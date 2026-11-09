@@ -302,7 +302,7 @@
     .field select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238d95a8' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: left 14px center; padding-left: 36px; }
     [dir="ltr"] .field select { background-position: right 14px center; padding-left: 14px; padding-right: 36px; }
     .field select option { background: var(--bg-2); color: var(--text); }
-    .field textarea { min-height: 110px; resize: vertical; }
+    .field textarea { min-height: 84px; resize: vertical; }
     .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent); }
     .form-note { font-size: 13px; color: var(--muted); margin-top: 10px; display: flex; gap: 6px; align-items: center; }
     .preview { margin-top: 14px; padding: 14px; border-radius: 14px; background: color-mix(in srgb, #25d366 10%, var(--surface-2)); border: 1px solid color-mix(in srgb, #25d366 30%, var(--border)); font-size: 14px; white-space: pre-wrap; display: none; }
@@ -541,27 +541,17 @@
           <form class="card reveal" id="orderForm" novalidate>
             <div class="row">
               <div class="field">
-                <label for="fName" data-i18n="f_name">الاسم</label>
-                <input id="fName" name="name" required autocomplete="name" data-i18n-ph="f_name_ph" placeholder="اسمك الكريم">
+                <label for="fName" data-i18n="f_name">اسمك أو اسم صفحتك</label>
+                <input id="fName" name="name" required autocomplete="name" data-i18n-ph="f_name_ph" placeholder="مثلاً: أحمد أو @mypage">
               </div>
-              <div class="field">
-                <label for="fBiz" data-i18n="f_biz">اسم النشاط / الصفحة</label>
-                <input id="fBiz" name="biz" data-i18n-ph="f_biz_ph" placeholder="مثلاً: مطعم الريف">
-              </div>
-            </div>
-            <div class="row">
               <div class="field">
                 <label for="fService" data-i18n="f_service">الخدمة المطلوبة</label>
                 <select id="fService" name="service" required></select>
               </div>
-              <div class="field">
-                <label for="fPlatform" data-i18n="f_platform">المنصة</label>
-                <select id="fPlatform" name="platform"></select>
-              </div>
             </div>
             <div class="field">
               <label for="fMsg" data-i18n="f_msg">تفاصيل إضافية</label>
-              <textarea id="fMsg" name="msg" data-i18n-ph="f_msg_ph" placeholder="احكيلنا أكتر عن طلبك، رابط الصفحة، الميزانية..."></textarea>
+              <textarea id="fMsg" rows="3" name="msg" data-i18n-ph="f_msg_ph" placeholder="احكيلنا أكتر عن طلبك، رابط الصفحة، الميزانية..."></textarea>
             </div>
             <p class="form-err" id="formErr" role="alert" hidden></p>
             <a class="btn btn-wa" id="sendLink" href="https://wa.me/972597653989" target="_blank" rel="noopener">
@@ -661,11 +651,6 @@
     // مثال: { name: 'أبو محمد', role: { ar: 'صاحب مطعم', en: 'Restaurant owner' }, stars: 5, text: { ar: '...', en: '...' } }
     const REVIEWS = [];
 
-    const PLATFORMS = {
-      ar: ['إنستغرام', 'فيسبوك', 'تيك توك', 'أكثر من منصة', 'غير ذلك'],
-      en: ['Instagram', 'Facebook', 'TikTok', 'Multiple platforms', 'Other']
-    };
-
     /* ================= النصوص (عربي / إنجليزي) ================= */
     const I18N = {
       ar: {
@@ -689,11 +674,11 @@
         contact_eyebrow: 'تواصل معنا', contact_title: 'جاهز نبلّش؟', contact_sub: 'عبّي الفورم، ورح تنفتح محادثة واتساب فيها طلبك جاهز. بس اضغط إرسال.',
         info_title: 'معلومات التواصل', info_wa: 'واتساب', info_ig: 'إنستغرام', info_hours: 'ساعات العمل', hours_val: 'يومياً من 10 صباحاً حتى 10 مساءً',
         open: 'متاحين الآن', closed: 'مغلق الآن',
-        f_name: 'الاسم', f_name_ph: 'اسمك الكريم', f_biz: 'اسم النشاط / الصفحة', f_biz_ph: 'مثلاً: مطعم الريف',
-        f_service: 'الخدمة المطلوبة', f_choose: 'اختر الخدمة…', f_platform: 'المنصة', f_msg: 'تفاصيل إضافية', f_msg_ph: 'احكيلنا أكتر عن طلبك، رابط الصفحة، الميزانية...',
+        f_name: 'اسمك أو اسم صفحتك', f_name_ph: 'مثلاً: أحمد أو @mypage',
+        f_service: 'الخدمة المطلوبة', f_choose: 'اختر الخدمة…', f_msg: 'ملاحظات (اختياري)', f_msg_ph: 'أي شي حابب تضيفه...',
         f_send: 'أرسل الطلب عبر واتساب', f_note: '🔒 ما بنحفظ بياناتك، الرسالة بتنبعت مباشرة من واتساب تبعك.',
         f_err_name: 'اكتب اسمك لو سمحت', f_err_service: 'اختار الخدمة المطلوبة',
-        msg_hello: 'مرحباً Explor Plus 👋', msg_want: 'بدي أطلب خدمة:', msg_name: 'الاسم', msg_biz: 'النشاط', msg_service: 'الخدمة', msg_platform: 'المنصة', msg_details: 'التفاصيل', msg_from_site: '(مرسلة من الموقع)',
+        msg_hello: 'مرحباً Explor Plus 👋', msg_want: 'بدي أطلب خدمة:', msg_name: 'الاسم / الصفحة', msg_service: 'الخدمة', msg_details: 'ملاحظات', msg_from_site: '(مرسلة من الموقع)',
         review_msg: 'مرحباً Explor Plus، حابب أشارككم رأيي بتجربتي معكم:',
         rights: 'جميع الحقوق محفوظة', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
       },
@@ -718,11 +703,11 @@
         contact_eyebrow: 'Contact', contact_title: 'Ready to start?', contact_sub: 'Fill in the form and a WhatsApp chat opens with your request ready. Just hit send.',
         info_title: 'Contact info', info_wa: 'WhatsApp', info_ig: 'Instagram', info_hours: 'Working hours', hours_val: 'Daily, 10 AM – 10 PM',
         open: 'Open now', closed: 'Closed now',
-        f_name: 'Name', f_name_ph: 'Your name', f_biz: 'Business / page name', f_biz_ph: 'e.g. Al Reef Restaurant',
-        f_service: 'Service', f_choose: 'Choose a service…', f_platform: 'Platform', f_msg: 'Extra details', f_msg_ph: 'Tell us more: page link, budget, goals...',
+        f_name: 'Your name or page name', f_name_ph: 'e.g. Ahmad or @mypage',
+        f_service: 'Service', f_choose: 'Choose a service…', f_msg: 'Notes (optional)', f_msg_ph: 'Anything you want to add...',
         f_send: 'Send request on WhatsApp', f_note: '🔒 We don’t store your data, the message is sent from your own WhatsApp.',
         f_err_name: 'Please enter your name', f_err_service: 'Please choose a service',
-        msg_hello: 'Hello Explor Plus 👋', msg_want: 'I would like to order a service:', msg_name: 'Name', msg_biz: 'Business', msg_service: 'Service', msg_platform: 'Platform', msg_details: 'Details', msg_from_site: '(sent from the website)',
+        msg_hello: 'Hello Explor Plus 👋', msg_want: 'I would like to order a service:', msg_name: 'Name / page', msg_service: 'Service', msg_details: 'Notes', msg_from_site: '(sent from the website)',
         review_msg: 'Hello Explor Plus, I would like to share my experience with you:',
         rights: 'All rights reserved', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
       }
@@ -798,9 +783,6 @@
       const sel = $('#fService'), prev = sel.value;
       sel.innerHTML = `<option value="">${t('f_choose')}</option>` + SERVICES.map(s => `<option value="${s.id}">${esc(s[lang].t)}</option>`).join('');
       sel.value = prev;
-      const pf = $('#fPlatform'), pprev = pf.selectedIndex;
-      pf.innerHTML = PLATFORMS[lang].map(p => `<option>${esc(p)}</option>`).join('');
-      if (pprev > 0) pf.selectedIndex = pprev;
     }
 
     function updateOpenNow() {
@@ -838,12 +820,10 @@
 
     function buildMessage() {
       const f = $('#orderForm');
-      const name = f.name.value.trim(), biz = f.biz.value.trim(), msg = f.msg.value.trim();
+      const name = f.name.value.trim(), msg = f.msg.value.trim();
       const svc = SERVICES.find(s => s.id === f.service.value);
       const lines = [t('msg_hello'), t('msg_want'), '', `👤 ${t('msg_name')}: ${name}`];
-      if (biz) lines.push(`🏪 ${t('msg_biz')}: ${biz}`);
       lines.push(`⭐ ${t('msg_service')}: ${svc ? svc[lang].t : ''}`);
-      lines.push(`📱 ${t('msg_platform')}: ${f.platform.value}`);
       if (msg) lines.push(`📝 ${t('msg_details')}: ${msg}`);
       lines.push('', t('msg_from_site'));
       return lines.join('\n');
