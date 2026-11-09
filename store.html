@@ -17,7 +17,8 @@
     <div class="wrap bar">
       <a class="brand" href="index.html"><img src="assets/logo-light.png" alt=""><span>Explor Plus<small>المتجر</small></span></a>
       <div class="bar-actions">
-        <a class="balance-chip" href="#wallet" id="balanceChip" hidden>الرصيد <b class="num" id="balanceVal">0</b></a>
+        <button class="bell" id="bellBtn" type="button" aria-label="الإشعارات" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="count" id="bellCount" hidden></span></button>
+        <a class="balance-chip" href="#wallet" id="balanceChip" hidden><span class="hide-sm">الرصيد</span> <b class="num" id="balanceVal">0</b></a>
         <a class="btn btn-primary btn-sm" href="#login" id="loginBtn">تسجيل الدخول</a>
         <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button" hidden>خروج</button>
       </div>
@@ -56,6 +57,7 @@
     async function refreshMe() {
       try { me = await getProfile(); } catch (e) { me = null; }
       $('#balanceChip').hidden = !me; $('#logoutBtn').hidden = !me; $('#loginBtn').hidden = !!me;
+      if (!me) $('#bellBtn').hidden = true; else loadNotes();
       if (me) $('#balanceVal').textContent = money(me.balance);
     }
     async function loadProducts() {
@@ -90,9 +92,16 @@
     }
     async function renderShop() {
       await loadProducts();
+      let expiring = [];
+      if (me) {
+        const soon = new Date(Date.now() + 3 * 86400000).toISOString(), past = new Date(Date.now() - 7 * 86400000).toISOString();
+        const { data } = await sb.from('orders').select('id, product_id, product_name, expires_at').eq('status', 'delivered').gte('expires_at', past).lte('expires_at', soon);
+        expiring = (data || []).filter((o) => products.some((p) => p.id === o.product_id));
+      }
       const list = products.filter((p) => filter === 'all' || p.category === filter);
       app.innerHTML = `
         <div class="page-head"><div><h1>المتجر</h1><p>اشحن رصيدك مرة وحدة، واشترِ واستلم اشتراكك فوراً.</p></div></div>
+        ${expiring.map((o) => { const n = daysLeft(o.expires_at); return `<div class="renew-banner"><span>⏰ <b>${esc(o.product_name)}</b> ${n < 0 ? 'انتهى' : n === 0 ? 'بينتهي اليوم' : `بينتهي بعد ${daysWord(n)}`}</span><button class="btn btn-primary btn-sm" data-buy="${o.product_id}">جدّد الآن</button></div>`; }).join('')}
         <div class="chips" role="group" aria-label="التصنيف">
           <button class="chip" data-filter="all" aria-pressed="${filter === 'all'}">الكل</button>
           <button class="chip" data-filter="subscription" aria-pressed="${filter === 'subscription'}">اشتراكات رقمية</button>
@@ -285,18 +294,90 @@
     }
 
     /* ---------- orders ---------- */
+    // كم يوم باقي على انتهاء الاشتراك
+    const daysLeft = (d) => Math.ceil((new Date(d) - Date.now()) / 86400000);
+    const daysWord = (n) => n === 1 ? 'يوم' : n === 2 ? 'يومين' : (n <= 10 ? `${n} أيام` : `${n} يوم`);
+    function expiryBadge(o) {
+      if (o.status !== 'delivered' || !o.expires_at) return '';
+      const n = daysLeft(o.expires_at);
+      if (n < 0) return '<span class="badge bad">منتهي</span>';
+      if (n === 0) return '<span class="badge bad">بينتهي اليوم</span>';
+      return `<span class="badge ${n <= 3 ? 'warn' : ''}">باقي ${daysWord(n)}</span>`;
+    }
+
+    let myOrders = [];
     async function renderOrders() {
-      const { data: orders, error } = await sb.from('orders').select('*, products(category)').order('created_at', { ascending: false }).limit(100);
+      const [{ data: orders, error }, { data: reports }] = await Promise.all([
+        sb.from('orders').select('*, products(category, active)').order('created_at', { ascending: false }).limit(100),
+        sb.from('reports').select('*').order('created_at', { ascending: false })
+      ]);
       if (error) throw error;
+      if (!products.length) { try { await loadProducts(); } catch (e) {} }
+      myOrders = orders || [];
+      const repBy = {};
+      (reports || []).forEach((r) => { if (!repBy[r.order_id]) repBy[r.order_id] = r; });
       app.innerHTML = `
         <div class="page-head"><div><h1>طلباتي</h1><p>كل مشترياتك وبياناتها بمكان واحد.</p></div></div>
-        ${(orders || []).length ? `<div class="list">${orders.map((o) => `
+        ${myOrders.length ? `<div class="list">${myOrders.map((o) => {
+          const rep = repBy[o.id];
+          const canRenew = o.status === 'delivered' && o.expires_at && daysLeft(o.expires_at) <= 7 && products.some((p) => p.id === o.product_id);
+          return `
           <div class="item">
-            <div class="item-head"><div><h3>${esc(o.product_name)}</h3><div class="meta">#${o.id} · ${fmtDate(o.created_at)} · <span class="num">${money(o.price)}</span></div></div>${pill(o.status)}</div>
+            <div class="item-head"><div><h3>${esc(o.product_name)}</h3><div class="meta">#${o.id} · ${fmtDate(o.created_at)} · <span class="num">${money(o.price)}</span>${o.expires_at && o.status === 'delivered' ? ` · ينتهي ${fmtDate(o.expires_at)}` : ''}</div></div><div class="row">${expiryBadge(o)}${pill(o.status)}</div></div>
             ${o.delivered_content && o.status !== 'refunded' ? secretBox(o.delivered_content) : ''}
             ${o.admin_note ? `<p class="small muted">ملاحظة: ${esc(o.admin_note)}</p>` : ''}
-            ${o.status === 'pending' ? `<a class="btn btn-wa btn-sm" style="justify-self:start" target="_blank" rel="noopener" href="${waLink(waFor(o.products), `مرحباً، بستفسر عن طلبي #${o.id} (${o.product_name})`)}">${WA_ICON} استفسر عن الطلب</a>` : ''}
-          </div>`).join('')}</div>` : '<div class="empty">ما عندك طلبات لسا. <a href="#shop" style="color:var(--accent)">تصفّح المتجر</a></div>'}`;
+            ${rep ? `<p class="small">${rep.status === 'open' ? '<span class="badge warn">بلاغك قيد المراجعة</span>' : `<span class="badge ${rep.status === 'resolved' ? 'ok' : ''}">${rep.status === 'resolved' ? 'انحلّ البلاغ' : 'تمت مراجعة البلاغ'}</span>`}${rep.admin_reply ? ` <span class="muted">${esc(rep.admin_reply)}</span>` : ''}</p>` : ''}
+            <div class="row">
+              ${canRenew ? `<button class="btn btn-primary btn-sm" data-buy="${o.product_id}">جدّد الاشتراك</button>` : ''}
+              ${o.status === 'delivered' && !(rep && rep.status === 'open') ? `<button class="btn btn-ghost btn-sm" data-report="${o.id}">في مشكلة؟ بلّغ</button>` : ''}
+              ${o.status === 'pending' ? `<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${waLink(waFor(o.products), `مرحباً، بستفسر عن طلبي #${o.id} (${o.product_name})`)}">${WA_ICON} استفسر عن الطلب</a>` : ''}
+            </div>
+          </div>`; }).join('')}</div>` : '<div class="empty">ما عندك طلبات لسا. <a href="#shop" style="color:var(--accent)">تصفّح المتجر</a></div>'}`;
+    }
+
+    function openReport(orderId) {
+      const o = myOrders.find((x) => x.id === Number(orderId)); if (!o) return;
+      const el = openSheet(`
+        <div class="spread"><h2>بلاغ عن طلب #${o.id}</h2><button class="btn btn-ghost btn-sm" data-close>إغلاق</button></div>
+        <p class="muted">${esc(o.product_name)}. احكيلنا شو المشكلة وبنحلها بأسرع وقت، يا ببديل يا بنرجّعلك المبلغ.</p>
+        <div class="chips">${['الحساب ما بيفتح', 'كلمة السر تغيّرت', 'البروفايل مش موجود', 'الاشتراك وقف'].map((t) => `<button type="button" class="chip" data-quick="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+        <div class="field"><label for="repMsg">تفاصيل المشكلة</label><textarea id="repMsg" rows="3" placeholder="مثلاً: بيطلع رسالة إنه الحساب موقوف"></textarea></div>
+        <p class="form-msg err" id="repErr" hidden></p>
+        <button class="btn btn-primary btn-block" id="repSend">أرسل البلاغ</button>`);
+      $$('[data-quick]', el).forEach((c) => c.addEventListener('click', () => { $('#repMsg', el).value = c.dataset.quick; }));
+      $('#repSend', el).addEventListener('click', async (e) => {
+        const btn = e.currentTarget, msg = $('#repMsg', el).value.trim(), err = $('#repErr', el);
+        if (msg.length < 3) { err.textContent = 'اكتب شو المشكلة.'; err.hidden = false; return; }
+        btn.disabled = true;
+        const { error } = await sb.rpc('report_issue', { p_order_id: o.id, p_message: msg });
+        if (error) { err.textContent = errMsg(error); err.hidden = false; btn.disabled = false; return; }
+        closeSheet(); toast('وصلنا بلاغك، رح نرد عليك بأقرب وقت ✓'); renderOrders();
+      });
+    }
+
+    /* ---------- notifications ---------- */
+    let notes = [];
+    async function loadNotes() {
+      if (!me) { $('#bellBtn').hidden = true; return; }
+      const { data } = await sb.from('notifications').select('*').order('created_at', { ascending: false }).limit(30);
+      notes = data || [];
+      const unread = notes.filter((n) => !n.is_read).length;
+      $('#bellBtn').hidden = false;
+      $('#bellCount').hidden = !unread; $('#bellCount').textContent = unread;
+    }
+    async function openNotes() {
+      openSheet(`
+        <div class="spread"><h2>الإشعارات</h2><button class="btn btn-ghost btn-sm" data-close>إغلاق</button></div>
+        ${notes.length ? `<div class="list">${notes.map((n) => `
+          <a class="item note${n.is_read ? '' : ' unread'}" href="${esc(n.link || '#orders')}" data-close>
+            <div class="item-head"><h3>${esc(n.title)}</h3><span class="meta">${fmtDate(n.created_at)}</span></div>
+            ${n.body ? `<p class="small muted">${esc(n.body)}</p>` : ''}
+          </a>`).join('')}</div>` : '<p class="muted">ما في إشعارات لسا.</p>'}`);
+      if (notes.some((n) => !n.is_read)) {
+        await sb.rpc('mark_notifications_read');
+        notes.forEach((n) => { n.is_read = true; });
+        $('#bellCount').hidden = true;
+      }
     }
 
     /* ---------- events ---------- */
@@ -304,12 +385,15 @@
       const f = e.target.closest('[data-filter]'); if (f) { filter = f.dataset.filter; renderShop(); return; }
       const b = e.target.closest('[data-buy]'); if (b) { openBuy(b.dataset.buy); return; }
       const c = e.target.closest('[data-copy]'); if (c) { copy(c.dataset.copy, c); return; }
+      const r = e.target.closest('[data-report]'); if (r) { openReport(r.dataset.report); return; }
     });
+    $('#bellBtn').addEventListener('click', openNotes);
+    setInterval(() => { if (me && !document.hidden) { loadNotes(); } }, 60000);
     $('#logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); me = null; await refreshMe(); location.hash = '#shop'; toast('سجّلت خروج'); });
     window.addEventListener('hashchange', () => { closeSheet(); route(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
 
-    (async () => { await refreshMe(); route(); })();
+    (async () => { await refreshMe(); route(); loadNotes(); })();
   })();
   </script>
 </body>

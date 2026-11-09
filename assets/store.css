@@ -187,3 +187,16 @@ td .row { flex-wrap: nowrap; }
   .card { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* v2: bell, renew banner, notifications, settings */
+.bell { position: relative; width: 40px; height: 40px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); display: grid; place-items: center; cursor: pointer; }
+.bell svg { width: 20px; height: 20px; }
+.bell .count { position: absolute; top: -6px; inset-inline-end: -6px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--bad); color: #fff; font-size: 11.5px; font-weight: 700; display: grid; place-items: center; }
+.renew-banner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 16px; margin-bottom: 12px; border-radius: 14px; background: rgba(245,165,36,.1); border: 1px solid rgba(245,165,36,.35); font-size: 14.5px; }
+.note.unread { border-color: rgba(10,132,255,.5); background: rgba(10,132,255,.07); }
+.note h3 { font-size: 15px; }
+.steps-list { padding-inline-start: 20px; display: grid; gap: 6px; color: var(--muted); font-size: 14px; }
+.steps-list b { color: var(--text); }
+
+.brand span, .balance-chip { white-space: nowrap; }
+@media (max-width: 420px) { .bar-actions { gap: 6px; } .balance-chip { padding: 0 10px; } .brand img { width: 34px; } }
