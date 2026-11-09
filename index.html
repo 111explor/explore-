@@ -307,6 +307,7 @@
     .form-note { font-size: 13px; color: var(--muted); margin-top: 10px; display: flex; gap: 6px; align-items: center; }
     .preview { margin-top: 14px; padding: 14px; border-radius: 14px; background: color-mix(in srgb, #25d366 10%, var(--surface-2)); border: 1px solid color-mix(in srgb, #25d366 30%, var(--border)); font-size: 14px; white-space: pre-wrap; display: none; }
     .preview.show { display: block; }
+    .form-err { color: #ef4444; font-size: 14px; font-weight: 600; margin-bottom: 10px; }
     .btn-wa { background: #25d366; color: #05140a; width: 100%; height: 54px; font-size: 16px; }
     .btn-wa:hover { box-shadow: 0 14px 40px -12px rgba(37,211,102,.55); transform: translateY(-1px); }
 
@@ -562,10 +563,11 @@
               <label for="fMsg" data-i18n="f_msg">تفاصيل إضافية</label>
               <textarea id="fMsg" name="msg" data-i18n-ph="f_msg_ph" placeholder="احكيلنا أكتر عن طلبك، رابط الصفحة، الميزانية..."></textarea>
             </div>
-            <button class="btn btn-wa" type="submit">
+            <p class="form-err" id="formErr" role="alert" hidden></p>
+            <a class="btn btn-wa" id="sendLink" href="https://wa.me/972597653989" target="_blank" rel="noopener">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
               <span data-i18n="f_send">أرسل الطلب عبر واتساب</span>
-            </button>
+            </a>
             <div class="preview" id="preview" aria-live="polite"></div>
             <p class="form-note" data-i18n="f_note">🔒 ما بنحفظ بياناتك، الرسالة بتنبعت مباشرة من واتساب تبعك.</p>
           </form>
@@ -821,6 +823,8 @@
       $('#langBtn').textContent = lang === 'ar' ? 'EN' : 'ع';
       renderServices(); renderWorks(); renderReviews(); renderForm(); updateOpenNow();
       $('#preview').classList.remove('show');
+      $('#formErr').hidden = true;
+      $('#sendLink').href = waLink(buildMessage());
       observeReveal();
       store.set('xp_lang', lang);
     }
@@ -858,21 +862,27 @@
       const b = e.target.closest('[data-order]');
       if (!b) return;
       $('#fService').value = b.dataset.order;
+      syncForm();
       $('#contact').scrollIntoView({ behavior: 'smooth' });
       setTimeout(() => $('#fName').focus({ preventScroll: true }), 600);
     });
 
-    $('#orderForm').addEventListener('input', () => {
+    function syncForm() {
+      $('#sendLink').href = waLink(buildMessage());
       const p = $('#preview');
       if ($('#fName').value.trim() || $('#fService').value) { p.textContent = buildMessage(); p.classList.add('show'); }
-    });
-
-    $('#orderForm').addEventListener('submit', e => {
-      e.preventDefault();
-      const f = e.target;
-      if (!f.name.value.trim()) { alert(t('f_err_name')); f.name.focus(); return; }
-      if (!f.service.value) { alert(t('f_err_service')); f.service.focus(); return; }
-      window.open(waLink(buildMessage()), '_blank', 'noopener');
+      if ($('#fName').value.trim() && $('#fService').value) $('#formErr').hidden = true;
+    }
+    $('#orderForm').addEventListener('input', syncForm);
+    $('#orderForm').addEventListener('change', syncForm);
+    $('#orderForm').addEventListener('submit', e => e.preventDefault());
+    $('#sendLink').addEventListener('click', e => {
+      const f = $('#orderForm'), err = $('#formErr');
+      let msg = '';
+      if (!f.name.value.trim()) { msg = t('f_err_name'); f.name.focus(); }
+      else if (!f.service.value) { msg = t('f_err_service'); f.service.focus(); }
+      if (msg) { e.preventDefault(); err.textContent = msg; err.hidden = false; return; }
+      $('#sendLink').href = waLink(buildMessage());
     });
 
     /* init */
