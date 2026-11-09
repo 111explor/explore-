@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-style="midnight">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explor Plus | للدعاية والإعلان</title>
+  <meta name="description" content="Explor Plus للدعاية والإعلان منذ 2018: توثيق واسترجاع الحسابات، الإعلانات الممولة، إدارة الصفحات، تصوير الفيديوهات والمنتجات، تصاميم السوشال ميديا والمنيو الإلكتروني.">
+  <meta name="theme-color" content="#07080b">
+  <meta property="og:title" content="Explor Plus | للدعاية والإعلان">
+  <meta property="og:description" content="نكبّر حضورك على السوشال ميديا: توثيق، إعلانات ممولة، إدارة صفحات، تصوير وتصميم.">
+  <meta property="og:image" content="assets/icon.png">
+  <link rel="icon" href="assets/icon.png">
+  <link rel="apple-touch-icon" href="assets/icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============ THEMES (الطوابع) ============ */
+    :root, [data-style="midnight"] {
+      --bg: #07080b;
+      --bg-2: #0c0e13;
+      --surface: #11141b;
+      --surface-2: #171b24;
+      --text: #f3f5f9;
+      --muted: #8d95a8;
+      --border: rgba(255,255,255,.08);
+      --accent: #0a84ff;
+      --accent-2: #0a84ff;
+      --accent-ink: #ffffff;
+      --glow: rgba(10,132,255,.35);
+      --radius: 22px;
+      --card-shadow: none;
+      --logo-on: url(assets/logo-light.png);
+    }
+    [data-style="clean"] {
+      --bg: #f5f6f8;
+      --bg-2: #eceef2;
+      --surface: #ffffff;
+      --surface-2: #f1f3f6;
+      --text: #0b0d12;
+      --muted: #5a6274;
+      --border: rgba(11,13,18,.09);
+      --accent: #0a6cff;
+      --accent-2: #0a6cff;
+      --accent-ink: #ffffff;
+      --glow: rgba(10,108,255,.18);
+      --radius: 28px;
+      --card-shadow: 0 1px 2px rgba(11,13,18,.04), 0 10px 30px -12px rgba(11,13,18,.12);
+    }
+    [data-style="aurora"] {
+      --bg: #050611;
+      --bg-2: #0a0b1d;
+      --surface: rgba(255,255,255,.04);
+      --surface-2: rgba(255,255,255,.07);
+      --text: #f5f6ff;
+      --muted: #9aa0c3;
+      --border: rgba(255,255,255,.1);
+      --accent: #3d8bff;
+      --accent-2: #a855f7;
+      --accent-ink: #ffffff;
+      --glow: rgba(124,92,255,.45);
+      --radius: 20px;
+      --card-shadow: 0 0 0 1px rgba(255,255,255,.02) inset;
+    }
+
+    /* ============ BASE ============ */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'IBM Plex Sans Arabic', 'Alexandria', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+      transition: background .4s, color .4s;
+    }
+    h1, h2, h3, .display { font-family: 'Alexandria', 'IBM Plex Sans Arabic', sans-serif; line-height: 1.25; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+    /* backgrounds per theme */
+    .bg-fx { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    [data-style="midnight"] .bg-fx {
+      background:
+        radial-gradient(900px 500px at 85% -10%, rgba(10,132,255,.16), transparent 60%),
+        linear-gradient(var(--bg), var(--bg));
+    }
+    [data-style="midnight"] .bg-fx::after {
+      content: ""; position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse at 70% 0%, #000 0%, transparent 65%);
+      -webkit-mask-image: radial-gradient(ellipse at 70% 0%, #000 0%, transparent 65%);
+    }
+    [data-style="clean"] .bg-fx { background: var(--bg); }
+    [data-style="aurora"] .bg-fx {
+      background:
+        radial-gradient(700px 450px at 90% 0%, rgba(61,139,255,.28), transparent 60%),
+        radial-gradient(600px 420px at 0% 25%, rgba(168,85,247,.22), transparent 60%),
+        radial-gradient(700px 500px at 60% 100%, rgba(34,211,238,.12), transparent 60%),
+        var(--bg);
+    }
+
+    /* ============ HEADER ============ */
+    header.top {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      background: color-mix(in srgb, var(--bg) 72%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 70px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-family: 'Alexandria'; font-weight: 700; }
+    .brand-logo { width: 44px; height: 34px; background: var(--logo) center/contain no-repeat; }
+    .brand small { display: block; font-size: 11px; color: var(--muted); font-weight: 500; line-height: 1.2; }
+    .brand span { line-height: 1.2; letter-spacing: .2px; }
+    .nav-links { display: flex; gap: 26px; font-size: 15px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .lang-btn {
+      height: 40px; min-width: 44px; padding: 0 12px; border-radius: 12px;
+      background: var(--surface-2); border: 1px solid var(--border); cursor: pointer; font-weight: 600; font-size: 14px;
+    }
+    .menu-btn { display: none; width: 40px; height: 40px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); cursor: pointer; place-items: center; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      height: 48px; padding: 0 22px; border-radius: 14px; font-weight: 600; font-size: 15px;
+      border: 1px solid transparent; cursor: pointer; transition: transform .2s, box-shadow .2s, background .2s; white-space: nowrap;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--accent-ink); box-shadow: 0 10px 30px -10px var(--glow); }
+    .btn-primary:hover { box-shadow: 0 14px 40px -10px var(--glow); transform: translateY(-1px); }
+    .btn-ghost { background: var(--surface-2); border-color: var(--border); }
+    .btn-ghost:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); }
+    .btn-sm { height: 40px; padding: 0 16px; font-size: 14px; border-radius: 12px; }
+    .btn svg { width: 18px; height: 18px; flex: none; }
+
+    /* ============ HERO ============ */
+    .hero { padding: 72px 0 40px; }
+    .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border-radius: 999px;
+      background: var(--surface-2); border: 1px solid var(--border); font-size: 13px; color: var(--muted);
+    }
+    [dir="ltr"] .pill { padding: 6px 6px 6px 14px; }
+    .pill b { background: var(--accent); color: var(--accent-ink); padding: 2px 10px; border-radius: 999px; font-weight: 600; }
+    .hero h1 { font-size: clamp(36px, 6vw, 68px); font-weight: 800; margin: 22px 0 18px; letter-spacing: -.5px; }
+    .grad { background: linear-gradient(120deg, var(--accent), var(--accent-2) 60%, var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    [data-style="midnight"] .grad, [data-style="clean"] .grad { background: none; color: var(--accent); }
+    .hero p.lead { font-size: clamp(16px, 2vw, 19px); color: var(--muted); max-width: 560px; }
+    .hero-ctas { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+    .stats { display: flex; gap: 14px; margin-top: 44px; flex-wrap: wrap; }
+    .stat { padding: 14px 18px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); min-width: 130px; box-shadow: var(--card-shadow); }
+    .stat strong { display: block; font-family: 'Alexandria'; font-size: 24px; font-weight: 700; }
+    .stat span { font-size: 13px; color: var(--muted); }
+
+    .hero-visual { position: relative; aspect-ratio: 1; max-width: 460px; width: 100%; justify-self: center; }
+    .orb {
+      position: absolute; inset: 8%; border-radius: 40px; background: var(--surface);
+      border: 1px solid var(--border); box-shadow: var(--card-shadow), 0 40px 120px -40px var(--glow);
+      display: grid; place-items: center; overflow: hidden;
+    }
+    [data-style="midnight"] .orb, [data-style="aurora"] .orb { background: #000; }
+    [data-style="midnight"] .orb::before, [data-style="aurora"] .orb::before {
+      content: ""; position: absolute; inset: -20%;
+      background-image: linear-gradient(135deg, rgba(255,255,255,.05) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.05) 50%, rgba(255,255,255,.05) 75%, transparent 75%);
+      background-size: 70px 70px; transform: rotate(-12deg); opacity: .55;
+    }
+    .orb .big-logo { position: relative; width: 62%; aspect-ratio: 579/427; background: var(--logo) center/contain no-repeat; animation: float 6s ease-in-out infinite; }
+    .chip {
+      position: absolute; display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px;
+      background: var(--surface-2); border: 1px solid var(--border); font-size: 13px; font-weight: 600;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 12px 30px -12px rgba(0,0,0,.4);
+      animation: float 7s ease-in-out infinite;
+    }
+    [data-style="clean"] .chip { background: #fff; box-shadow: 0 12px 30px -14px rgba(11,13,18,.25); }
+    .chip .dot { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
+    .chip .dot svg { width: 16px; height: 16px; }
+    .chip-1 { top: 2%; inset-inline-start: -2%; }
+    .chip-2 { bottom: 12%; inset-inline-start: -6%; animation-delay: -2s; }
+    .chip-3 { top: 40%; inset-inline-end: -6%; animation-delay: -4s; }
+    @keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
+
+    /* marquee */
+    .marquee { border-block: 1px solid var(--border); padding: 18px 0; overflow: hidden; margin-top: 40px; background: color-mix(in srgb, var(--bg-2) 60%, transparent); }
+    .marquee-track { display: flex; gap: 40px; width: max-content; animation: scroll 40s linear infinite; font-family: 'Alexandria'; font-weight: 600; color: var(--muted); font-size: 17px; }
+    .marquee-track span { display: inline-flex; align-items: center; gap: 40px; }
+    .marquee-track span::after { content: "✦"; color: var(--accent); }
+    [dir="rtl"] .marquee-track { animation-name: scroll-rtl; }
+    @keyframes scroll { to { transform: translateX(-50%); } }
+    @keyframes scroll-rtl { to { transform: translateX(50%); } }
+
+    /* ============ SECTIONS ============ */
+    section.block { padding: 96px 0; }
+    .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 44px; flex-wrap: wrap; }
+    .eyebrow { color: var(--accent); font-weight: 600; font-size: 14px; letter-spacing: .5px; }
+    .sec-head h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 700; margin-top: 8px; }
+    .sec-head p { color: var(--muted); max-width: 460px; }
+
+    /* services */
+    .services { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; grid-auto-flow: dense; }
+    .svc {
+      position: relative; display: flex; flex-direction: column; gap: 14px; padding: 26px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--card-shadow); transition: transform .25s, border-color .25s, background .25s; overflow: hidden;
+    }
+    .svc:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+    [data-style="aurora"] .svc { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .svc-top { display: flex; align-items: center; justify-content: space-between; }
+    .svc-ico { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+    [data-style="aurora"] .svc-ico { background: linear-gradient(135deg, rgba(61,139,255,.25), rgba(168,85,247,.25)); color: #fff; }
+    .svc-ico svg { width: 26px; height: 26px; }
+    .svc-num { font-family: 'Alexandria'; font-weight: 700; font-size: 34px; color: transparent; -webkit-text-stroke: 1px var(--border); opacity: .9; }
+    [data-style="clean"] .svc-num { -webkit-text-stroke: 1px rgba(11,13,18,.15); }
+    .svc h3 { font-size: 19px; font-weight: 700; }
+    .svc p { color: var(--muted); font-size: 15px; flex: 1; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); }
+    .svc .order { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14px; color: var(--accent); background: none; border: 0; cursor: pointer; padding: 4px 0; }
+    .svc .order svg { width: 16px; height: 16px; transition: transform .2s; }
+    [dir="rtl"] .svc .order svg { transform: scaleX(-1); }
+    .svc .order:hover svg { transform: translateX(4px); }
+    [dir="rtl"] .svc .order:hover svg { transform: scaleX(-1) translateX(4px); }
+    .svc.featured { grid-column: span 2; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, var(--surface)), var(--surface) 70%); }
+    [data-style="clean"] .svc.featured { background: #0b0d12; color: #fff; border-color: #0b0d12; }
+    [data-style="clean"] .svc.featured p, [data-style="clean"] .svc.featured .tag { color: #b8bfcc; }
+    [data-style="clean"] .svc.featured .tag { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); }
+    [data-style="clean"] .svc.featured .svc-num { -webkit-text-stroke: 1px rgba(255,255,255,.25); }
+    [data-style="clean"] .svc.featured .svc-ico { background: rgba(10,108,255,.25); color: #5ea2ff; }
+    [data-style="clean"] .svc.featured .order { color: #5ea2ff; }
+
+    /* process */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: s; }
+    .step { padding: 26px; border-radius: var(--radius); border: 1px dashed var(--border); position: relative; }
+    .step::before { counter-increment: s; content: "0" counter(s); font-family: 'Alexandria'; font-weight: 700; color: var(--accent); font-size: 14px; }
+    .step h3 { font-size: 18px; margin: 10px 0 6px; }
+    .step p { color: var(--muted); font-size: 14.5px; }
+
+    /* works */
+    .works { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .work {
+      aspect-ratio: 4/5; border-radius: var(--radius); overflow: hidden; position: relative;
+      background: var(--surface); border: 1px solid var(--border); display: flex; align-items: flex-end; padding: 20px;
+    }
+    .work::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(120% 80% at 80% 0%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 60%);
+    }
+    .work .work-logo { position: absolute; inset: 0; background: var(--logo) center/36% no-repeat; opacity: .08; }
+    .work .meta { position: relative; }
+    .work .meta b { display: block; font-family: 'Alexandria'; font-size: 17px; }
+    .work .meta span { font-size: 13px; color: var(--muted); }
+    .work .soon { position: absolute; top: 16px; inset-inline-start: 16px; font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); }
+    .work img, .work video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .work.has-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 50%, rgba(0,0,0,.75)); }
+    .work.has-media .meta { z-index: 1; color: #fff; }
+    .work.has-media .meta span { color: #d0d4dd; }
+
+    /* testimonials */
+    .reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .review { padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+    .review .stars { color: #ffb400; letter-spacing: 2px; }
+    .review p { margin: 12px 0 18px; }
+    .review .who { display: flex; align-items: center; gap: 10px; }
+    .review .av { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 700; }
+    .review .who span { display: block; font-size: 13px; color: var(--muted); }
+    .reviews-empty {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+      padding: 32px; border-radius: var(--radius); border: 1px dashed var(--border); background: color-mix(in srgb, var(--surface) 60%, transparent);
+    }
+    .reviews-empty h3 { font-size: 22px; }
+    .reviews-empty p { color: var(--muted); }
+
+    /* contact */
+    .contact { display: grid; grid-template-columns: .9fr 1.1fr; gap: 20px; }
+    .card { padding: 30px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+    [data-style="aurora"] .card { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .info-list { display: grid; gap: 12px; margin-top: 22px; }
+    .info { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--border); transition: border-color .2s; }
+    a.info:hover { border-color: var(--accent); }
+    .info .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); flex: none; }
+    .info .ico svg { width: 22px; height: 22px; }
+    .info small { display: block; color: var(--muted); font-size: 12.5px; }
+    .info b { font-weight: 600; direction: ltr; unicode-bidi: isolate; }
+    .open-now { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 2px 8px; border-radius: 999px; margin-inline-start: 6px; }
+    .open-now.on { background: rgba(34,197,94,.15); color: #22c55e; }
+    .open-now.off { background: rgba(239,68,68,.12); color: #ef4444; }
+    .open-now::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field { display: grid; gap: 6px; margin-bottom: 14px; }
+    .field label { font-size: 14px; font-weight: 600; }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 13px 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--border);
+      outline: none; transition: border-color .2s, box-shadow .2s; font-size: 15px;
+    }
+    .field select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238d95a8' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: left 14px center; padding-left: 36px; }
+    [dir="ltr"] .field select { background-position: right 14px center; padding-left: 14px; padding-right: 36px; }
+    .field select option { background: var(--bg-2); color: var(--text); }
+    .field textarea { min-height: 110px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent); }
+    .form-note { font-size: 13px; color: var(--muted); margin-top: 10px; display: flex; gap: 6px; align-items: center; }
+    .preview { margin-top: 14px; padding: 14px; border-radius: 14px; background: color-mix(in srgb, #25d366 10%, var(--surface-2)); border: 1px solid color-mix(in srgb, #25d366 30%, var(--border)); font-size: 14px; white-space: pre-wrap; display: none; }
+    .preview.show { display: block; }
+    .btn-wa { background: #25d366; color: #05140a; width: 100%; height: 54px; font-size: 16px; }
+    .btn-wa:hover { box-shadow: 0 14px 40px -12px rgba(37,211,102,.55); transform: translateY(-1px); }
+
+    /* footer */
+    footer { border-top: 1px solid var(--border); padding: 40px 0; margin-top: 40px; color: var(--muted); font-size: 14px; }
+    .foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .socials { display: flex; gap: 10px; }
+    .socials a { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-2); border: 1px solid var(--border); }
+    .socials a:hover { color: var(--accent); border-color: var(--accent); }
+    .socials svg { width: 20px; height: 20px; }
+
+    /* floating whatsapp */
+    .fab { position: fixed; bottom: 20px; inset-inline-start: 20px; z-index: 60; width: 58px; height: 58px; border-radius: 50%; background: #25d366; color: #fff; display: grid; place-items: center; box-shadow: 0 12px 30px -8px rgba(37,211,102,.6); }
+    .fab svg { width: 30px; height: 30px; }
+    .fab::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid #25d366; animation: ping 2.4s infinite; }
+    @keyframes ping { 0% { transform: scale(1); opacity: .7 } 100% { transform: scale(1.6); opacity: 0 } }
+
+    /* style picker (للمعاينة فقط — بينشال بعد ما تختار الطابع) */
+    .picker { position: fixed; bottom: 20px; inset-inline-end: 20px; z-index: 70; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 10px; box-shadow: 0 20px 60px -20px rgba(0,0,0,.5); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+    [data-style="aurora"] .picker { background: rgba(10,11,29,.85); }
+    .picker small { display: block; font-size: 11px; color: var(--muted); padding: 0 6px 6px; font-weight: 600; }
+    .picker-opts { display: flex; gap: 6px; }
+    .picker button { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); cursor: pointer; font-size: 13px; font-weight: 600; }
+    .picker button[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent); }
+    .sw { width: 16px; height: 16px; border-radius: 50%; flex: none; border: 1px solid rgba(128,128,128,.4); }
+    .sw-midnight { background: linear-gradient(135deg, #07080b 50%, #0a84ff 50%); }
+    .sw-clean { background: linear-gradient(135deg, #ffffff 50%, #0a6cff 50%); }
+    .sw-aurora { background: linear-gradient(135deg, #3d8bff, #a855f7); }
+
+    /* reveal */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* mobile nav */
+    .mobile-nav { display: none; }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 980px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-visual { max-width: 360px; order: -1; }
+      .services, .works, .reviews { grid-template-columns: repeat(2, 1fr); }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .contact { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .menu-btn { display: grid; }
+      .nav-actions .btn-cta { display: none; }
+      .mobile-nav.open { display: grid; gap: 4px; padding: 10px 16px 18px; border-bottom: 1px solid var(--border); }
+      .mobile-nav a { padding: 12px; border-radius: 12px; font-weight: 600; }
+      .mobile-nav a:hover { background: var(--surface-2); }
+    }
+    @media (max-width: 640px) {
+      .hero { padding-top: 36px; }
+      section.block { padding: 64px 0; }
+      .services, .works, .reviews, .steps { grid-template-columns: 1fr; }
+      .svc.featured { grid-column: auto; }
+      form .row { grid-template-columns: 1fr; }
+      .chip-2 { inset-inline-start: 0; }
+      .chip-3 { inset-inline-end: 0; }
+      .chip-1 { inset-inline-start: 0; }
+      .stat { flex: 1 1 40%; min-width: 0; }
+      .card { padding: 22px; }
+      .picker { inset-inline-end: 16px; bottom: 16px; padding: 6px; border-radius: 16px; }
+      .picker small { display: none; }
+      .picker button { padding: 9px; }
+      .picker button span.lbl { display: none; }
+      .chip-3 { display: none; }
+      .fab { inset-inline-start: 16px; bottom: 16px; }
+      .hero-ctas .btn { flex: 1 1 auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-fx" aria-hidden="true"></div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="top">
+    <div class="wrap nav">
+      <a href="#home" class="brand" aria-label="Explor Plus">
+        <i class="brand-logo" aria-hidden="true"></i>
+        <span>Explor Plus<small data-i18n="tagline">للدعاية والإعلان</small></span>
+      </a>
+      <nav class="nav-links" aria-label="main">
+        <a href="#services" data-i18n="nav_services">خدماتنا</a>
+        <a href="#process" data-i18n="nav_process">كيف نشتغل</a>
+        <a href="#works" data-i18n="nav_works">أعمالنا</a>
+        <a href="#reviews" data-i18n="nav_reviews">آراء العملاء</a>
+        <a href="#contact" data-i18n="nav_contact">تواصل معنا</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="lang-btn" id="langBtn" type="button" aria-label="Change language">EN</button>
+        <a href="#contact" class="btn btn-primary btn-sm btn-cta" data-i18n="cta_order">اطلب خدمتك</a>
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav class="mobile-nav" id="mobileNav" aria-label="mobile">
+      <a href="#services" data-i18n="nav_services">خدماتنا</a>
+      <a href="#process" data-i18n="nav_process">كيف نشتغل</a>
+      <a href="#works" data-i18n="nav_works">أعمالنا</a>
+      <a href="#reviews" data-i18n="nav_reviews">آراء العملاء</a>
+      <a href="#contact" data-i18n="nav_contact">تواصل معنا</a>
+    </nav>
+  </header>
+
+  <main id="home">
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="reveal">
+          <span class="pill"><b data-i18n="since">منذ 2018</b><span data-i18n="pill_text">شريكك في النمو الرقمي</span></span>
+          <h1><span data-i18n="hero_1">نكبّر حضورك</span><br><span class="grad" data-i18n="hero_2">ونخلّي علامتك تنشاف.</span></h1>
+          <p class="lead" data-i18n="hero_lead">من توثيق حسابك وإدارة صفحاتك، لتصوير منتجاتك وإطلاق حملاتك الإعلانية. فريق واحد بيهتم بكل تفاصيل ظهورك على السوشال ميديا.</p>
+          <div class="hero-ctas">
+            <a href="#contact" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+              <span data-i18n="cta_whatsapp">احجز عبر واتساب</span>
+            </a>
+            <a href="#services" class="btn btn-ghost" data-i18n="cta_services">تصفّح الخدمات</a>
+          </div>
+          <div class="stats">
+            <div class="stat"><strong id="yearsStat">+8</strong><span data-i18n="stat_years">سنوات خبرة</span></div>
+            <div class="stat"><strong>10</strong><span data-i18n="stat_services">خدمات متكاملة</span></div>
+            <div class="stat"><strong dir="ltr">10–10</strong><span data-i18n="stat_hours">متواجدين يومياً</span></div>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal" aria-hidden="true">
+          <div class="orb"><i class="big-logo"></i></div>
+          <div class="chip chip-1"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg></span><span data-i18n="chip_1">توثيق خلال دقائق</span></div>
+          <div class="chip chip-2"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/></svg></span><span data-i18n="chip_2">نمو حقيقي بالتفاعل</span></div>
+          <div class="chip chip-3"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><span data-i18n="chip_3">تصوير احترافي</span></div>
+        </div>
+      </div>
+
+      <div class="marquee" aria-hidden="true"><div class="marquee-track" id="marquee"></div></div>
+    </section>
+
+    <!-- ============ SERVICES ============ -->
+    <section class="block" id="services">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div>
+            <div class="eyebrow" data-i18n="services_eyebrow">خدماتنا</div>
+            <h2 data-i18n="services_title">كل اللي بتحتاجه علامتك، بمكان واحد</h2>
+          </div>
+          <p data-i18n="services_sub">اختار الخدمة واضغط "اطلبها"، ورح نجهزلك رسالة واتساب جاهزة بثانية.</p>
+        </div>
+        <div class="services" id="servicesGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ PROCESS ============ -->
+    <section class="block" id="process" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div>
+            <div class="eyebrow" data-i18n="process_eyebrow">كيف نشتغل</div>
+            <h2 data-i18n="process_title">من أول رسالة لحد النتيجة</h2>
+          </div>
+        </div>
+        <div class="steps">
+          <div class="step reveal"><h3 data-i18n="p1_t">تواصل معنا</h3><p data-i18n="p1_d">احكيلنا عن نشاطك والخدمة اللي بدك إياها عبر الفورم أو واتساب.</p></div>
+          <div class="step reveal"><h3 data-i18n="p2_t">نفهم ونخطط</h3><p data-i18n="p2_d">ندرس صفحتك وجمهورك ونقترح عليك الخطة والسعر الأنسب.</p></div>
+          <div class="step reveal"><h3 data-i18n="p3_t">ننفّذ</h3><p data-i18n="p3_d">تصوير، تصميم، إعلانات أو إدارة كاملة. بتابع معنا خطوة بخطوة.</p></div>
+          <div class="step reveal"><h3 data-i18n="p4_t">نتابع النتائج</h3><p data-i18n="p4_d">تقارير واضحة وتحسين مستمر لحتى توصل لهدفك.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WORKS ============ -->
+    <section class="block" id="works" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div>
+            <div class="eyebrow" data-i18n="works_eyebrow">أعمالنا</div>
+            <h2 data-i18n="works_title">شغل بنفتخر فيه</h2>
+          </div>
+          <a class="btn btn-ghost btn-sm" href="https://www.instagram.com/explor.ps" target="_blank" rel="noopener" data-i18n="works_more">شوف المزيد على إنستغرام</a>
+        </div>
+        <div class="works" id="worksGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ REVIEWS ============ -->
+    <section class="block" id="reviews" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div>
+            <div class="eyebrow" data-i18n="reviews_eyebrow">آراء العملاء</div>
+            <h2 data-i18n="reviews_title">شو بيحكوا عنّا</h2>
+          </div>
+        </div>
+        <div id="reviewsWrap"></div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="block" id="contact" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div>
+            <div class="eyebrow" data-i18n="contact_eyebrow">تواصل معنا</div>
+            <h2 data-i18n="contact_title">جاهز نبلّش؟</h2>
+          </div>
+          <p data-i18n="contact_sub">عبّي الفورم، ورح تنفتح محادثة واتساب فيها طلبك جاهز. بس اضغط إرسال.</p>
+        </div>
+        <div class="contact">
+          <div class="card reveal">
+            <h3 style="font-size:22px" data-i18n="info_title">معلومات التواصل</h3>
+            <div class="info-list">
+              <a class="info" href="https://wa.me/972597653989" target="_blank" rel="noopener">
+                <span class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg></span>
+                <span><small data-i18n="info_wa">واتساب</small><b>+972 59 765 3989</b></span>
+              </a>
+              <a class="info" href="https://www.instagram.com/explor.ps" target="_blank" rel="noopener">
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></span>
+                <span><small data-i18n="info_ig">إنستغرام</small><b>@explor.ps</b></span>
+              </a>
+              <div class="info">
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+                <span><small data-i18n="info_hours">ساعات العمل</small><span style="font-weight:600" data-i18n="hours_val">يومياً من 10 صباحاً حتى 10 مساءً</span><span class="open-now" id="openNow"></span></span>
+              </div>
+            </div>
+          </div>
+
+          <form class="card reveal" id="orderForm" novalidate>
+            <div class="row">
+              <div class="field">
+                <label for="fName" data-i18n="f_name">الاسم</label>
+                <input id="fName" name="name" required autocomplete="name" data-i18n-ph="f_name_ph" placeholder="اسمك الكريم">
+              </div>
+              <div class="field">
+                <label for="fBiz" data-i18n="f_biz">اسم النشاط / الصفحة</label>
+                <input id="fBiz" name="biz" data-i18n-ph="f_biz_ph" placeholder="مثلاً: مطعم الريف">
+              </div>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label for="fService" data-i18n="f_service">الخدمة المطلوبة</label>
+                <select id="fService" name="service" required></select>
+              </div>
+              <div class="field">
+                <label for="fPlatform" data-i18n="f_platform">المنصة</label>
+                <select id="fPlatform" name="platform"></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="fMsg" data-i18n="f_msg">تفاصيل إضافية</label>
+              <textarea id="fMsg" name="msg" data-i18n-ph="f_msg_ph" placeholder="احكيلنا أكتر عن طلبك، رابط الصفحة، الميزانية..."></textarea>
+            </div>
+            <button class="btn btn-wa" type="submit">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+              <span data-i18n="f_send">أرسل الطلب عبر واتساب</span>
+            </button>
+            <div class="preview" id="preview" aria-live="polite"></div>
+            <p class="form-note" data-i18n="f_note">🔒 ما بنحفظ بياناتك، الرسالة بتنبعت مباشرة من واتساب تبعك.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <div class="brand"><i class="brand-logo" aria-hidden="true"></i><span>Explor Plus<small>© <span id="year"></span> · <span data-i18n="rights">جميع الحقوق محفوظة</span></small></span></div>
+      <div class="socials">
+        <a href="https://www.instagram.com/explor.ps" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a>
+        <a href="https://wa.me/972597653989" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg></a>
+      </div>
+    </div>
+  </footer>
+
+  <a class="fab" href="https://wa.me/972597653989" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+  </a>
+
+  <!-- اختيار الطابع: للمعاينة فقط. بعد ما تختار، منشيل هالقطعة ومنثبّت الطابع -->
+  <div class="picker" id="picker" role="group" aria-label="Style">
+    <small data-i18n="picker_title">اختر الطابع</small>
+    <div class="picker-opts">
+      <button type="button" data-set-style="midnight"><i class="sw sw-midnight"></i><span class="lbl" data-i18n="st_midnight">ليلي</span></button>
+      <button type="button" data-set-style="clean"><i class="sw sw-clean"></i><span class="lbl" data-i18n="st_clean">فاتح</span></button>
+      <button type="button" data-set-style="aurora"><i class="sw sw-aurora"></i><span class="lbl" data-i18n="st_aurora">أورورا</span></button>
+    </div>
+  </div>
+
+  <script>
+    /* ================= إعدادات سهلة التعديل ================= */
+    const WHATSAPP = '972597653989';
+    const FOUNDED = 2018;
+
+    // أيقونات الخدمات
+    const ICONS = {
+      verify: '<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>',
+      recover: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10 11V9.5a2 2 0 0 1 4 0V11"/>',
+      growth: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11l-3-3-3 3"/><path d="M19 8v8"/>',
+      ads: '<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+      manage: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+      video: '<path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
+      menu: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/>',
+      camera: '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+      design: '<path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.6 7.6"/><circle cx="11" cy="11" r="2"/>',
+      launch: '<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>'
+    };
+
+    // الخدمات — عدّل النصوص من هون
+    const SERVICES = [
+      { id: 'verify', icon: 'verify', featured: true,
+        ar: { t: 'توثيق الحسابات', d: 'نوثّق حسابك رسمياً بالعلامة الزرقاء خلال 10 دقائق، باشتراك شهري أو 6 شهور أو سنوي.', tags: ['فيسبوك', 'إنستغرام', 'تيك توك', 'شهر · 6 شهور · سنة'] },
+        en: { t: 'Account Verification', d: 'Get your account officially verified with the blue badge in about 10 minutes, on a monthly, 6‑month or yearly plan.', tags: ['Facebook', 'Instagram', 'TikTok', '1M · 6M · 1Y'] } },
+      { id: 'recover', icon: 'recover',
+        ar: { t: 'استرجاع الحسابات', d: 'نسترجع حسابك سواء كان معطّلاً مؤقتاً أو محظوراً نهائياً، ونرجّعلك تحكمك فيه.', tags: ['باند نهائي', 'تقييد', 'تعطيل مؤقت'] },
+        en: { t: 'Account Recovery', d: 'We recover your account whether it was temporarily disabled or permanently banned, and get you back in control.', tags: ['Permanent ban', 'Restricted', 'Disabled'] } },
+      { id: 'growth', icon: 'growth',
+        ar: { t: 'زيادة المتابعين والتفاعل', d: 'ننمّي حسابك بمتابعين حقيقيين حسب الطلب ونرفع التفاعل على منشوراتك.', tags: ['متابعين', 'لايكات', 'مشاهدات'] },
+        en: { t: 'Followers & Engagement', d: 'Grow your account with real followers on demand and boost engagement on your posts.', tags: ['Followers', 'Likes', 'Views'] } },
+      { id: 'ads', icon: 'ads',
+        ar: { t: 'الإعلانات الممولة', d: 'ندير حملتك الإعلانية من الإعداد حتى الإطلاق، مع استهداف دقيق وتقارير واضحة للنتائج.', tags: ['مبيعات', 'تفاعل', 'مشاهدات'] },
+        en: { t: 'Sponsored Ads', d: 'We run your ad campaigns from setup to launch, with precise targeting and clear result reports.', tags: ['Sales', 'Engagement', 'Reach'] } },
+      { id: 'manage', icon: 'manage', featured: true,
+        ar: { t: 'الإدارة الكاملة للصفحات', d: 'نتولى إدارة صفحاتك بالكامل: من التصميم والإنتاج والنشر، للإعلانات والرد على الرسائل.', tags: ['تصميم', 'زيارات', 'إعلانات', 'نشر'] },
+        en: { t: 'Full Page Management', d: 'We fully manage your pages: design, production and publishing, through to ads and replying to messages.', tags: ['Design', 'Visits', 'Ads', 'Publishing'] } },
+      { id: 'video', icon: 'video',
+        ar: { t: 'تصوير فيديوهات إعلانية', d: 'ننتج فيديوهات إعلانية احترافية للمطاعم والمحلات والشركات، من الفكرة للمونتاج.', tags: ['تصوير', 'مونتاج', 'إخراج'] },
+        en: { t: 'Promo Video Production', d: 'Professional promo videos for restaurants, shops and companies, from concept to final edit.', tags: ['Filming', 'Editing', 'Directing'] } },
+      { id: 'menu', icon: 'menu',
+        ar: { t: 'تصميم المنيو الإلكتروني', d: 'نصمم منيو إلكتروني عصري يعرض أصنافك بوضوح وبيفتح بكود QR من موبايل الزبون.', tags: ['تصميم', 'تصوير', 'تطوير'] },
+        en: { t: 'Digital Menu Design', d: 'A modern digital menu that shows your items clearly and opens from a QR code on any phone.', tags: ['Design', 'Photography', 'Development'] } },
+      { id: 'product', icon: 'camera',
+        ar: { t: 'تصوير المنتجات والأصناف', d: 'نصوّر منتجاتك وأصنافك بجودة احترافية تُظهر تفاصيلها وتشجّع على الشراء.', tags: ['تصوير', 'تحسين', 'تعديل'] },
+        en: { t: 'Product Photography', d: 'Professional photos of your products and dishes that show every detail and drive sales.', tags: ['Shooting', 'Retouching', 'Editing'] } },
+      { id: 'design', icon: 'design',
+        ar: { t: 'تصاميم السوشال ميديا', d: 'نصمم محتوى بصري احترافي يبرز خدماتك وعروضك ويخلّي صفحتك بهوية واحدة.', tags: ['فكرة', 'رؤية', 'تصميم'] },
+        en: { t: 'Social Media Design', d: 'Professional visuals that showcase your services and offers with one consistent identity.', tags: ['Idea', 'Vision', 'Design'] } },
+      { id: 'setup', icon: 'launch',
+        ar: { t: 'تأسيس وتجهيز الصفحات التجارية', d: 'نؤسس صفحتك من الصفر بكل عناصرها: الاسم، النبذة، الصور، والإعدادات الصحيحة.', tags: ['تفكير', 'تخطيط', 'تنفيذ'] },
+        en: { t: 'Business Page Setup', d: 'We build your page from scratch with every element: name, bio, visuals and the right settings.', tags: ['Thinking', 'Planning', 'Execution'] } }
+    ];
+
+    // أعمالنا — ضيف صورك هون لما تجهز (حط الصور بمجلد assets/works)
+    // مثال: { img: 'assets/works/burger.jpg', ar: { t: 'مطعم ...', s: 'تصوير منتجات' }, en: { t: '...', s: 'Product photography' } }
+    const WORKS = [];
+
+    // آراء العملاء — ضيف هون آراء حقيقية فقط (مثلاً من رسائل أو تعليقات الزباين بإذنهم)
+    // مثال: { name: 'أبو محمد', role: { ar: 'صاحب مطعم', en: 'Restaurant owner' }, stars: 5, text: { ar: '...', en: '...' } }
+    const REVIEWS = [];
+
+    const PLATFORMS = {
+      ar: ['إنستغرام', 'فيسبوك', 'تيك توك', 'أكثر من منصة', 'غير ذلك'],
+      en: ['Instagram', 'Facebook', 'TikTok', 'Multiple platforms', 'Other']
+    };
+
+    /* ================= النصوص (عربي / إنجليزي) ================= */
+    const I18N = {
+      ar: {
+        tagline: 'للدعاية والإعلان', nav_services: 'خدماتنا', nav_process: 'كيف نشتغل', nav_works: 'أعمالنا', nav_reviews: 'آراء العملاء', nav_contact: 'تواصل معنا',
+        cta_order: 'اطلب خدمتك', since: 'منذ 2018', pill_text: 'شريكك في النمو الرقمي',
+        hero_1: 'نكبّر حضورك', hero_2: 'ونخلّي علامتك تنشاف.',
+        hero_lead: 'من توثيق حسابك وإدارة صفحاتك، لتصوير منتجاتك وإطلاق حملاتك الإعلانية. فريق واحد بيهتم بكل تفاصيل ظهورك على السوشال ميديا.',
+        cta_whatsapp: 'احجز عبر واتساب', cta_services: 'تصفّح الخدمات',
+        stat_years: 'سنوات خبرة', stat_services: 'خدمات متكاملة', stat_hours: 'متواجدين يومياً',
+        chip_1: 'توثيق خلال دقائق', chip_2: 'نمو حقيقي بالتفاعل', chip_3: 'تصوير احترافي',
+        services_eyebrow: 'خدماتنا', services_title: 'كل اللي بتحتاجه علامتك، بمكان واحد', services_sub: 'اختار الخدمة واضغط "اطلبها"، ورح نجهزلك رسالة واتساب جاهزة بثانية.',
+        order_this: 'اطلبها',
+        process_eyebrow: 'كيف نشتغل', process_title: 'من أول رسالة لحد النتيجة',
+        p1_t: 'تواصل معنا', p1_d: 'احكيلنا عن نشاطك والخدمة اللي بدك إياها عبر الفورم أو واتساب.',
+        p2_t: 'نفهم ونخطط', p2_d: 'ندرس صفحتك وجمهورك ونقترح عليك الخطة والسعر الأنسب.',
+        p3_t: 'ننفّذ', p3_d: 'تصوير، تصميم، إعلانات أو إدارة كاملة. بتابع معنا خطوة بخطوة.',
+        p4_t: 'نتابع النتائج', p4_d: 'تقارير واضحة وتحسين مستمر لحتى توصل لهدفك.',
+        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
+        reviews_eyebrow: 'آراء العملاء', reviews_title: 'شو بيحكوا عنّا',
+        reviews_empty_t: 'اشتغلت معنا؟', reviews_empty_d: 'رأيك بيهمنا وبيساعد غيرك يختار صح. ابعتلنا تجربتك على واتساب.', reviews_empty_btn: 'شاركنا رأيك',
+        contact_eyebrow: 'تواصل معنا', contact_title: 'جاهز نبلّش؟', contact_sub: 'عبّي الفورم، ورح تنفتح محادثة واتساب فيها طلبك جاهز. بس اضغط إرسال.',
+        info_title: 'معلومات التواصل', info_wa: 'واتساب', info_ig: 'إنستغرام', info_hours: 'ساعات العمل', hours_val: 'يومياً من 10 صباحاً حتى 10 مساءً',
+        open: 'متاحين الآن', closed: 'مغلق الآن',
+        f_name: 'الاسم', f_name_ph: 'اسمك الكريم', f_biz: 'اسم النشاط / الصفحة', f_biz_ph: 'مثلاً: مطعم الريف',
+        f_service: 'الخدمة المطلوبة', f_choose: 'اختر الخدمة…', f_platform: 'المنصة', f_msg: 'تفاصيل إضافية', f_msg_ph: 'احكيلنا أكتر عن طلبك، رابط الصفحة، الميزانية...',
+        f_send: 'أرسل الطلب عبر واتساب', f_note: '🔒 ما بنحفظ بياناتك، الرسالة بتنبعت مباشرة من واتساب تبعك.',
+        f_err_name: 'اكتب اسمك لو سمحت', f_err_service: 'اختار الخدمة المطلوبة',
+        msg_hello: 'مرحباً Explor Plus 👋', msg_want: 'بدي أطلب خدمة:', msg_name: 'الاسم', msg_biz: 'النشاط', msg_service: 'الخدمة', msg_platform: 'المنصة', msg_details: 'التفاصيل', msg_from_site: '(مرسلة من الموقع)',
+        review_msg: 'مرحباً Explor Plus، حابب أشارككم رأيي بتجربتي معكم:',
+        rights: 'جميع الحقوق محفوظة', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
+      },
+      en: {
+        tagline: 'Advertising & Media', nav_services: 'Services', nav_process: 'How we work', nav_works: 'Our work', nav_reviews: 'Reviews', nav_contact: 'Contact',
+        cta_order: 'Order a service', since: 'Since 2018', pill_text: 'Your digital growth partner',
+        hero_1: 'We grow your presence', hero_2: 'and make your brand seen.',
+        hero_lead: 'From verifying your account and managing your pages, to shooting your products and launching ad campaigns. One team that takes care of every detail of your social media presence.',
+        cta_whatsapp: 'Book on WhatsApp', cta_services: 'Browse services',
+        stat_years: 'Years of experience', stat_services: 'Integrated services', stat_hours: 'Available daily',
+        chip_1: 'Verified in minutes', chip_2: 'Real engagement growth', chip_3: 'Pro photography',
+        services_eyebrow: 'Services', services_title: 'Everything your brand needs, in one place', services_sub: 'Pick a service and tap “Order”, we will prepare a ready WhatsApp message in a second.',
+        order_this: 'Order',
+        process_eyebrow: 'How we work', process_title: 'From the first message to results',
+        p1_t: 'Reach out', p1_d: 'Tell us about your business and the service you need via the form or WhatsApp.',
+        p2_t: 'Understand & plan', p2_d: 'We study your page and audience and suggest the best plan and price.',
+        p3_t: 'Execute', p3_d: 'Shooting, design, ads or full management. You follow every step with us.',
+        p4_t: 'Track results', p4_d: 'Clear reports and continuous optimization until you hit your goal.',
+        works_eyebrow: 'Our work', works_title: 'Work we are proud of', works_more: 'See more on Instagram', soon: 'Coming soon',
+        reviews_eyebrow: 'Reviews', reviews_title: 'What clients say',
+        reviews_empty_t: 'Worked with us?', reviews_empty_d: 'Your opinion matters and helps others choose right. Send us your experience on WhatsApp.', reviews_empty_btn: 'Share your review',
+        contact_eyebrow: 'Contact', contact_title: 'Ready to start?', contact_sub: 'Fill in the form and a WhatsApp chat opens with your request ready. Just hit send.',
+        info_title: 'Contact info', info_wa: 'WhatsApp', info_ig: 'Instagram', info_hours: 'Working hours', hours_val: 'Daily, 10 AM – 10 PM',
+        open: 'Open now', closed: 'Closed now',
+        f_name: 'Name', f_name_ph: 'Your name', f_biz: 'Business / page name', f_biz_ph: 'e.g. Al Reef Restaurant',
+        f_service: 'Service', f_choose: 'Choose a service…', f_platform: 'Platform', f_msg: 'Extra details', f_msg_ph: 'Tell us more: page link, budget, goals...',
+        f_send: 'Send request on WhatsApp', f_note: '🔒 We don’t store your data, the message is sent from your own WhatsApp.',
+        f_err_name: 'Please enter your name', f_err_service: 'Please choose a service',
+        msg_hello: 'Hello Explor Plus 👋', msg_want: 'I would like to order a service:', msg_name: 'Name', msg_biz: 'Business', msg_service: 'Service', msg_platform: 'Platform', msg_details: 'Details', msg_from_site: '(sent from the website)',
+        review_msg: 'Hello Explor Plus, I would like to share my experience with you:',
+        rights: 'All rights reserved', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
+      }
+    };
+
+    /* ================= المنطق ================= */
+    const $ = (s, el = document) => el.querySelector(s);
+    const store = {
+      get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+      set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+    };
+    const params = new URLSearchParams(location.search);
+    let lang = params.get('lang') || store.get('xp_lang') || 'ar';
+    if (!I18N[lang]) lang = 'ar';
+    const t = (k) => I18N[lang][k] ?? k;
+    const icon = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
+    const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const waLink = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
+
+    function setStyle(s) {
+      if (!['midnight', 'clean', 'aurora'].includes(s)) s = 'midnight';
+      document.documentElement.dataset.style = s;
+      document.documentElement.style.setProperty('--logo', s === 'clean' ? 'url(assets/logo-dark.png)' : 'url(assets/logo-light.png)');
+      document.querySelectorAll('[data-set-style]').forEach(b => b.setAttribute('aria-pressed', b.dataset.setStyle === s));
+      $('meta[name="theme-color"]').content = s === 'clean' ? '#f5f6f8' : (s === 'aurora' ? '#050611' : '#07080b');
+      store.set('xp_style', s);
+    }
+
+    function renderServices() {
+      $('#servicesGrid').innerHTML = SERVICES.map((s, i) => {
+        const c = s[lang];
+        return `<article class="svc reveal${s.featured ? ' featured' : ''}">
+          <div class="svc-top"><span class="svc-ico">${icon(s.icon)}</span><span class="svc-num">${String(i + 1).padStart(2, '0')}</span></div>
+          <h3>${esc(c.t)}</h3>
+          <p>${esc(c.d)}</p>
+          <div class="tags">${c.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}</div>
+          <button class="order" type="button" data-order="${s.id}">${t('order_this')}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </article>`;
+      }).join('');
+      $('#marquee').innerHTML = [...SERVICES, ...SERVICES].map(s => `<span>${esc(s[lang].t)}</span>`).join('');
+    }
+
+    function renderWorks() {
+      const items = WORKS.length ? WORKS : SERVICES.filter(s => ['video', 'product', 'design', 'menu', 'manage', 'ads'].includes(s.id))
+        .map(s => ({ placeholder: true, [lang]: { t: s[lang].t, s: t('soon') } }));
+      $('#worksGrid').innerHTML = items.map(w => {
+        const c = w[lang] || w.ar;
+        if (w.placeholder) return `<div class="work reveal"><i class="work-logo"></i><span class="soon">${t('soon')}</span><div class="meta"><b>${esc(c.t)}</b></div></div>`;
+        const media = w.video ? `<video src="${esc(w.video)}" muted loop playsinline autoplay></video>` : `<img src="${esc(w.img)}" alt="${esc(c.t)}" loading="lazy">`;
+        return `<div class="work has-media reveal">${media}<div class="meta"><b>${esc(c.t)}</b><span>${esc(c.s || '')}</span></div></div>`;
+      }).join('');
+    }
+
+    function renderReviews() {
+      const wrap = $('#reviewsWrap');
+      if (!REVIEWS.length) {
+        wrap.innerHTML = `<div class="reviews-empty reveal">
+          <div><h3>${t('reviews_empty_t')}</h3><p>${t('reviews_empty_d')}</p></div>
+          <a class="btn btn-primary" target="_blank" rel="noopener" href="${waLink(t('review_msg'))}">${t('reviews_empty_btn')}</a>
+        </div>`;
+        return;
+      }
+      wrap.innerHTML = `<div class="reviews">${REVIEWS.map(r => `<figure class="review reveal">
+          <div class="stars" aria-label="${r.stars}/5">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
+          <p>${esc(r.text[lang] || r.text.ar)}</p>
+          <figcaption class="who"><span class="av">${esc(r.name.trim()[0])}</span><span><b>${esc(r.name)}</b><span>${esc(r.role?.[lang] || '')}</span></span></figcaption>
+        </figure>`).join('')}</div>`;
+    }
+
+    function renderForm() {
+      const sel = $('#fService'), prev = sel.value;
+      sel.innerHTML = `<option value="">${t('f_choose')}</option>` + SERVICES.map(s => `<option value="${s.id}">${esc(s[lang].t)}</option>`).join('');
+      sel.value = prev;
+      const pf = $('#fPlatform'), pprev = pf.selectedIndex;
+      pf.innerHTML = PLATFORMS[lang].map(p => `<option>${esc(p)}</option>`).join('');
+      if (pprev > 0) pf.selectedIndex = pprev;
+    }
+
+    function updateOpenNow() {
+      // توقيت فلسطين
+      let h;
+      try { h = Number(new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: 'Asia/Hebron' }).format(new Date())); }
+      catch (e) { h = new Date().getHours(); }
+      const open = h >= 10 && h < 22;
+      const el = $('#openNow');
+      el.className = 'open-now ' + (open ? 'on' : 'off');
+      el.textContent = open ? t('open') : t('closed');
+    }
+
+    function applyLang() {
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.title = lang === 'ar' ? 'Explor Plus | للدعاية والإعلان' : 'Explor Plus | Advertising & Media';
+      document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+      $('#langBtn').textContent = lang === 'ar' ? 'EN' : 'ع';
+      renderServices(); renderWorks(); renderReviews(); renderForm(); updateOpenNow();
+      $('#preview').classList.remove('show');
+      observeReveal();
+      store.set('xp_lang', lang);
+    }
+
+    let io;
+    function observeReveal() {
+      if (!('IntersectionObserver' in window)) { document.querySelectorAll('.reveal').forEach(el => el.classList.add('in')); return; }
+      io = io || new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
+      document.querySelectorAll('.reveal:not(.in)').forEach(el => io.observe(el));
+    }
+
+    function buildMessage() {
+      const f = $('#orderForm');
+      const name = f.name.value.trim(), biz = f.biz.value.trim(), msg = f.msg.value.trim();
+      const svc = SERVICES.find(s => s.id === f.service.value);
+      const lines = [t('msg_hello'), t('msg_want'), '', `👤 ${t('msg_name')}: ${name}`];
+      if (biz) lines.push(`🏪 ${t('msg_biz')}: ${biz}`);
+      lines.push(`⭐ ${t('msg_service')}: ${svc ? svc[lang].t : ''}`);
+      lines.push(`📱 ${t('msg_platform')}: ${f.platform.value}`);
+      if (msg) lines.push(`📝 ${t('msg_details')}: ${msg}`);
+      lines.push('', t('msg_from_site'));
+      return lines.join('\n');
+    }
+
+    /* events */
+    $('#langBtn').addEventListener('click', () => { lang = lang === 'ar' ? 'en' : 'ar'; applyLang(); });
+    $('#menuBtn').addEventListener('click', () => {
+      const nav = $('#mobileNav'), open = nav.classList.toggle('open');
+      $('#menuBtn').setAttribute('aria-expanded', open);
+    });
+    $('#mobileNav').addEventListener('click', e => { if (e.target.tagName === 'A') { $('#mobileNav').classList.remove('open'); $('#menuBtn').setAttribute('aria-expanded', false); } });
+    document.querySelectorAll('[data-set-style]').forEach(b => b.addEventListener('click', () => setStyle(b.dataset.setStyle)));
+
+    document.addEventListener('click', e => {
+      const b = e.target.closest('[data-order]');
+      if (!b) return;
+      $('#fService').value = b.dataset.order;
+      $('#contact').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => $('#fName').focus({ preventScroll: true }), 600);
+    });
+
+    $('#orderForm').addEventListener('input', () => {
+      const p = $('#preview');
+      if ($('#fName').value.trim() || $('#fService').value) { p.textContent = buildMessage(); p.classList.add('show'); }
+    });
+
+    $('#orderForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const f = e.target;
+      if (!f.name.value.trim()) { alert(t('f_err_name')); f.name.focus(); return; }
+      if (!f.service.value) { alert(t('f_err_service')); f.service.focus(); return; }
+      window.open(waLink(buildMessage()), '_blank', 'noopener');
+    });
+
+    /* init */
+    $('#year').textContent = new Date().getFullYear();
+    $('#yearsStat').textContent = '+' + (new Date().getFullYear() - FOUNDED);
+    setStyle(params.get('style') || store.get('xp_style') || 'midnight');
+    applyLang();
+    setInterval(updateOpenNow, 60000);
+  </script>
+</body>
+</html>
