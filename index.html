@@ -311,6 +311,12 @@
     .btn-wa { background: #25d366; color: #05140a; width: 100%; height: 54px; font-size: 16px; }
     .btn-wa:hover { box-shadow: 0 14px 40px -12px rgba(37,211,102,.55); transform: translateY(-1px); }
 
+    .store-band { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding: 32px; border-radius: var(--radius); border: 1px solid var(--border); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, var(--surface)), var(--surface) 70%); box-shadow: var(--card-shadow); }
+    .store-band h2 { font-size: clamp(24px, 3.4vw, 34px); margin: 6px 0 8px; }
+    .store-band p { color: var(--muted); max-width: 560px; }
+    .admin-link { font-size: 12.5px; color: var(--muted); opacity: .7; }
+    .admin-link:hover { opacity: 1; color: var(--text); }
+
     /* footer */
     footer { border-top: 1px solid var(--border); padding: 40px 0; margin-top: 40px; color: var(--muted); font-size: 14px; }
     .foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
@@ -402,6 +408,7 @@
       </nav>
       <div class="nav-actions">
         <button class="lang-btn" id="langBtn" type="button" aria-label="Change language">EN</button>
+        <a href="store.html" class="btn btn-ghost btn-sm btn-cta" data-i18n="nav_store">المتجر</a>
         <a href="#contact" class="btn btn-primary btn-sm btn-cta" data-i18n="cta_order">اطلب خدمتك</a>
         <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -414,6 +421,7 @@
       <a href="#works" data-i18n="nav_works">أعمالنا</a>
       <a href="#reviews" data-i18n="nav_reviews">آراء العملاء</a>
       <a href="#contact" data-i18n="nav_contact">تواصل معنا</a>
+      <a href="store.html" data-i18n="nav_store_full">المتجر · اشحن واشترِ</a>
     </nav>
   </header>
 
@@ -461,6 +469,20 @@
           <p data-i18n="services_sub">اختار الخدمة واضغط "اطلبها"، ورح نجهزلك رسالة واتساب جاهزة بثانية.</p>
         </div>
         <div class="services" id="servicesGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ STORE PROMO ============ -->
+    <section class="block" id="store" style="padding-top:0">
+      <div class="wrap">
+        <div class="store-band reveal">
+          <div>
+            <div class="eyebrow" data-i18n="store_eyebrow">الاشتراكات الرقمية</div>
+            <h2 data-i18n="store_title">اشحن رصيدك واستلم اشتراكك فوراً</h2>
+            <p data-i18n="store_sub">اعمل حساب برقم جوالك، اشحن محفظتك، واشترِ اشتراكاتك وبتوصلك بياناتها مباشرة بدون انتظار.</p>
+          </div>
+          <a class="btn btn-primary" href="store.html" data-i18n="store_cta">ادخل المتجر</a>
+        </div>
       </div>
     </section>
 
@@ -569,6 +591,7 @@
   <footer>
     <div class="wrap foot">
       <div class="brand"><i class="brand-logo" aria-hidden="true"></i><span>Explor Plus<small>© <span id="year"></span> · <span data-i18n="rights">جميع الحقوق محفوظة</span></small></span></div>
+      <a class="admin-link" href="admin.html" data-i18n="admin_login">دخول الإدارة</a>
       <div class="socials">
         <a href="https://www.instagram.com/explor.ps" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a>
         <a href="https://wa.me/972597653989" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg></a>
@@ -590,9 +613,10 @@
     </div>
   </div>
 
+  <script src="assets/config.js"></script>
   <script>
     /* ================= إعدادات سهلة التعديل ================= */
-    const WHATSAPP = '972597653989';
+    const WHATSAPP = (window.EXPLOR_CONFIG && window.EXPLOR_CONFIG.WA_SERVICES) || '972597653989';
     const FOUNDED = 2018;
 
     // أيقونات الخدمات
@@ -680,7 +704,7 @@
         f_err_name: 'اكتب اسمك لو سمحت', f_err_service: 'اختار الخدمة المطلوبة',
         msg_hello: 'مرحباً Explor Plus 👋', msg_want: 'بدي أطلب خدمة:', msg_name: 'الاسم / الصفحة', msg_service: 'الخدمة', msg_details: 'ملاحظات', msg_from_site: '(مرسلة من الموقع)',
         review_msg: 'مرحباً Explor Plus، حابب أشارككم رأيي بتجربتي معكم:',
-        rights: 'جميع الحقوق محفوظة', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
+        rights: 'جميع الحقوق محفوظة', nav_store: 'المتجر', nav_store_full: 'المتجر · اشحن واشترِ', store_eyebrow: 'الاشتراكات الرقمية', store_title: 'اشحن رصيدك واستلم اشتراكك فوراً', store_sub: 'اعمل حساب برقم جوالك، اشحن محفظتك، واشترِ اشتراكاتك وبتوصلك بياناتها مباشرة بدون انتظار.', store_cta: 'ادخل المتجر', admin_login: 'دخول الإدارة', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
       },
       en: {
         tagline: 'Advertising & Media', nav_services: 'Services', nav_process: 'How we work', nav_works: 'Our work', nav_reviews: 'Reviews', nav_contact: 'Contact',
@@ -709,7 +733,7 @@
         f_err_name: 'Please enter your name', f_err_service: 'Please choose a service',
         msg_hello: 'Hello Explor Plus 👋', msg_want: 'I would like to order a service:', msg_name: 'Name / page', msg_service: 'Service', msg_details: 'Notes', msg_from_site: '(sent from the website)',
         review_msg: 'Hello Explor Plus, I would like to share my experience with you:',
-        rights: 'All rights reserved', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
+        rights: 'All rights reserved', nav_store: 'Store', nav_store_full: 'Store · top up & buy', store_eyebrow: 'Digital subscriptions', store_title: 'Top up your wallet and get your subscription instantly', store_sub: 'Create an account with your phone number, top up your wallet, and buy subscriptions that are delivered to you right away.', store_cta: 'Open the store', admin_login: 'Admin login', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
       }
     };
 

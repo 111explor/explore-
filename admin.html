@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة إدارة Explor Plus</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#07080b">
+  <link rel="icon" href="assets/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/store.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap bar">
+      <a class="brand" href="#home"><img src="assets/logo-light.png" alt=""><span>Explor Plus<small>لوحة الإدارة</small></span></a>
+      <div class="bar-actions">
+        <button class="btn btn-ghost btn-sm" id="refreshBtn" type="button" hidden>تحديث</button>
+        <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button" hidden>خروج</button>
+      </div>
+    </div>
+    <nav class="wrap tabs" id="tabs" aria-label="الإدارة" hidden>
+      <a class="tab" href="#home" data-route="home">الرئيسية</a>
+      <a class="tab" href="#topups" data-route="topups">طلبات الشحن <span class="count" id="cTopups" hidden></span></a>
+      <a class="tab" href="#orders" data-route="orders">الطلبات <span class="count" id="cOrders" hidden></span></a>
+      <a class="tab" href="#products" data-route="products">المنتجات</a>
+      <a class="tab" href="#stock" data-route="stock">المخزون</a>
+      <a class="tab" href="#customers" data-route="customers">الزباين</a>
+    </nav>
+  </header>
+
+  <main class="wrap" id="app"><div class="spinner"></div></main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="assets/config.js"></script>
+  <script src="assets/store-core.js"></script>
+  <script>
+  (function () {
+    const { C, sb, configured, $, $$, esc, intlPhone, money, fmtDate, waLink, errMsg, toast, twoStep, pill, setupNotice, getProfile, signIn } = XP;
+    const app = $('#app');
+    let me = null;
+    let orderFilter = 'pending', topupFilter = 'pending', stockProduct = null, custQuery = '';
+    const WA_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>';
+    const waCustomer = (p, text) => p && p.phone ? `<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${waLink(intlPhone(p.phone), text)}" aria-label="واتساب">${WA_ICON}</a>` : '';
+    const who = (p) => p ? `<b>${esc(p.full_name || '—')}</b><div class="muted small num">${esc(p.phone)}</div>` : '—';
+
+    if (!configured) { setupNotice(app); return; }
+
+    function closeSheet() { const s = $('.sheet-bg'); if (s) s.remove(); }
+    function openSheet(html) {
+      closeSheet();
+      const bg = document.createElement('div'); bg.className = 'sheet-bg';
+      bg.innerHTML = `<div class="sheet" role="dialog" aria-modal="true">${html}</div>`;
+      bg.addEventListener('click', (e) => { if (e.target === bg || e.target.closest('[data-close]')) closeSheet(); });
+      document.body.appendChild(bg);
+      return bg.firstElementChild;
+    }
+    const fail = (e) => toast(errMsg(e), 'err');
+
+    /* ---------- auth ---------- */
+    function renderLogin(msg) {
+      $('#tabs').hidden = true; $('#logoutBtn').hidden = !me; $('#refreshBtn').hidden = true;
+      app.innerHTML = `<form class="auth card stack" id="loginForm" novalidate>
+        <h1 style="font-size:22px">دخول الإدارة</h1>
+        ${msg ? `<p class="form-msg err">${esc(msg)}</p>` : ''}
+        <div class="field"><label for="lPhone">رقم الجوال</label><input id="lPhone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" required></div>
+        <div class="field"><label for="lPass">كلمة السر</label><input id="lPass" type="password" autocomplete="current-password" dir="ltr" required></div>
+        <p class="form-msg err" id="lErr" hidden></p>
+        <button class="btn btn-primary btn-block" type="submit">دخول</button>
+      </form>`;
+      $('#loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); const err = $('#lErr');
+        try { await signIn($('#lPhone').value, $('#lPass').value); await boot(); }
+        catch (ex) { err.textContent = errMsg(ex); err.hidden = false; }
+      });
+    }
+
+    async function boot() {
+      try { me = await getProfile(); } catch (e) { me = null; }
+      if (!me) return renderLogin();
+      if (!me.is_admin) { await sb.auth.signOut(); me = null; return renderLogin('هالحساب مش أدمن. لازم تفعّله من Supabase (شوف ملف README).'); }
+      $('#tabs').hidden = false; $('#logoutBtn').hidden = false; $('#refreshBtn').hidden = false;
+      updateCounts(); route();
+    }
+
+    async function updateCounts() {
+      if (!me) return;
+      const [t, o] = await Promise.all([
+        sb.from('topups').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+        sb.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending')
+      ]);
+      const set = (el, n) => { el.hidden = !n; el.textContent = n || ''; };
+      set($('#cTopups'), t.count); set($('#cOrders'), o.count);
+      return { topups: t.count || 0, orders: o.count || 0 };
+    }
+
+    /* ---------- router ---------- */
+    async function route() {
+      if (!me) return;
+      const r = (location.hash || '#home').slice(1);
+      $$('[data-route]').forEach((a) => { if (a.dataset.route === r) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+      app.innerHTML = '<div class="spinner"></div>';
+      try {
+        if (r === 'topups') return await renderTopups();
+        if (r === 'orders') return await renderOrders();
+        if (r === 'products') return await renderProducts();
+        if (r === 'stock') return await renderStock();
+        if (r === 'customers') return await renderCustomers();
+        return await renderHome();
+      } catch (e) { app.innerHTML = `<div class="empty">${esc(errMsg(e))}</div>`; }
+    }
+
+    /* ---------- home ---------- */
+    async function renderHome() {
+      const start = new Date(); start.setHours(0, 0, 0, 0);
+      const [counts, users, today, stockRes, prods] = await Promise.all([
+        updateCounts(),
+        sb.from('profiles').select('id', { count: 'exact', head: true }),
+        sb.from('orders').select('price, status').gte('created_at', start.toISOString()),
+        sb.rpc('product_stock'),
+        sb.from('products').select('id, name, delivery, active').eq('delivery', 'auto').eq('active', true)
+      ]);
+      const sales = (today.data || []).filter((o) => o.status !== 'refunded');
+      const stockMap = Object.fromEntries((stockRes.data || []).map((r) => [r.product_id, Number(r.available)]));
+      const low = (prods.data || []).filter((p) => (stockMap[p.id] || 0) < 3);
+      app.innerHTML = `
+        <div class="page-head"><div><h1>أهلاً ${esc(me.full_name)} 👋</h1><p>ملخص اليوم.</p></div></div>
+        <div class="grid grid-4">
+          <a class="stat" href="#topups"><b class="num">${counts.topups}</b><span>طلبات شحن بانتظارك</span></a>
+          <a class="stat" href="#orders"><b class="num">${counts.orders}</b><span>طلبات قيد التنفيذ</span></a>
+          <div class="stat"><b class="num">${money(sales.reduce((s, o) => s + Number(o.price), 0))}</b><span>مبيعات اليوم (${sales.length} طلب)</span></div>
+          <a class="stat" href="#customers"><b class="num">${users.count || 0}</b><span>زبون مسجّل</span></a>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h2 style="font-size:18px;margin-bottom:10px">مخزون قرّب يخلص</h2>
+          ${low.length ? low.map((p) => `<div class="spread" style="padding:8px 0;border-bottom:1px solid var(--border)"><span>${esc(p.name)}</span><span class="row"><span class="badge ${(stockMap[p.id] || 0) ? 'warn' : 'bad'}">${stockMap[p.id] || 0} متبقي</span><a class="btn btn-ghost btn-sm" href="#stock" data-stock-go="${p.id}">إضافة</a></span></div>`).join('') : '<p class="muted small">كل المخزون تمام.</p>'}
+        </div>`;
+    }
+
+    /* ---------- topups ---------- */
+    async function renderTopups() {
+      let q = sb.from('topups').select('*, profiles(full_name, phone, balance)').order('created_at', { ascending: topupFilter === 'pending' }).limit(100);
+      if (topupFilter !== 'all') q = q.eq('status', topupFilter);
+      const { data, error } = await q; if (error) throw error;
+      const paths = (data || []).map((t) => t.receipt_path).filter(Boolean);
+      let urls = {};
+      if (paths.length) {
+        const { data: s } = await sb.storage.from('receipts').createSignedUrls(paths, 3600);
+        (s || []).forEach((x) => { if (x.signedUrl) urls[x.path] = x.signedUrl; });
+      }
+      app.innerHTML = `
+        <div class="page-head"><div><h1>طلبات الشحن</h1><p>تأكد من وصول التحويل قبل الموافقة. بتقدر تعدّل المبلغ إذا وصلك مبلغ مختلف.</p></div></div>
+        <div class="chips">${['pending:بانتظار المراجعة', 'approved:مقبولة', 'rejected:مرفوضة', 'all:الكل'].map((x) => { const [k, l] = x.split(':'); return `<button class="chip" data-tf="${k}" aria-pressed="${topupFilter === k}">${l}</button>`; }).join('')}</div>
+        ${(data || []).length ? `<div class="list">${data.map((t) => `
+          <div class="item" data-topup="${t.id}">
+            <div class="item-head">
+              <div>${who(t.profiles)}<div class="meta">#${t.id} · ${fmtDate(t.created_at)}</div></div>
+              <div class="row">${pill(t.status, 'topup')}${waCustomer(t.profiles, t.status === 'approved' ? `مرحباً ${t.profiles?.full_name || ''} 👋\nتم شحن رصيدك بمبلغ ${money(t.amount)} ✅\nبتقدر تشتري هلأ من المتجر.` : '')}</div>
+            </div>
+            <div class="row small"><span class="badge">${esc(t.method)}</span><b class="num">${money(t.amount)}</b>${t.reference ? `<span class="muted">مرجع: ${esc(t.reference)}</span>` : ''}${t.receipt_path && urls[t.receipt_path] ? `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="${esc(urls[t.receipt_path])}">عرض الإيصال</a>` : '<span class="muted">بدون إيصال</span>'}</div>
+            ${t.admin_note ? `<p class="small muted">ملاحظة: ${esc(t.admin_note)}</p>` : ''}
+            ${t.status === 'pending' ? `
+              <div class="row">
+                <input class="input" style="max-width:140px" type="number" step="any" dir="ltr" value="${t.amount}" data-amount aria-label="المبلغ المعتمد">
+                <button class="btn btn-ok btn-sm" data-approve="${t.id}">موافقة وإضافة الرصيد</button>
+                <input class="input" style="max-width:220px" placeholder="سبب الرفض (اختياري)" data-note aria-label="سبب الرفض">
+                <button class="btn btn-bad btn-sm" data-reject="${t.id}">رفض</button>
+              </div>` : ''}
+          </div>`).join('')}</div>` : '<div class="empty">ما في طلبات هون.</div>'}`;
+    }
+
+    /* ---------- orders ---------- */
+    async function renderOrders() {
+      let q = sb.from('orders').select('*, profiles(full_name, phone)').order('created_at', { ascending: orderFilter === 'pending' }).limit(150);
+      if (orderFilter !== 'all') q = q.eq('status', orderFilter);
+      const { data, error } = await q; if (error) throw error;
+      app.innerHTML = `
+        <div class="page-head"><div><h1>الطلبات</h1><p>الاشتراكات التلقائية بتتسلّم لحالها. الخدمات اليدوية بتسلّمها من هون.</p></div></div>
+        <div class="chips">${['pending:قيد التنفيذ', 'delivered:تم التسليم', 'refunded:مسترجعة', 'all:الكل'].map((x) => { const [k, l] = x.split(':'); return `<button class="chip" data-of="${k}" aria-pressed="${orderFilter === k}">${l}</button>`; }).join('')}</div>
+        ${(data || []).length ? `<div class="list">${data.map((o) => `
+          <div class="item" data-order="${o.id}">
+            <div class="item-head">
+              <div><h3>${esc(o.product_name)} · <span class="num">${money(o.price)}</span></h3><div class="meta">#${o.id} · ${fmtDate(o.created_at)}</div></div>
+              <div class="row">${pill(o.status)}${waCustomer(o.profiles, o.status === 'delivered' ? `مرحباً ${o.profiles?.full_name || ''} 👋\nطلبك #${o.id} (${o.product_name}) جاهز ✅\nبتلاقي التفاصيل بصفحة "طلباتي" بالمتجر.` : `مرحباً ${o.profiles?.full_name || ''} 👋\nبخصوص طلبك #${o.id} (${o.product_name}):`)}</div>
+            </div>
+            <div class="small">${who(o.profiles)}</div>
+            ${o.customer_note ? `<p class="small"><span class="muted">ملاحظة الزبون:</span> ${esc(o.customer_note)}</p>` : ''}
+            ${o.delivered_content ? `<div class="secret"><code>${esc(o.delivered_content)}</code></div>` : ''}
+            ${o.status === 'pending' ? `<div class="field"><textarea rows="2" placeholder="اللي بدك يوصل للزبون (بيانات الحساب، رابط، ملاحظة…)" data-content aria-label="محتوى التسليم"></textarea></div>` : ''}
+            ${o.status !== 'refunded' ? `<div class="row">
+              ${o.status === 'pending' ? `<button class="btn btn-ok btn-sm" data-deliver="${o.id}">تسليم الطلب</button>` : ''}
+              <input class="input" style="max-width:220px" placeholder="سبب الاسترجاع (اختياري)" data-note aria-label="سبب الاسترجاع">
+              <button class="btn btn-bad btn-sm" data-refund="${o.id}">استرجاع المبلغ للزبون</button>
+            </div>` : (o.admin_note ? `<p class="small muted">سبب الاسترجاع: ${esc(o.admin_note)}</p>` : '')}
+          </div>`).join('')}</div>` : '<div class="empty">ما في طلبات هون.</div>'}`;
+    }
+
+    /* ---------- products ---------- */
+    let productsCache = [];
+    async function renderProducts() {
+      const [{ data, error }, { data: s }] = await Promise.all([sb.from('products').select('*').order('sort').order('id'), sb.rpc('product_stock')]);
+      if (error) throw error;
+      productsCache = data || [];
+      const stockMap = Object.fromEntries((s || []).map((r) => [r.product_id, Number(r.available)]));
+      app.innerHTML = `
+        <div class="page-head"><div><h1>المنتجات</h1><p>الاشتراكات والخدمات اللي بتظهر بالمتجر.</p></div><button class="btn btn-primary" data-edit="new">+ منتج جديد</button></div>
+        ${productsCache.length ? `<div class="table-wrap"><table>
+          <thead><tr><th>المنتج</th><th>القسم</th><th>السعر</th><th>التسليم</th><th>المخزون</th><th>الحالة</th><th></th></tr></thead>
+          <tbody>${productsCache.map((p) => `<tr>
+            <td><b>${esc(p.name)}</b>${p.duration ? `<div class="muted small">${esc(p.duration)}</div>` : ''}</td>
+            <td>${p.category === 'service' ? 'خدمة' : 'اشتراك'}</td>
+            <td class="num">${money(p.price)}</td>
+            <td>${p.delivery === 'auto' ? 'تلقائي' : 'يدوي'}</td>
+            <td class="num">${p.delivery === 'auto' ? (stockMap[p.id] || 0) : '—'}</td>
+            <td>${p.active ? '<span class="badge ok">ظاهر</span>' : '<span class="badge">مخفي</span>'}</td>
+            <td><div class="row"><button class="btn btn-ghost btn-sm" data-edit="${p.id}">تعديل</button>${p.delivery === 'auto' ? `<a class="btn btn-ghost btn-sm" href="#stock" data-stock-go="${p.id}">مخزون</a>` : ''}</div></td>
+          </tr>`).join('')}</tbody></table></div>` : '<div class="empty">ما في منتجات لسا. اضغط "منتج جديد" وابدأ.</div>'}`;
+    }
+
+    function editProduct(id) {
+      const p = productsCache.find((x) => x.id === Number(id)) || { category: 'subscription', delivery: 'auto', active: true, sort: 0 };
+      const el = openSheet(`
+        <div class="spread"><h2>${p.id ? 'تعديل منتج' : 'منتج جديد'}</h2><button class="btn btn-ghost btn-sm" data-close>إغلاق</button></div>
+        <form class="stack" id="pForm" novalidate>
+          <div class="grid grid-2">
+            <div class="field"><label for="pCat">القسم</label><select id="pCat"><option value="subscription">اشتراك رقمي</option><option value="service">خدمة</option></select></div>
+            <div class="field"><label for="pDel">طريقة التسليم</label><select id="pDel"><option value="auto">تلقائي من المخزون</option><option value="manual">يدوي (أنا بسلّم)</option></select></div>
+          </div>
+          <div class="field"><label for="pName">الاسم</label><input id="pName" required placeholder="مثلاً: نتفلكس بريميوم"></div>
+          <div class="grid grid-2">
+            <div class="field"><label for="pPrice">السعر (${esc(C.CURRENCY || '₪')})</label><input id="pPrice" type="number" step="any" min="0" dir="ltr" required></div>
+            <div class="field"><label for="pDur">المدة</label><input id="pDur" placeholder="شهر، 3 شهور، سنة…"></div>
+          </div>
+          <div class="field"><label for="pDesc">الوصف</label><textarea id="pDesc" rows="3" placeholder="شو بياخد الزبون بالضبط"></textarea></div>
+          <div class="field"><label for="pImg">رابط صورة (اختياري)</label><input id="pImg" dir="ltr" placeholder="https://… أو assets/products/netflix.jpg"></div>
+          <div class="grid grid-2">
+            <div class="field"><label for="pSort">الترتيب</label><input id="pSort" type="number" dir="ltr"><span class="hint">الأصغر بيظهر أول.</span></div>
+            <label class="check" style="align-self:center"><input id="pActive" type="checkbox"> ظاهر بالمتجر</label>
+          </div>
+          <p class="form-msg err" id="pErr" hidden></p>
+          <div class="row"><button class="btn btn-primary" type="submit">حفظ</button>${p.id ? '<button class="btn btn-bad" type="button" id="pDelBtn">حذف المنتج</button>' : ''}</div>
+        </form>`);
+      $('#pCat', el).value = p.category; $('#pDel', el).value = p.delivery; $('#pName', el).value = p.name || '';
+      $('#pPrice', el).value = p.price ?? ''; $('#pDur', el).value = p.duration || ''; $('#pDesc', el).value = p.description || '';
+      $('#pImg', el).value = p.image_url || ''; $('#pSort', el).value = p.sort || 0; $('#pActive', el).checked = !!p.active;
+      $('#pForm', el).addEventListener('submit', async (e) => {
+        e.preventDefault(); const err = $('#pErr', el);
+        const row = {
+          category: $('#pCat', el).value, delivery: $('#pDel', el).value, name: $('#pName', el).value.trim(),
+          price: Number($('#pPrice', el).value), duration: $('#pDur', el).value.trim() || null, description: $('#pDesc', el).value.trim() || null,
+          image_url: $('#pImg', el).value.trim() || null, sort: Number($('#pSort', el).value) || 0, active: $('#pActive', el).checked
+        };
+        if (!row.name || !($('#pPrice', el).value !== '' && row.price >= 0)) { err.textContent = 'الاسم والسعر مطلوبين.'; err.hidden = false; return; }
+        const res = p.id ? await sb.from('products').update(row).eq('id', p.id) : await sb.from('products').insert(row);
+        if (res.error) { err.textContent = errMsg(res.error); err.hidden = false; return; }
+        closeSheet(); toast('انحفظ ✓'); renderProducts();
+      });
+      const del = $('#pDelBtn', el);
+      if (del) del.addEventListener('click', () => twoStep(del, async () => {
+        const { error } = await sb.from('products').delete().eq('id', p.id);
+        if (error) return fail(error);
+        closeSheet(); toast('انحذف المنتج'); renderProducts();
+      }));
+    }
+
+    /* ---------- stock ---------- */
+    async function renderStock() {
+      const [{ data: prods }, { data: s }] = await Promise.all([sb.from('products').select('id, name, duration').eq('delivery', 'auto').order('sort').order('id'), sb.rpc('product_stock')]);
+      const stockMap = Object.fromEntries((s || []).map((r) => [r.product_id, Number(r.available)]));
+      if (!(prods || []).length) { app.innerHTML = '<div class="empty">ما في منتجات بتسليم تلقائي. ضيف منتج من تبويب المنتجات واختار "تلقائي من المخزون".</div>'; return; }
+      if (!stockProduct || !prods.find((p) => p.id === stockProduct)) stockProduct = prods[0].id;
+      const { data: items } = await sb.from('stock_items').select('id, content, created_at').eq('product_id', stockProduct).eq('is_sold', false).order('id').limit(300);
+      app.innerHTML = `
+        <div class="page-head"><div><h1>المخزون</h1><p>كل سطر = حساب واحد بينسلّم لزبون واحد تلقائياً لما يشتري.</p></div></div>
+        <div class="grid grid-2">
+          <form class="card stack" id="sForm" novalidate>
+            <div class="field"><label for="sProd">المنتج</label><select id="sProd">${prods.map((p) => `<option value="${p.id}" ${p.id === stockProduct ? 'selected' : ''}>${esc(p.name)}${p.duration ? ' · ' + esc(p.duration) : ''} (${stockMap[p.id] || 0})</option>`).join('')}</select></div>
+            <div class="field"><label for="sLines">الحسابات / الأكواد</label><textarea id="sLines" rows="8" dir="ltr" placeholder="email1@mail.com : pass123 : Profile 2&#10;email2@mail.com : pass456 : Profile 3"></textarea><span class="hint">سطر لكل حساب. اكتب بكل سطر كل اللي بيحتاجه الزبون.</span></div>
+            <button class="btn btn-primary" type="submit">إضافة للمخزون</button>
+          </form>
+          <div class="card stack">
+            <div class="spread"><h2 style="font-size:18px">متوفر حالياً</h2><span class="badge ${(stockMap[stockProduct] || 0) ? 'ok' : 'bad'}">${stockMap[stockProduct] || 0}</span></div>
+            ${(items || []).length ? `<div class="list">${items.map((i) => `<div class="secret"><code>${esc(i.content)}</code><button class="btn btn-bad btn-sm" data-del-stock="${i.id}">حذف</button></div>`).join('')}</div>` : '<p class="muted small">المخزون فاضي لهالمنتج.</p>'}
+          </div>
+        </div>`;
+      $('#sProd').addEventListener('change', (e) => { stockProduct = Number(e.target.value); renderStock(); });
+      $('#sForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const lines = $('#sLines').value;
+        if (!lines.trim()) return toast('الصق الحسابات أول', 'err');
+        const { data: n, error } = await sb.rpc('admin_add_stock', { p_product_id: stockProduct, p_lines: lines });
+        if (error) return fail(error);
+        toast(`انضاف ${n} للمخزون ✓`); renderStock();
+      });
+    }
+
+    /* ---------- customers ---------- */
+    async function renderCustomers() {
+      let q = sb.from('profiles').select('*').order('created_at', { ascending: false }).limit(60);
+      const term = custQuery.replace(/[%,()]/g, '').trim();
+      if (term) q = q.or(`phone.ilike.%${term}%,full_name.ilike.%${term}%`);
+      const { data, error } = await q; if (error) throw error;
+      app.innerHTML = `
+        <div class="page-head"><div><h1>الزباين</h1><p>ابحث بالاسم أو الرقم، وعدّل الرصيد إذا لزم.</p></div></div>
+        <form class="row" id="cSearch" style="margin-bottom:14px"><input class="input" id="cQ" style="max-width:320px" placeholder="بحث…" value="${esc(custQuery)}" aria-label="بحث"><button class="btn btn-ghost" type="submit">بحث</button></form>
+        ${(data || []).length ? `<div class="table-wrap"><table>
+          <thead><tr><th>الزبون</th><th>الرصيد</th><th>تاريخ التسجيل</th><th></th></tr></thead>
+          <tbody>${data.map((p) => `<tr>
+            <td>${who(p)}${p.is_admin ? ' <span class="badge info">أدمن</span>' : ''}</td>
+            <td class="num"><b>${money(p.balance)}</b></td>
+            <td class="small muted">${fmtDate(p.created_at)}</td>
+            <td><div class="row"><button class="btn btn-ghost btn-sm" data-adjust="${p.id}" data-name="${esc(p.full_name)}">تعديل الرصيد</button>${waCustomer(p, `مرحباً ${p.full_name} 👋`)}</div></td>
+          </tr>`).join('')}</tbody></table></div>` : '<div class="empty">ما في نتائج.</div>'}`;
+      $('#cSearch').addEventListener('submit', (e) => { e.preventDefault(); custQuery = $('#cQ').value; renderCustomers(); });
+    }
+
+    function adjustBalance(id, name) {
+      const el = openSheet(`
+        <div class="spread"><h2>تعديل رصيد ${esc(name)}</h2><button class="btn btn-ghost btn-sm" data-close>إغلاق</button></div>
+        <form class="stack" id="aForm" novalidate>
+          <div class="field"><label for="aAmt">المبلغ</label><input id="aAmt" type="number" step="any" dir="ltr" required placeholder="20 للإضافة، ‎-20 للخصم"></div>
+          <div class="field"><label for="aNote">السبب</label><input id="aNote" placeholder="مثلاً: تعويض، هدية، تصحيح"></div>
+          <p class="form-msg err" id="aErr" hidden></p>
+          <button class="btn btn-primary" type="submit">حفظ</button>
+        </form>`);
+      $('#aForm', el).addEventListener('submit', async (e) => {
+        e.preventDefault(); const amt = Number($('#aAmt', el).value), err = $('#aErr', el);
+        if (!amt) { err.textContent = 'اكتب مبلغ غير صفر.'; err.hidden = false; return; }
+        const { error } = await sb.rpc('admin_adjust_balance', { p_user_id: id, p_amount: amt, p_note: $('#aNote', el).value.trim() || null });
+        if (error) { err.textContent = error.message.includes('balance_check') || error.message.includes('check constraint') ? 'الرصيد ما بيصير بالسالب.' : errMsg(error); err.hidden = false; return; }
+        closeSheet(); toast('انعدّل الرصيد ✓'); renderCustomers();
+      });
+    }
+
+    /* ---------- events ---------- */
+    document.addEventListener('click', async (e) => {
+      const t = e.target.closest('button, a'); if (!t) return;
+      const d = t.dataset;
+      if (d.tf) { topupFilter = d.tf; return renderTopups(); }
+      if (d.of) { orderFilter = d.of; return renderOrders(); }
+      if (d.edit) return editProduct(d.edit === 'new' ? null : d.edit);
+      if (d.stockGo) { stockProduct = Number(d.stockGo); return; }
+      if (d.adjust) return adjustBalance(d.adjust, d.name);
+      if (d.approve) {
+        const box = t.closest('[data-topup]'); const amt = Number($('[data-amount]', box).value);
+        t.disabled = true;
+        const { error } = await sb.rpc('admin_approve_topup', { p_topup_id: Number(d.approve), p_amount: amt });
+        if (error) { t.disabled = false; return fail(error); }
+        toast(`انضاف ${money(amt)} لرصيد الزبون ✓`); updateCounts(); return renderTopups();
+      }
+      if (d.reject) return twoStep(t, async () => {
+        const box = t.closest('[data-topup]');
+        const { error } = await sb.rpc('admin_reject_topup', { p_topup_id: Number(d.reject), p_note: $('[data-note]', box).value.trim() || null });
+        if (error) return fail(error);
+        toast('انرفض الطلب'); updateCounts(); renderTopups();
+      });
+      if (d.deliver) {
+        const box = t.closest('[data-order]'); const content = $('[data-content]', box).value.trim();
+        if (!content) return toast('اكتب شو بدك يوصل للزبون أول', 'err');
+        t.disabled = true;
+        const { error } = await sb.rpc('admin_deliver_order', { p_order_id: Number(d.deliver), p_content: content });
+        if (error) { t.disabled = false; return fail(error); }
+        toast('انسلّم الطلب ✓'); updateCounts(); return renderOrders();
+      }
+      if (d.refund) return twoStep(t, async () => {
+        const box = t.closest('[data-order]');
+        const { error } = await sb.rpc('admin_refund_order', { p_order_id: Number(d.refund), p_note: $('[data-note]', box).value.trim() || null });
+        if (error) return fail(error);
+        toast('رجع المبلغ لرصيد الزبون ✓'); updateCounts(); renderOrders();
+      });
+      if (d.delStock) return twoStep(t, async () => {
+        const { error } = await sb.from('stock_items').delete().eq('id', Number(d.delStock)).eq('is_sold', false);
+        if (error) return fail(error);
+        toast('انحذف'); renderStock();
+      });
+    });
+    $('#logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); me = null; renderLogin(); });
+    $('#refreshBtn').addEventListener('click', () => { updateCounts(); route(); });
+    window.addEventListener('hashchange', () => { closeSheet(); route(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
+    setInterval(updateCounts, 30000);
+
+    boot();
+  })();
+  </script>
+</body>
+</html>

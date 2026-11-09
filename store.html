@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متجر Explor Plus</title>
+  <meta name="description" content="اشحن رصيدك واشترِ اشتراكاتك الرقمية وخدمات Explor Plus واستلمها فوراً.">
+  <meta name="theme-color" content="#07080b">
+  <link rel="icon" href="assets/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/store.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap bar">
+      <a class="brand" href="index.html"><img src="assets/logo-light.png" alt=""><span>Explor Plus<small>المتجر</small></span></a>
+      <div class="bar-actions">
+        <a class="balance-chip" href="#wallet" id="balanceChip" hidden>الرصيد <b class="num" id="balanceVal">0</b></a>
+        <a class="btn btn-primary btn-sm" href="#login" id="loginBtn">تسجيل الدخول</a>
+        <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button" hidden>خروج</button>
+      </div>
+    </div>
+    <nav class="wrap tabs" aria-label="المتجر">
+      <a class="tab" href="#shop" data-route="shop">المتجر</a>
+      <a class="tab" href="#wallet" data-route="wallet">محفظتي</a>
+      <a class="tab" href="#orders" data-route="orders">طلباتي</a>
+      <a class="tab" href="index.html">الموقع الرئيسي</a>
+    </nav>
+  </header>
+
+  <main class="wrap" id="app"><div class="spinner"></div></main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="assets/config.js"></script>
+  <script src="assets/store-core.js"></script>
+  <script>
+  (function () {
+    const { C, sb, configured, $, $$, esc, normPhone, validPhone, money, fmtDate, waLink, errMsg, toast, copy, pill, TX_KIND, setupNotice, getProfile, signIn, signUp } = XP;
+    const app = $('#app');
+    let me = null;            // profile
+    let products = [];
+    let stock = {};
+    let filter = 'all';
+    let pendingBuy = null;    // product id to resume after login
+
+    const MARK = 'assets/logo-light.png';
+    const COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+    const WA_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>';
+    const waFor = (p) => (p && p.category === 'service') ? C.WA_SERVICES : C.WA_SUBSCRIPTIONS;
+
+    if (!configured) { setupNotice(app); return; }
+
+    /* ---------- data ---------- */
+    async function refreshMe() {
+      try { me = await getProfile(); } catch (e) { me = null; }
+      $('#balanceChip').hidden = !me; $('#logoutBtn').hidden = !me; $('#loginBtn').hidden = !!me;
+      if (me) $('#balanceVal').textContent = money(me.balance);
+    }
+    async function loadProducts() {
+      const [{ data: p, error }, { data: s }] = await Promise.all([
+        sb.from('products').select('*').eq('active', true).order('sort').order('id'),
+        sb.rpc('product_stock')
+      ]);
+      if (error) throw error;
+      products = p || [];
+      stock = Object.fromEntries((s || []).map((r) => [r.product_id, Number(r.available)]));
+    }
+
+    /* ---------- router ---------- */
+    async function route() {
+      const r = (location.hash || '#shop').slice(1);
+      $$('[data-route]').forEach((a) => { if (a.dataset.route === r) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+      if ((r === 'wallet' || r === 'orders') && !me) { location.hash = '#login'; return; }
+      app.innerHTML = '<div class="spinner"></div>';
+      try {
+        if (r === 'login') return renderAuth();
+        if (r === 'wallet') return await renderWallet();
+        if (r === 'orders') return await renderOrders();
+        return await renderShop();
+      } catch (e) { app.innerHTML = `<div class="empty">${esc(errMsg(e))}</div>`; }
+    }
+
+    /* ---------- shop ---------- */
+    function stockBadge(p) {
+      if (p.delivery === 'manual') return '<span class="badge info">تنفيذ خلال وقت قصير</span>';
+      const n = stock[p.id] || 0;
+      return n > 0 ? `<span class="badge ok">متوفر · تسليم فوري</span>` : '<span class="badge bad">نفدت الكمية</span>';
+    }
+    async function renderShop() {
+      await loadProducts();
+      const list = products.filter((p) => filter === 'all' || p.category === filter);
+      app.innerHTML = `
+        <div class="page-head"><div><h1>المتجر</h1><p>اشحن رصيدك مرة وحدة، واشترِ واستلم اشتراكك فوراً.</p></div></div>
+        <div class="chips" role="group" aria-label="التصنيف">
+          <button class="chip" data-filter="all" aria-pressed="${filter === 'all'}">الكل</button>
+          <button class="chip" data-filter="subscription" aria-pressed="${filter === 'subscription'}">اشتراكات رقمية</button>
+          <button class="chip" data-filter="service" aria-pressed="${filter === 'service'}">خدمات</button>
+        </div>
+        ${list.length ? `<div class="products">${list.map((p) => {
+          const out = p.delivery === 'auto' && !(stock[p.id] > 0);
+          return `<article class="product">
+            <div class="product-media ${p.image_url ? 'has-img' : ''}">${p.image_url ? `<img class="cover" src="${esc(p.image_url)}" alt="" loading="lazy">` : `<img class="mark" src="${MARK}" alt="">`}</div>
+            <div class="product-body">
+              <div class="spread"><h3>${esc(p.name)}</h3>${p.duration ? `<span class="badge">${esc(p.duration)}</span>` : ''}</div>
+              ${p.description ? `<p>${esc(p.description)}</p>` : '<p></p>'}
+              <div>${stockBadge(p)}</div>
+              <div class="spread">
+                <div class="price num">${money(p.price)}</div>
+                <button class="btn btn-primary btn-sm" data-buy="${p.id}" ${out ? 'disabled' : ''}>${out ? 'نفدت' : 'اشترِ الآن'}</button>
+              </div>
+            </div>
+          </article>`; }).join('')}</div>` : '<div class="empty">ما في منتجات بهالقسم حالياً.</div>'}`;
+    }
+
+    function closeSheet() { const s = $('.sheet-bg'); if (s) s.remove(); }
+    function openSheet(html) {
+      closeSheet();
+      const bg = document.createElement('div'); bg.className = 'sheet-bg';
+      bg.innerHTML = `<div class="sheet" role="dialog" aria-modal="true">${html}</div>`;
+      bg.addEventListener('click', (e) => { if (e.target === bg || e.target.closest('[data-close]')) closeSheet(); });
+      document.body.appendChild(bg);
+      return bg.firstElementChild;
+    }
+
+    function openBuy(id) {
+      const p = products.find((x) => x.id === Number(id));
+      if (!p) return;
+      if (!me) { pendingBuy = p.id; toast('سجّل دخول أو اعمل حساب لتكمل الشراء'); location.hash = '#login'; return; }
+      const enough = Number(me.balance) >= Number(p.price);
+      const el = openSheet(`
+        <div class="spread"><h2>تأكيد الشراء</h2><button class="btn btn-ghost btn-sm" data-close>إغلاق</button></div>
+        <div>
+          <div class="kv"><span>المنتج</span><b>${esc(p.name)}${p.duration ? ' · ' + esc(p.duration) : ''}</b></div>
+          <div class="kv"><span>السعر</span><b class="num">${money(p.price)}</b></div>
+          <div class="kv"><span>رصيدك الحالي</span><b class="num">${money(me.balance)}</b></div>
+          <div class="kv"><span>رصيدك بعد الشراء</span><b class="num" style="color:${enough ? 'var(--ok)' : 'var(--bad)'}">${money(me.balance - p.price)}</b></div>
+        </div>
+        ${p.delivery === 'manual' ? `<div class="field"><label for="buyNote">رابط صفحتك أو أي تفاصيل بنحتاجها</label><textarea id="buyNote" rows="3" placeholder="مثلاً: instagram.com/mypage"></textarea></div>` : ''}
+        <p class="form-msg err" id="buyErr" hidden></p>
+        ${enough
+          ? `<button class="btn btn-primary btn-block" id="confirmBuy">ادفع ${money(p.price)} من رصيدك</button>`
+          : `<p class="form-msg err">رصيدك ما بيكفي. ناقصك ${money(p.price - me.balance)}.</p><a class="btn btn-primary btn-block" href="#wallet" data-close>اشحن رصيدك</a>`}
+      `);
+      const btn = $('#confirmBuy', el);
+      if (btn) btn.addEventListener('click', async () => {
+        btn.disabled = true; btn.textContent = 'جاري الشراء…';
+        const note = $('#buyNote', el) ? $('#buyNote', el).value : null;
+        const { data: o, error } = await sb.rpc('purchase', { p_product_id: p.id, p_note: note });
+        if (error) { const m = $('#buyErr', el); m.textContent = errMsg(error); m.hidden = false; btn.disabled = false; btn.textContent = 'جرّب كمان مرة'; return; }
+        await refreshMe();
+        showResult(o, p);
+        if ((location.hash || '#shop') === '#shop') renderShop();
+      });
+    }
+
+    function secretBox(text) {
+      return `<div class="secret"><code>${esc(text)}</code><button class="btn btn-ghost btn-sm" data-copy="${esc(text)}" aria-label="نسخ">${COPY_ICON}</button></div>`;
+    }
+
+    function showResult(o, p) {
+      const msg = `مرحباً Explor Plus 👋\nطلب رقم #${o.id}\nالمنتج: ${o.product_name}\nالحالة: ${o.status === 'delivered' ? 'تم التسليم' : 'قيد التنفيذ'}`;
+      openSheet(o.status === 'delivered' ? `
+        <h2>✅ تم الشراء والتسليم</h2>
+        <p class="muted">هاي بيانات ${esc(o.product_name)}. احفظها بمكان آمن، وبتلاقيها كمان بصفحة "طلباتي".</p>
+        ${secretBox(o.delivered_content)}
+        <div class="row"><a class="btn btn-ghost" href="#orders" data-close>طلباتي</a><a class="btn btn-wa" target="_blank" rel="noopener" href="${waLink(waFor(p), msg)}">${WA_ICON} مساعدة</a></div>
+      ` : `
+        <h2>🕐 استلمنا طلبك #${o.id}</h2>
+        <p class="muted">انخصم ${money(o.price)} من رصيدك وطلبك صار عند الفريق. بس يخلص بيظهرلك بصفحة "طلباتي". لتسريع الطلب ابعتلنا رسالة:</p>
+        <a class="btn btn-wa btn-block" target="_blank" rel="noopener" href="${waLink(waFor(p), msg)}">${WA_ICON} أرسل رقم الطلب على واتساب</a>
+        <a class="btn btn-ghost btn-block" href="#orders" data-close>طلباتي</a>
+      `);
+    }
+
+    /* ---------- auth ---------- */
+    function renderAuth(mode = 'login') {
+      if (me) { location.hash = '#shop'; return; }
+      app.innerHTML = `
+        <div class="auth card">
+          <div class="switch" role="group">
+            <button type="button" data-mode="login" aria-pressed="${mode === 'login'}">تسجيل الدخول</button>
+            <button type="button" data-mode="signup" aria-pressed="${mode === 'signup'}">حساب جديد</button>
+          </div>
+          <form class="stack" id="authForm" novalidate>
+            ${mode === 'signup' ? `<div class="field"><label for="aName">الاسم</label><input id="aName" autocomplete="name" required placeholder="اسمك أو اسم صفحتك"></div>` : ''}
+            <div class="field"><label for="aPhone">رقم الجوال</label><input id="aPhone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="059xxxxxxx" dir="ltr"><span class="hint">نفس رقم الواتساب لحتى نتواصل معك.</span></div>
+            <div class="field"><label for="aPass">كلمة السر</label><input id="aPass" type="password" autocomplete="${mode === 'signup' ? 'new-password' : 'current-password'}" required minlength="6" placeholder="6 أحرف أو أكثر" dir="ltr"></div>
+            <p class="form-msg err" id="authErr" hidden></p>
+            <button class="btn btn-primary btn-block" type="submit">${mode === 'signup' ? 'إنشاء الحساب' : 'دخول'}</button>
+            ${mode === 'login' ? `<a class="small muted" style="text-align:center" target="_blank" rel="noopener" href="${waLink(C.WA_SUBSCRIPTIONS, 'مرحباً، نسيت كلمة السر لحسابي بالمتجر. رقمي: ')}">نسيت كلمة السر؟ راسلنا على واتساب</a>` : ''}
+          </form>
+        </div>`;
+      $$('[data-mode]', app).forEach((b) => b.addEventListener('click', () => renderAuth(b.dataset.mode)));
+      $('#authForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const err = $('#authErr'), btn = e.target.querySelector('button[type=submit]');
+        const name = $('#aName') ? $('#aName').value.trim() : '';
+        const phone = $('#aPhone').value, pass = $('#aPass').value;
+        let m = '';
+        if (mode === 'signup' && !name) m = 'اكتب اسمك.';
+        else if (!validPhone(phone)) m = 'اكتب رقم جوال صحيح، مثلاً 0597653989.';
+        else if (pass.length < 6) m = 'كلمة السر لازم تكون 6 أحرف أو أكثر.';
+        if (m) { err.textContent = m; err.hidden = false; return; }
+        btn.disabled = true; err.hidden = true;
+        try {
+          if (mode === 'signup') await signUp(name, phone, pass); else await signIn(phone, pass);
+          await refreshMe();
+          toast(mode === 'signup' ? `أهلاً ${name}! حسابك جاهز` : 'أهلاً فيك من جديد');
+          location.hash = '#shop';
+          if (pendingBuy) { const id = pendingBuy; pendingBuy = null; setTimeout(() => openBuy(id), 400); }
+        } catch (ex) { err.textContent = errMsg(ex); err.hidden = false; btn.disabled = false; }
+      });
+    }
+
+    /* ---------- wallet ---------- */
+    async function renderWallet() {
+      await refreshMe();
+      const [{ data: tops }, { data: txs }] = await Promise.all([
+        sb.from('topups').select('*').order('created_at', { ascending: false }).limit(30),
+        sb.from('wallet_tx').select('*').order('created_at', { ascending: false }).limit(50)
+      ]);
+      const methods = C.PAYMENT_METHODS || [];
+      app.innerHTML = `
+        <div class="page-head"><div><h1>محفظتي</h1><p>اشحن رصيدك وتابع حركاتك.</p></div></div>
+        <div class="stack">
+          <div class="wallet-hero"><div><span class="muted">رصيدك الحالي</span><div class="big num">${money(me.balance)}</div></div><span class="muted small">${esc(me.full_name)} · <span class="num">${esc(me.phone)}</span></span></div>
+          <div class="grid grid-2">
+            <form class="card stack" id="topupForm" novalidate>
+              <h2 style="font-size:19px">شحن رصيد</h2>
+              <div class="field"><label for="tMethod">طريقة الدفع</label>
+                <select id="tMethod">${methods.map((m) => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('')}</select></div>
+              <div class="pay-details" id="payDetails"></div>
+              <div class="field"><label for="tAmount">المبلغ (${esc(C.CURRENCY || '₪')})</label><input id="tAmount" type="number" inputmode="decimal" min="${C.MIN_TOPUP || 1}" step="any" required dir="ltr" placeholder="${C.MIN_TOPUP || 10}"></div>
+              <div class="field"><label for="tRef">رقم العملية / اسم المحوّل</label><input id="tRef" placeholder="اختياري بس بيسرّع المراجعة"></div>
+              <div class="field"><label for="tFile">صورة الإيصال</label><input id="tFile" type="file" accept="image/*"><span class="hint">سكرين شوت من التحويل.</span></div>
+              <p class="form-msg err" id="tErr" hidden></p>
+              <button class="btn btn-primary btn-block" type="submit">أرسل طلب الشحن</button>
+            </form>
+            <div class="card stack">
+              <h2 style="font-size:19px">طلبات الشحن</h2>
+              ${(tops || []).length ? `<div class="list">${tops.map((t) => `
+                <div class="spread" style="padding:8px 0;border-bottom:1px solid var(--border)">
+                  <div><b class="num">${money(t.amount)}</b> <span class="muted small">· ${esc(t.method)}</span><div class="muted small">#${t.id} · ${fmtDate(t.created_at)}${t.admin_note ? ' · ' + esc(t.admin_note) : ''}</div></div>
+                  ${pill(t.status, 'topup')}
+                </div>`).join('')}</div>` : '<p class="muted small">ما في طلبات شحن لسا.</p>'}
+            </div>
+          </div>
+          <div class="card">
+            <h2 style="font-size:19px;margin-bottom:6px">سجل الحركات</h2>
+            ${(txs || []).length ? txs.map((x) => `
+              <div class="tx"><div><b>${esc(TX_KIND[x.kind] || x.kind)}</b>${x.note ? ` <span class="muted">· ${esc(x.note)}</span>` : ''}<div class="muted small">${fmtDate(x.created_at)}</div></div>
+              <span class="amt num ${x.amount > 0 ? 'plus' : 'minus'}">${x.amount > 0 ? '+' : ''}${money(x.amount)}</span></div>`).join('') : '<p class="muted small">ما في حركات لسا.</p>'}
+          </div>
+        </div>`;
+      const showDetails = () => { const m = methods.find((x) => x.id === $('#tMethod').value); $('#payDetails').textContent = m ? m.details : ''; };
+      $('#tMethod').addEventListener('change', showDetails); showDetails();
+      $('#topupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const err = $('#tErr'), btn = e.target.querySelector('button[type=submit]');
+        const amount = Number($('#tAmount').value), file = $('#tFile').files[0];
+        const method = methods.find((x) => x.id === $('#tMethod').value);
+        if (!(amount >= (C.MIN_TOPUP || 1))) { err.textContent = `أقل مبلغ للشحن ${money(C.MIN_TOPUP || 1)}.`; err.hidden = false; return; }
+        if (file && file.size > 8 * 1024 * 1024) { err.textContent = 'الصورة كبيرة كتير (أكثر من 8MB).'; err.hidden = false; return; }
+        btn.disabled = true; btn.textContent = 'جاري الإرسال…'; err.hidden = true;
+        try {
+          let receipt_path = null;
+          if (file) {
+            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+            receipt_path = `${me.id}/${Date.now()}.${ext}`;
+            const up = await sb.storage.from('receipts').upload(receipt_path, file, { contentType: file.type || 'image/jpeg' });
+            if (up.error) throw up.error;
+          }
+          const { data: t, error } = await sb.from('topups').insert({ user_id: me.id, amount, method: method ? method.name : '', reference: $('#tRef').value.trim() || null, receipt_path }).select().single();
+          if (error) throw error;
+          const msg = `مرحباً Explor Plus 👋\nأرسلت طلب شحن رصيد #${t.id}\nالمبلغ: ${money(amount)}\nطريقة الدفع: ${t.method}\nالاسم: ${me.full_name}\nالرقم: ${me.phone}`;
+          openSheet(`<h2>✅ وصل طلب الشحن #${t.id}</h2>
+            <p class="muted">رح نراجع التحويل ونضيف الرصيد لحسابك بأقرب وقت. لتسريع المراجعة ابعتلنا رسالة:</p>
+            <a class="btn btn-wa btn-block" target="_blank" rel="noopener" href="${waLink(C.WA_SUBSCRIPTIONS, msg)}">${WA_ICON} أرسل على واتساب</a>
+            <button class="btn btn-ghost btn-block" data-close>تمام</button>`);
+          renderWallet();
+        } catch (ex) { err.textContent = errMsg(ex); err.hidden = false; btn.disabled = false; btn.textContent = 'أرسل طلب الشحن'; }
+      });
+    }
+
+    /* ---------- orders ---------- */
+    async function renderOrders() {
+      const { data: orders, error } = await sb.from('orders').select('*, products(category)').order('created_at', { ascending: false }).limit(100);
+      if (error) throw error;
+      app.innerHTML = `
+        <div class="page-head"><div><h1>طلباتي</h1><p>كل مشترياتك وبياناتها بمكان واحد.</p></div></div>
+        ${(orders || []).length ? `<div class="list">${orders.map((o) => `
+          <div class="item">
+            <div class="item-head"><div><h3>${esc(o.product_name)}</h3><div class="meta">#${o.id} · ${fmtDate(o.created_at)} · <span class="num">${money(o.price)}</span></div></div>${pill(o.status)}</div>
+            ${o.delivered_content && o.status !== 'refunded' ? secretBox(o.delivered_content) : ''}
+            ${o.admin_note ? `<p class="small muted">ملاحظة: ${esc(o.admin_note)}</p>` : ''}
+            ${o.status === 'pending' ? `<a class="btn btn-wa btn-sm" style="justify-self:start" target="_blank" rel="noopener" href="${waLink(waFor(o.products), `مرحباً، بستفسر عن طلبي #${o.id} (${o.product_name})`)}">${WA_ICON} استفسر عن الطلب</a>` : ''}
+          </div>`).join('')}</div>` : '<div class="empty">ما عندك طلبات لسا. <a href="#shop" style="color:var(--accent)">تصفّح المتجر</a></div>'}`;
+    }
+
+    /* ---------- events ---------- */
+    document.addEventListener('click', (e) => {
+      const f = e.target.closest('[data-filter]'); if (f) { filter = f.dataset.filter; renderShop(); return; }
+      const b = e.target.closest('[data-buy]'); if (b) { openBuy(b.dataset.buy); return; }
+      const c = e.target.closest('[data-copy]'); if (c) { copy(c.dataset.copy, c); return; }
+    });
+    $('#logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); me = null; await refreshMe(); location.hash = '#shop'; toast('سجّلت خروج'); });
+    window.addEventListener('hashchange', () => { closeSheet(); route(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
+
+    (async () => { await refreshMe(); route(); })();
+  })();
+  </script>
+</body>
+</html>
