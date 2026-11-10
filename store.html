@@ -106,7 +106,9 @@
     function stockBadge(p) {
       if (p.delivery === 'manual') return '<span class="badge info">تنفيذ خلال وقت قصير</span>';
       const n = stock[p.id] || 0;
-      return n > 0 ? `<span class="badge ok">متوفر · تسليم فوري</span>` : '<span class="badge bad">نفدت الكمية</span>';
+      if (n <= 0) return '<span class="badge bad">نفدت الكمية</span>';
+      if (n <= 3) return `<span class="badge warn">🔥 باقي ${n} بس · تسليم فوري</span>`;
+      return `<span class="badge ok">متوفر ${n} · تسليم فوري</span>`;
     }
     async function renderShop() {
       await loadProducts();
