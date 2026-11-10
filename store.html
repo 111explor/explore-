@@ -119,6 +119,7 @@
       await Promise.all([loadTiers(), me ? loadSummary() : null]);
       const list = products.filter((p) => filter === 'all' || p.category === filter);
       app.innerHTML = `
+        ${XP.announcements.map((a) => `<div class="offer-banner"><div><b>🎁 ${esc(a.title)}</b>${a.body ? `<span>${esc(a.body)}</span>` : ''}</div>${a.link ? `<a class="btn btn-sm btn-primary" href="${esc(a.link)}"${/^https?:/.test(a.link) ? ' target="_blank" rel="noopener"' : ''}>شوف العرض</a>` : ''}</div>`).join('')}
         ${me && summary ? dashboard() : guestPanel()}
         ${expiring.map((o) => { const n = daysLeft(o.expires_at); return `<div class="renew-banner"><span>⏰ <b>${esc(o.product_name)}</b> ${n < 0 ? 'انتهى' : n === 0 ? 'بينتهي اليوم' : `بينتهي بعد ${daysWord(n)}`}</span><button class="btn btn-primary btn-sm" data-buy="${o.product_id}">جدّد الآن</button></div>`; }).join('')}
         <div class="chips" role="group" aria-label="التصنيف">
@@ -470,7 +471,7 @@
     window.addEventListener('hashchange', () => { closeSheet(); route(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
 
-    (async () => { await refreshMe(); route(); loadNotes(); })();
+    (async () => { await XP.loadSiteConfig(); await refreshMe(); route(); loadNotes(); })();
   })();
   </script>
 </body>

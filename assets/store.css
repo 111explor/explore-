@@ -226,3 +226,8 @@ a.dash-card:hover { border-color: rgba(10,132,255,.5); }
   .dash-balance span { flex-basis: 100%; }
   .dash-balance .btn { margin-top: 0; align-self: center; }
 }
+
+/* v4: offers */
+.offer-banner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 16px; margin-bottom: 14px; border-radius: 16px; background: linear-gradient(135deg, rgba(168,85,247,.22), rgba(10,132,255,.18)); border: 1px solid rgba(168,85,247,.4); }
+.offer-banner div { display: grid; gap: 2px; min-width: 0; }
+.offer-banner span { color: var(--muted); font-size: 14px; }

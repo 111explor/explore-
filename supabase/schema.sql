@@ -725,6 +725,69 @@ grant execute on function public.my_summary() to authenticated;
 grant execute on function public.admin_customer_spent() to authenticated;
 
 -- =====================================================================
+--  v4: إعدادات الموقع العامة (واتساب، دفع، تواصل) + العروض والإعلانات
+-- =====================================================================
+
+-- إعدادات عامة بيقرأها الموقع (مش سرية): الأدمن بيعدّلها من لوحة الإدارة
+create table if not exists public.site_config (
+  key    text primary key,
+  value  jsonb not null
+);
+insert into public.site_config (key, value) values
+  ('wa_subscriptions', '"972597653989"'),
+  ('wa_services',      '"972597653989"'),
+  ('socials',          '{"instagram": "https://www.instagram.com/explor.ps", "facebook": "", "tiktok": "", "telegram": ""}'),
+  ('hours',            '"يومياً من 10 صباحاً حتى 10 مساءً"'),
+  ('payment_methods',  '[{"id": "jawwalpay", "name": "جوال باي", "details": "حوّل المبلغ على الرقم 0597653989 وارفع صورة الإيصال."}, {"id": "bank", "name": "تحويل بنكي", "details": "البنك: ……  رقم الحساب: ……  الاسم: ……"}]')
+on conflict (key) do nothing;
+
+-- العروض والإعلانات: بتظهر كشريط بالموقع والمتجر، وممكن تبعت إشعار لكل الزباين
+create table if not exists public.announcements (
+  id          bigint generated always as identity primary key,
+  title       text not null,
+  body        text,
+  link        text,
+  active      boolean not null default true,
+  ends_at     timestamptz,
+  created_at  timestamptz not null default now()
+);
+
+-- نشر عرض: بينحفظ، واختيارياً بيوصل إشعار لكل زبون
+create or replace function public.admin_publish_offer(p_title text, p_body text default null, p_link text default null, p_notify boolean default true, p_days int default null)
+returns public.announcements
+language plpgsql security definer set search_path = public as $$
+declare v_a public.announcements; v_n int;
+begin
+  if not public.is_admin() then raise exception 'forbidden'; end if;
+  if trim(coalesce(p_title, '')) = '' then raise exception 'title_required'; end if;
+  insert into public.announcements (title, body, link, ends_at)
+    values (trim(p_title), nullif(trim(coalesce(p_body, '')), ''), nullif(trim(coalesce(p_link, '')), ''),
+            case when p_days is not null and p_days > 0 then now() + make_interval(days => p_days) end)
+    returning * into v_a;
+  if p_notify then
+    insert into public.notifications (user_id, title, body, link)
+      select id, '🎁 ' || v_a.title, v_a.body, coalesce(v_a.link, '#shop') from public.profiles where not is_admin;
+    get diagnostics v_n = row_count;
+    perform public.notify_admin('📣 <b>نشرت عرض:</b> ' || public.tg_esc(v_a.title) || E'\nوصل إشعار لـ ' || v_n || ' زبون.');
+  end if;
+  return v_a;
+end $$;
+
+alter table public.site_config   enable row level security;
+alter table public.announcements enable row level security;
+drop policy if exists site_config_select on public.site_config;
+create policy site_config_select on public.site_config for select using (true);
+drop policy if exists site_config_admin on public.site_config;
+create policy site_config_admin on public.site_config for all using (public.is_admin()) with check (public.is_admin());
+drop policy if exists announcements_select on public.announcements;
+create policy announcements_select on public.announcements for select using ((active and (ends_at is null or ends_at > now())) or public.is_admin());
+drop policy if exists announcements_admin on public.announcements;
+create policy announcements_admin on public.announcements for all using (public.is_admin()) with check (public.is_admin());
+
+revoke execute on function public.admin_publish_offer(text, text, text, boolean, int) from public, anon;
+grant execute on function public.admin_publish_offer(text, text, text, boolean, int) to authenticated;
+
+-- =====================================================================
 --  بعد ما تعمل حسابك من صفحة المتجر، خلّي حالك أدمن بهالسطر (غيّر الرقم):
 --  update public.profiles set is_admin = true where phone = '0597653989';
 -- =====================================================================

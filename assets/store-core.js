@@ -44,6 +44,7 @@
     report_not_open: 'البلاغ هاد انحلّ من قبل.',
     content_required: 'اكتب البيانات الجديدة.',
     invalid_setting: 'إعداد غير معروف.',
+    title_required: 'اكتب عنوان العرض.',
     'Invalid login credentials': 'رقم الجوال أو كلمة السر غلط.',
     'User already registered': 'هالرقم مسجّل من قبل. سجّل دخول بدل ما تعمل حساب جديد.',
     'already registered': 'هالرقم مسجّل من قبل. سجّل دخول بدل ما تعمل حساب جديد.',
@@ -124,5 +125,30 @@
     if (!data.session) await signIn(phone, password); // إذا التفعيل بالإيميل مطفّى بيرجع session مباشرة
   }
 
-  window.XP = { C, sb, configured, $, $$, esc, normPhone, validPhone, phoneEmail, intlPhone, money, fmtDate, waLink, errMsg, toast, copy, twoStep, pill, TX_KIND, setupNotice, getProfile, signIn, signUp };
+  // إعدادات الموقع من قاعدة البيانات (الأدمن بيعدّلها) — بتغطي على config.js
+  let siteLoaded = false;
+  const announcements = [];
+  async function loadSiteConfig() {
+    if (!sb || siteLoaded) return C;
+    siteLoaded = true;
+    try {
+      const [{ data: cfg }, { data: ann }] = await Promise.all([
+        sb.from('site_config').select('key, value'),
+        sb.from('announcements').select('*').eq('active', true).order('created_at', { ascending: false }).limit(5)
+      ]);
+      const v = Object.fromEntries((cfg || []).map((r) => [r.key, r.value]));
+      const digits = (x) => String(x || '').replace(/\D/g, '');
+      if (digits(v.wa_subscriptions)) C.WA_SUBSCRIPTIONS = digits(v.wa_subscriptions);
+      if (digits(v.wa_services)) C.WA_SERVICES = digits(v.wa_services);
+      if (Array.isArray(v.payment_methods) && v.payment_methods.length) C.PAYMENT_METHODS = v.payment_methods;
+      if (v.socials && typeof v.socials === 'object') C.SOCIALS = v.socials;
+      if (typeof v.hours === 'string' && v.hours) C.HOURS = v.hours;
+      announcements.length = 0;
+      (ann || []).filter((a) => !a.ends_at || new Date(a.ends_at) > new Date()).forEach((a) => announcements.push(a));
+    } catch (e) { /* بنضل على القيم الافتراضية */ }
+    return C;
+  }
+  const prettyPhone = (n) => { const d = String(n || ''); return d.length >= 11 ? `+${d.slice(0, 3)} ${d.slice(3, 5)} ${d.slice(5, 8)} ${d.slice(8)}` : '+' + d; };
+
+  window.XP = { loadSiteConfig, announcements, prettyPhone, C, sb, configured, $, $$, esc, normPhone, validPhone, phoneEmail, intlPhone, money, fmtDate, waLink, errMsg, toast, copy, twoStep, pill, TX_KIND, setupNotice, getProfile, signIn, signUp };
 })();

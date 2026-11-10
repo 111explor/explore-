@@ -29,6 +29,7 @@
       <a class="tab" href="#stock" data-route="stock">المخزون</a>
       <a class="tab" href="#reports" data-route="reports">البلاغات <span class="count" id="cReports" hidden></span></a>
       <a class="tab" href="#customers" data-route="customers">الزباين</a>
+      <a class="tab" href="#site" data-route="site">الموقع والعروض</a>
       <a class="tab" href="#settings" data-route="settings">الإعدادات</a>
     </nav>
   </header>
@@ -113,6 +114,7 @@
         if (r === 'customers') return await renderCustomers();
         if (r === 'reports') return await renderReports();
         if (r === 'settings') return await renderSettings();
+        if (r === 'site') return await renderSite();
         return await renderHome();
       } catch (e) { app.innerHTML = `<div class="empty">${esc(errMsg(e))}</div>`; }
     }
@@ -421,6 +423,120 @@
       });
     }
 
+    /* ---------- site: contact, payment, offers ---------- */
+    let payDraft = [];
+    async function renderSite() {
+      const [{ data: cfgRows, error }, { data: anns }] = await Promise.all([
+        sb.from('site_config').select('key, value'),
+        sb.from('announcements').select('*').order('created_at', { ascending: false }).limit(30)
+      ]);
+      if (error) throw error;
+      const v = Object.fromEntries((cfgRows || []).map((r) => [r.key, r.value]));
+      const so = v.socials || {};
+      payDraft = Array.isArray(v.payment_methods) ? v.payment_methods.map((m) => ({ ...m })) : [];
+      const now = new Date();
+      app.innerHTML = `
+        <div class="page-head"><div><h1>الموقع والعروض</h1><p>كل اللي بتعدّله هون بيتغيّر عالموقع والمتجر فوراً.</p></div></div>
+        <div class="grid grid-2">
+          <form class="card stack" id="contactForm" novalidate>
+            <h2 style="font-size:18px">📞 التواصل</h2>
+            <div class="grid grid-2">
+              <div class="field"><label for="cWaSub">واتساب الاشتراكات والشحن</label><input id="cWaSub" dir="ltr" inputmode="tel" value="${esc(v.wa_subscriptions || '')}" placeholder="972597653989"></div>
+              <div class="field"><label for="cWaSrv">واتساب باقي الخدمات</label><input id="cWaSrv" dir="ltr" inputmode="tel" value="${esc(v.wa_services || '')}" placeholder="972597653989"></div>
+            </div>
+            <span class="hint small muted">اكتب الرقم مع مقدمة الدولة وبدون + ولا صفر بالأول، مثلاً 972597653989.</span>
+            <div class="field"><label for="cHours">ساعات العمل</label><input id="cHours" value="${esc(v.hours || '')}" placeholder="يومياً من 10 صباحاً حتى 10 مساءً"></div>
+            <div class="grid grid-2">
+              <div class="field"><label for="cIg">إنستغرام</label><input id="cIg" dir="ltr" value="${esc(so.instagram || '')}" placeholder="https://instagram.com/…"></div>
+              <div class="field"><label for="cFb">فيسبوك</label><input id="cFb" dir="ltr" value="${esc(so.facebook || '')}" placeholder="https://facebook.com/…"></div>
+              <div class="field"><label for="cTt">تيك توك</label><input id="cTt" dir="ltr" value="${esc(so.tiktok || '')}" placeholder="https://tiktok.com/@…"></div>
+              <div class="field"><label for="cTg">تلجرام</label><input id="cTg" dir="ltr" value="${esc(so.telegram || '')}" placeholder="https://t.me/…"></div>
+            </div>
+            <button class="btn btn-primary" type="submit">حفظ التواصل</button>
+          </form>
+
+          <div class="card stack">
+            <h2 style="font-size:18px">💳 طرق الدفع</h2>
+            <p class="small muted">هاي اللي بتظهر للزبون لما يشحن رصيد. اكتب بالتفاصيل الرقم والاسم وكل اللي بيحتاجه ليحوّل.</p>
+            <div class="stack" id="payList"></div>
+            <div class="row"><button class="btn btn-ghost" type="button" id="payAdd">+ طريقة دفع</button><button class="btn btn-primary" type="button" id="paySave">حفظ طرق الدفع</button></div>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:14px">
+          <form class="card stack" id="offerForm" novalidate>
+            <h2 style="font-size:18px">🎁 نشر عرض جديد</h2>
+            <div class="field"><label for="oTitle">عنوان العرض</label><input id="oTitle" placeholder="مثلاً: خصم 20% على نتفلكس"></div>
+            <div class="field"><label for="oBody">التفاصيل</label><textarea id="oBody" rows="2" placeholder="مثلاً: لمدة 3 أيام بس، لكل الزباين"></textarea></div>
+            <div class="grid grid-2">
+              <div class="field"><label for="oDays">مدة العرض (أيام)</label><input id="oDays" type="number" min="1" dir="ltr" placeholder="فاضي = لحتى توقفه"></div>
+              <div class="field"><label for="oLink">رابط الزر (اختياري)</label><input id="oLink" dir="ltr" placeholder="store.html أو رابط"></div>
+            </div>
+            <label class="check"><input type="checkbox" id="oNotify" checked> ابعت إشعار 🔔 لكل الزباين</label>
+            <p class="form-msg err" id="oErr" hidden></p>
+            <button class="btn btn-primary" type="submit">انشر العرض</button>
+            <p class="small muted">العرض بيظهر كشريط فوق بالموقع والمتجر. لتغيير سعر منتج، روح على تبويب المنتجات.</p>
+          </form>
+          <div class="card stack">
+            <h2 style="font-size:18px">العروض</h2>
+            ${(anns || []).length ? anns.map((a) => {
+              const expired = a.ends_at && new Date(a.ends_at) <= now;
+              return `<div class="item">
+                <div class="item-head"><div><h3>${esc(a.title)}</h3><div class="meta">${fmtDate(a.created_at)}${a.ends_at ? ` · ينتهي ${fmtDate(a.ends_at)}` : ''}</div></div>
+                ${expired ? '<span class="badge">انتهى</span>' : a.active ? '<span class="badge ok">ظاهر</span>' : '<span class="badge">موقوف</span>'}</div>
+                ${a.body ? `<p class="small muted">${esc(a.body)}</p>` : ''}
+                <div class="row"><button class="btn btn-ghost btn-sm" data-ann-toggle="${a.id}" data-on="${a.active ? 1 : 0}">${a.active ? 'إيقاف' : 'إظهار'}</button><button class="btn btn-bad btn-sm" data-ann-del="${a.id}">حذف</button></div>
+              </div>`; }).join('') : '<p class="muted small">ما في عروض لسا.</p>'}
+          </div>
+        </div>`;
+      drawPay();
+
+      const digits = (x) => String(x || '').replace(/\D/g, '').replace(/^00/, '');
+      $('#contactForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const rows = [
+          { key: 'wa_subscriptions', value: digits($('#cWaSub').value) },
+          { key: 'wa_services', value: digits($('#cWaSrv').value) },
+          { key: 'hours', value: $('#cHours').value.trim() },
+          { key: 'socials', value: { instagram: $('#cIg').value.trim(), facebook: $('#cFb').value.trim(), tiktok: $('#cTt').value.trim(), telegram: $('#cTg').value.trim() } }
+        ];
+        if (rows[0].value.length < 9 || rows[1].value.length < 9) return toast('اكتب رقمين واتساب صحيحين', 'err');
+        const { error } = await sb.from('site_config').upsert(rows);
+        if (error) return fail(error);
+        C.WA_SUBSCRIPTIONS = rows[0].value; C.WA_SERVICES = rows[1].value;
+        toast('انحفظ ✓ والموقع اتحدّث');
+      });
+      $('#payAdd').addEventListener('click', () => { syncPay(); payDraft.push({ id: 'm' + Date.now(), name: '', details: '' }); drawPay(); });
+      $('#paySave').addEventListener('click', async () => {
+        syncPay();
+        const clean = payDraft.filter((m) => m.name.trim()).map((m) => ({ id: m.id || ('m' + Date.now()), name: m.name.trim(), details: m.details.trim() }));
+        if (!clean.length) return toast('لازم طريقة دفع وحدة على الأقل', 'err');
+        const { error } = await sb.from('site_config').upsert({ key: 'payment_methods', value: clean });
+        if (error) return fail(error);
+        C.PAYMENT_METHODS = clean; toast('انحفظت طرق الدفع ✓'); renderSite();
+      });
+      $('#offerForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); const err = $('#oErr'); err.hidden = true;
+        const btn = e.target.querySelector('button[type=submit]');
+        const days = Number($('#oDays').value);
+        btn.disabled = true;
+        const { error } = await sb.rpc('admin_publish_offer', { p_title: $('#oTitle').value, p_body: $('#oBody').value, p_link: $('#oLink').value, p_notify: $('#oNotify').checked, p_days: days > 0 ? Math.round(days) : null });
+        btn.disabled = false;
+        if (error) { err.textContent = errMsg(error); err.hidden = false; return; }
+        toast($('#oNotify').checked ? 'انتشر العرض ووصل إشعار للزباين ✓' : 'انتشر العرض ✓'); renderSite();
+      });
+    }
+    function syncPay() {
+      $$('[data-pay]').forEach((row) => { const m = payDraft[Number(row.dataset.pay)]; if (m) { m.name = $('[data-p-name]', row).value; m.details = $('[data-p-det]', row).value; } });
+    }
+    function drawPay() {
+      $('#payList').innerHTML = payDraft.map((m, i) => `
+        <div class="item" data-pay="${i}">
+          <div class="spread"><input class="input" data-p-name value="${esc(m.name)}" placeholder="اسم الطريقة (جوال باي، بنك…)" aria-label="اسم طريقة الدفع" style="flex:1;min-width:0"><button class="btn btn-bad btn-sm" type="button" data-pay-del="${i}">حذف</button></div>
+          <textarea class="input" data-p-det rows="2" placeholder="الرقم، الاسم، رقم الحساب…" aria-label="تفاصيل الدفع">${esc(m.details)}</textarea>
+        </div>`).join('') || '<p class="muted small">ما في طرق دفع.</p>';
+    }
+
     /* ---------- customers ---------- */
     async function renderCustomers() {
       let q = sb.from('profiles').select('*').order('created_at', { ascending: false }).limit(60);
@@ -501,6 +617,17 @@
         toast('رجع المبلغ لرصيد الزبون ✓'); updateCounts(); renderOrders();
       });
       if (d.rf) { reportFilter = d.rf; return renderReports(); }
+      if (d.payDel !== undefined) { syncPay(); payDraft.splice(Number(d.payDel), 1); return drawPay(); }
+      if (d.annToggle) {
+        const { error } = await sb.from('announcements').update({ active: d.on !== '1' }).eq('id', Number(d.annToggle));
+        if (error) return fail(error);
+        return renderSite();
+      }
+      if (d.annDel) return twoStep(t, async () => {
+        const { error } = await sb.from('announcements').delete().eq('id', Number(d.annDel));
+        if (error) return fail(error);
+        toast('انحذف العرض'); renderSite();
+      });
       if (d.tierSave) {
         const row = t.closest('[data-tier]');
         const rec = { name: $('[data-t-name]', row).value.trim(), min_spent: Number($('[data-t-min]', row).value), discount_pct: Number($('[data-t-pct]', row).value) };
@@ -549,7 +676,7 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
     setInterval(updateCounts, 30000);
 
-    boot();
+    XP.loadSiteConfig().finally(boot);
   })();
   </script>
 </body>
