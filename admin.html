@@ -355,8 +355,11 @@
     }
 
     /* ---------- settings ---------- */
+    let tiersCache = [];
     async function renderSettings() {
-      const { data, error } = await sb.rpc('admin_get_settings'); if (error) throw error;
+      const [{ data, error }, { data: tr }] = await Promise.all([sb.rpc('admin_get_settings'), sb.from('loyalty_tiers').select('*').order('min_spent')]);
+      if (error) throw error;
+      tiersCache = tr || [];
       const st = (data && data[0]) || {};
       app.innerHTML = `
         <div class="page-head"><div><h1>الإعدادات</h1><p>إشعارات تلجرام إلك: طلب شحن، طلب جديد، بلاغ، مخزون قرّب يخلص، وملخص يومي الساعة 9 الصبح.</p></div></div>
@@ -383,6 +386,23 @@
             </ol>
             <p class="small muted">بدك الإشعارات توصل لكذا موظف؟ اعمل جروب تلجرام، ضيف البوت عليه، وحط Chat ID تبع الجروب (بيبلّش بـ ‎-100).</p>
           </div>
+        </div>
+        <div class="card stack" style="margin-top:14px">
+          <div><h2 style="font-size:18px">⭐ مستويات الامتياز</h2><p class="small muted">الزبون بياخد خصم تلقائي على كل مشترياته لما مجموع اللي صرفه يوصل للمبلغ. الخصم بينحسب من السيرفر، ما حدا بيقدر يتلاعب فيه.</p></div>
+          <div class="table-wrap"><table style="min-width:520px">
+            <thead><tr><th>اسم المستوى</th><th>لما يصرف (${esc(C.CURRENCY || '₪')})</th><th>الخصم %</th><th></th></tr></thead>
+            <tbody>${tiersCache.map((t) => `<tr data-tier="${t.id}">
+              <td><input class="input" data-t-name value="${esc(t.name)}" aria-label="اسم المستوى"></td>
+              <td><input class="input" data-t-min type="number" min="1" dir="ltr" value="${Number(t.min_spent)}" aria-label="المبلغ"></td>
+              <td><input class="input" data-t-pct type="number" min="0.1" max="99" step="0.1" dir="ltr" value="${Number(t.discount_pct)}" aria-label="الخصم"></td>
+              <td><div class="row"><button class="btn btn-primary btn-sm" data-tier-save="${t.id}">حفظ</button><button class="btn btn-bad btn-sm" data-tier-del="${t.id}">حذف</button></div></td>
+            </tr>`).join('')}
+            <tr data-tier="new">
+              <td><input class="input" data-t-name placeholder="مثلاً: ماسي" aria-label="اسم المستوى"></td>
+              <td><input class="input" data-t-min type="number" min="1" dir="ltr" placeholder="20000" aria-label="المبلغ"></td>
+              <td><input class="input" data-t-pct type="number" min="0.1" max="99" step="0.1" dir="ltr" placeholder="7" aria-label="الخصم"></td>
+              <td><button class="btn btn-ghost btn-sm" data-tier-save="new">+ إضافة</button></td>
+            </tr></tbody></table></div>
         </div>`;
       $('#setForm').addEventListener('submit', async (e) => {
         e.preventDefault(); const err = $('#sErr'); err.hidden = true;
@@ -406,18 +426,23 @@
       let q = sb.from('profiles').select('*').order('created_at', { ascending: false }).limit(60);
       const term = custQuery.replace(/[%,()]/g, '').trim();
       if (term) q = q.or(`phone.ilike.%${term}%,full_name.ilike.%${term}%`);
-      const { data, error } = await q; if (error) throw error;
+      const [{ data, error }, { data: spentRows }, { data: tierRows }] = await Promise.all([q, sb.rpc('admin_customer_spent'), sb.from('loyalty_tiers').select('*').order('min_spent', { ascending: false })]);
+      if (error) throw error;
+      const spentBy = Object.fromEntries((spentRows || []).map((r) => [r.user_id, r]));
+      const tierOf = (n) => (tierRows || []).find((t) => n >= Number(t.min_spent));
       app.innerHTML = `
         <div class="page-head"><div><h1>الزباين</h1><p>ابحث بالاسم أو الرقم، وعدّل الرصيد إذا لزم.</p></div></div>
         <form class="row" id="cSearch" style="margin-bottom:14px"><input class="input" id="cQ" style="max-width:320px" placeholder="بحث…" value="${esc(custQuery)}" aria-label="بحث"><button class="btn btn-ghost" type="submit">بحث</button></form>
         ${(data || []).length ? `<div class="table-wrap"><table>
-          <thead><tr><th>الزبون</th><th>الرصيد</th><th>تاريخ التسجيل</th><th></th></tr></thead>
-          <tbody>${data.map((p) => `<tr>
+          <thead><tr><th>الزبون</th><th>الرصيد</th><th>مجموع المشتريات</th><th>المستوى</th><th>تاريخ التسجيل</th><th></th></tr></thead>
+          <tbody>${data.map((p) => { const sp = Number((spentBy[p.id] || {}).total_spent || 0), tr = tierOf(sp); return `<tr>
             <td>${who(p)}${p.is_admin ? ' <span class="badge info">أدمن</span>' : ''}</td>
             <td class="num"><b>${money(p.balance)}</b></td>
+            <td class="num">${money(sp)} <span class="muted small">(${(spentBy[p.id] || {}).orders_count || 0} طلب)</span></td>
+            <td>${tr ? `<span class="badge warn">⭐ ${esc(tr.name)} · ${Number(tr.discount_pct)}%</span>` : '<span class="muted small">—</span>'}</td>
             <td class="small muted">${fmtDate(p.created_at)}</td>
             <td><div class="row"><button class="btn btn-ghost btn-sm" data-adjust="${p.id}" data-name="${esc(p.full_name)}">تعديل الرصيد</button>${waCustomer(p, `مرحباً ${p.full_name} 👋`)}</div></td>
-          </tr>`).join('')}</tbody></table></div>` : '<div class="empty">ما في نتائج.</div>'}`;
+          </tr>`; }).join('')}</tbody></table></div>` : '<div class="empty">ما في نتائج.</div>'}`;
       $('#cSearch').addEventListener('submit', (e) => { e.preventDefault(); custQuery = $('#cQ').value; renderCustomers(); });
     }
 
@@ -476,6 +501,19 @@
         toast('رجع المبلغ لرصيد الزبون ✓'); updateCounts(); renderOrders();
       });
       if (d.rf) { reportFilter = d.rf; return renderReports(); }
+      if (d.tierSave) {
+        const row = t.closest('[data-tier]');
+        const rec = { name: $('[data-t-name]', row).value.trim(), min_spent: Number($('[data-t-min]', row).value), discount_pct: Number($('[data-t-pct]', row).value) };
+        if (!rec.name || !(rec.min_spent > 0) || !(rec.discount_pct > 0 && rec.discount_pct < 100)) return toast('عبّي الاسم والمبلغ والخصم (بين 0 و 100)', 'err');
+        const res = d.tierSave === 'new' ? await sb.from('loyalty_tiers').insert(rec) : await sb.from('loyalty_tiers').update(rec).eq('id', Number(d.tierSave));
+        if (res.error) return toast(res.error.message.includes('duplicate') ? 'في مستوى بنفس المبلغ.' : errMsg(res.error), 'err');
+        toast('انحفظ المستوى ✓'); return renderSettings();
+      }
+      if (d.tierDel) return twoStep(t, async () => {
+        const { error } = await sb.from('loyalty_tiers').delete().eq('id', Number(d.tierDel));
+        if (error) return fail(error);
+        toast('انحذف المستوى'); renderSettings();
+      });
       if (d.showManual !== undefined) { const box = t.closest('[data-report-box]'); $('[data-manual]', box).hidden = false; $('[data-content]', box).focus(); return; }
       if (d.resolve) {
         const box = t.closest('[data-report-box]'); const id = Number(box.dataset.reportBox);

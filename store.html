@@ -26,7 +26,7 @@
     <nav class="wrap tabs" aria-label="المتجر">
       <a class="tab" href="#shop" data-route="shop">المتجر</a>
       <a class="tab" href="#wallet" data-route="wallet">محفظتي</a>
-      <a class="tab" href="#orders" data-route="orders">طلباتي</a>
+      <a class="tab" href="#orders" data-route="orders" data-orders-filter="all">طلباتي</a>
       <a class="tab" href="index.html">الموقع الرئيسي</a>
     </nav>
   </header>
@@ -54,8 +54,26 @@
     if (!configured) { setupNotice(app); return; }
 
     /* ---------- data ---------- */
+    let summary = null;   // رصيد، مصروف، عمليات، مستوى الامتياز
+    let tiers = [];
+    const pct = (n) => `${Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 })}%`;
+    const myDiscount = () => Number((summary && summary.discount_pct) || 0);
+    const priceFor = (p) => Math.round(Number(p.price) * (100 - myDiscount())) / 100;
+    async function loadSummary() {
+      summary = null;
+      if (!me) return;
+      const { data } = await sb.rpc('my_summary');
+      summary = (data && data[0]) || null;
+    }
+    async function loadTiers() {
+      if (tiers.length) return;
+      const { data } = await sb.from('loyalty_tiers').select('*').order('min_spent');
+      tiers = data || [];
+    }
+
     async function refreshMe() {
       try { me = await getProfile(); } catch (e) { me = null; }
+      await loadSummary();
       $('#balanceChip').hidden = !me; $('#logoutBtn').hidden = !me; $('#loginBtn').hidden = !!me;
       if (!me) $('#bellBtn').hidden = true; else loadNotes();
       if (me) $('#balanceVal').textContent = money(me.balance);
@@ -98,9 +116,10 @@
         const { data } = await sb.from('orders').select('id, product_id, product_name, expires_at').eq('status', 'delivered').gte('expires_at', past).lte('expires_at', soon);
         expiring = (data || []).filter((o) => products.some((p) => p.id === o.product_id));
       }
+      await Promise.all([loadTiers(), me ? loadSummary() : null]);
       const list = products.filter((p) => filter === 'all' || p.category === filter);
       app.innerHTML = `
-        <div class="page-head"><div><h1>المتجر</h1><p>اشحن رصيدك مرة وحدة، واشترِ واستلم اشتراكك فوراً.</p></div></div>
+        ${me && summary ? dashboard() : guestPanel()}
         ${expiring.map((o) => { const n = daysLeft(o.expires_at); return `<div class="renew-banner"><span>⏰ <b>${esc(o.product_name)}</b> ${n < 0 ? 'انتهى' : n === 0 ? 'بينتهي اليوم' : `بينتهي بعد ${daysWord(n)}`}</span><button class="btn btn-primary btn-sm" data-buy="${o.product_id}">جدّد الآن</button></div>`; }).join('')}
         <div class="chips" role="group" aria-label="التصنيف">
           <button class="chip" data-filter="all" aria-pressed="${filter === 'all'}">الكل</button>
@@ -116,11 +135,55 @@
               ${p.description ? `<p>${esc(p.description)}</p>` : '<p></p>'}
               <div>${stockBadge(p)}</div>
               <div class="spread">
-                <div class="price num">${money(p.price)}</div>
+                ${myDiscount() > 0 ? `<div class="price num">${money(priceFor(p))} <s class="was">${money(p.price)}</s></div>` : `<div class="price num">${money(p.price)}</div>`}
                 <button class="btn btn-primary btn-sm" data-buy="${p.id}" ${out ? 'disabled' : ''}>${out ? 'نفدت' : 'اشترِ الآن'}</button>
               </div>
             </div>
           </article>`; }).join('')}</div>` : '<div class="empty">ما في منتجات بهالقسم حالياً.</div>'}`;
+    }
+
+    function dashboard() {
+      const sm = summary, spent = Number(sm.total_spent), next = sm.next_min_spent ? Number(sm.next_min_spent) : null;
+      const prevMin = sm.tier_name ? Number((tiers.find((t) => t.name === sm.tier_name) || {}).min_spent || 0) : 0;
+      const progress = next ? Math.max(4, Math.min(100, ((spent - prevMin) / (next - prevMin)) * 100)) : 100;
+      return `
+        <section class="dash" aria-label="حسابي">
+          <div class="dash-hello"><h1>أهلاً ${esc(me.full_name)} 👋</h1>${sm.tier_name ? `<span class="tier-badge">⭐ عضو ${esc(sm.tier_name)} · خصم ${pct(sm.discount_pct)}</span>` : ''}</div>
+          <div class="dash-grid">
+            <div class="dash-card dash-balance">
+              <span class="muted small">رصيدك</span>
+              <b class="num">${money(sm.balance)}</b>
+              <a class="btn btn-primary" href="#wallet">+ شحن رصيد</a>
+            </div>
+            <a class="dash-card" href="#orders" data-orders-filter="delivered">
+              <span class="muted small">عمليات مكتملة</span>
+              <b class="num">${sm.completed_count}</b>
+              <span class="small dash-link">عرض العمليات ←</span>
+            </a>
+            <div class="dash-card">
+              <span class="muted small">مجموع مشترياتك عنا</span>
+              <b class="num">${money(spent)}</b>
+              ${Number(sm.pending_count) ? `<a class="small dash-link" href="#orders" data-orders-filter="pending">${sm.pending_count} قيد التنفيذ ←</a>` : '<span class="small muted">شكراً لثقتك 💙</span>'}
+            </div>
+          </div>
+          ${tiers.length ? `<div class="loyalty">
+            <div class="spread small"><span>${next ? `باقيلك <b class="num">${money(next - spent)}</b> وبتصير عضو <b>${esc(sm.next_tier_name)}</b> بخصم <b>${pct(sm.next_discount_pct)}</b>` : `🏆 وصلت لأعلى مستوى! خصم ${pct(sm.discount_pct)} على كل شي`}</span><button class="linkish" type="button" data-show-tiers>كيف بتشتغل الامتيازات؟</button></div>
+            <div class="bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(progress)}"><i style="width:${progress}%"></i></div>
+          </div>` : ''}
+        </section>`;
+    }
+    function guestPanel() {
+      return `
+        <div class="page-head"><div><h1>المتجر</h1><p>اشحن رصيدك مرة وحدة، واشترِ واستلم اشتراكك فوراً.</p></div><a class="btn btn-primary" href="#login">سجّل دخول / حساب جديد</a></div>
+        ${tiers.length ? `<div class="loyalty guest"><span>⭐ <b>امتيازات Explor Plus:</b> ${tiers.map((t) => `خصم ${pct(t.discount_pct)} لما تصرف ${money(t.min_spent)}`).join('، ')}.</span></div>` : ''}`;
+    }
+    function showTiers() {
+      const spent = summary ? Number(summary.total_spent) : 0;
+      openSheet(`
+        <div class="spread"><h2>⭐ امتيازات Explor Plus</h2><button class="btn btn-ghost btn-sm" data-close>إغلاق</button></div>
+        <p class="muted">كل ما تشتري أكثر، بتوفّر أكثر. الخصم بينطبق تلقائياً على كل مشترياتك لما توصل للمستوى.</p>
+        <div>${tiers.map((t) => `<div class="kv"><span>${spent >= Number(t.min_spent) ? '✅' : '⬜'} عضو <b>${esc(t.name)}</b> · لما تصرف ${money(t.min_spent)}</span><b>خصم ${pct(t.discount_pct)}</b></div>`).join('')}</div>
+        ${summary ? `<p class="small muted">مجموع مشترياتك لهلأ: <b class="num">${money(spent)}</b></p>` : ''}`);
     }
 
     function closeSheet() { const s = $('.sheet-bg'); if (s) s.remove(); }
@@ -137,20 +200,22 @@
       const p = products.find((x) => x.id === Number(id));
       if (!p) return;
       if (!me) { pendingBuy = p.id; toast('سجّل دخول أو اعمل حساب لتكمل الشراء'); location.hash = '#login'; return; }
-      const enough = Number(me.balance) >= Number(p.price);
+      const disc = myDiscount(), final = priceFor(p);
+      const enough = Number(me.balance) >= final;
       const el = openSheet(`
         <div class="spread"><h2>تأكيد الشراء</h2><button class="btn btn-ghost btn-sm" data-close>إغلاق</button></div>
         <div>
           <div class="kv"><span>المنتج</span><b>${esc(p.name)}${p.duration ? ' · ' + esc(p.duration) : ''}</b></div>
           <div class="kv"><span>السعر</span><b class="num">${money(p.price)}</b></div>
+          ${disc > 0 ? `<div class="kv"><span>⭐ خصم الامتياز (${pct(disc)})</span><b class="num" style="color:var(--ok)">-${money(Number(p.price) - final)}</b></div><div class="kv"><span>السعر بعد الخصم</span><b class="num">${money(final)}</b></div>` : ''}
           <div class="kv"><span>رصيدك الحالي</span><b class="num">${money(me.balance)}</b></div>
-          <div class="kv"><span>رصيدك بعد الشراء</span><b class="num" style="color:${enough ? 'var(--ok)' : 'var(--bad)'}">${money(me.balance - p.price)}</b></div>
+          <div class="kv"><span>رصيدك بعد الشراء</span><b class="num" style="color:${enough ? 'var(--ok)' : 'var(--bad)'}">${money(me.balance - final)}</b></div>
         </div>
         ${p.delivery === 'manual' ? `<div class="field"><label for="buyNote">رابط صفحتك أو أي تفاصيل بنحتاجها</label><textarea id="buyNote" rows="3" placeholder="مثلاً: instagram.com/mypage"></textarea></div>` : ''}
         <p class="form-msg err" id="buyErr" hidden></p>
         ${enough
-          ? `<button class="btn btn-primary btn-block" id="confirmBuy">ادفع ${money(p.price)} من رصيدك</button>`
-          : `<p class="form-msg err">رصيدك ما بيكفي. ناقصك ${money(p.price - me.balance)}.</p><a class="btn btn-primary btn-block" href="#wallet" data-close>اشحن رصيدك</a>`}
+          ? `<button class="btn btn-primary btn-block" id="confirmBuy">ادفع ${money(final)} من رصيدك</button>`
+          : `<p class="form-msg err">رصيدك ما بيكفي. ناقصك ${money(final - me.balance)}.</p><a class="btn btn-primary btn-block" href="#wallet" data-close>اشحن رصيدك</a>`}
       `);
       const btn = $('#confirmBuy', el);
       if (btn) btn.addEventListener('click', async () => {
@@ -306,6 +371,7 @@
     }
 
     let myOrders = [];
+    let ordersFilter = 'all';
     async function renderOrders() {
       const [{ data: orders, error }, { data: reports }] = await Promise.all([
         sb.from('orders').select('*, products(category, active)').order('created_at', { ascending: false }).limit(100),
@@ -314,16 +380,24 @@
       if (error) throw error;
       if (!products.length) { try { await loadProducts(); } catch (e) {} }
       myOrders = orders || [];
+      const shown = myOrders.filter((o) => ordersFilter === 'all' || o.status === ordersFilter);
+      const cnt = (st) => myOrders.filter((o) => o.status === st).length;
       const repBy = {};
       (reports || []).forEach((r) => { if (!repBy[r.order_id]) repBy[r.order_id] = r; });
       app.innerHTML = `
         <div class="page-head"><div><h1>طلباتي</h1><p>كل مشترياتك وبياناتها بمكان واحد.</p></div></div>
-        ${myOrders.length ? `<div class="list">${myOrders.map((o) => {
+        <div class="chips" role="group" aria-label="فلترة">
+          <button class="chip" data-of="all" aria-pressed="${ordersFilter === 'all'}">الكل (${myOrders.length})</button>
+          <button class="chip" data-of="delivered" aria-pressed="${ordersFilter === 'delivered'}">مكتملة (${cnt('delivered')})</button>
+          <button class="chip" data-of="pending" aria-pressed="${ordersFilter === 'pending'}">قيد التنفيذ (${cnt('pending')})</button>
+          ${cnt('refunded') ? `<button class="chip" data-of="refunded" aria-pressed="${ordersFilter === 'refunded'}">مسترجعة (${cnt('refunded')})</button>` : ''}
+        </div>
+        ${shown.length ? `<div class="list">${shown.map((o) => {
           const rep = repBy[o.id];
           const canRenew = o.status === 'delivered' && o.expires_at && daysLeft(o.expires_at) <= 7 && products.some((p) => p.id === o.product_id);
           return `
           <div class="item">
-            <div class="item-head"><div><h3>${esc(o.product_name)}</h3><div class="meta">#${o.id} · ${fmtDate(o.created_at)} · <span class="num">${money(o.price)}</span>${o.expires_at && o.status === 'delivered' ? ` · ينتهي ${fmtDate(o.expires_at)}` : ''}</div></div><div class="row">${expiryBadge(o)}${pill(o.status)}</div></div>
+            <div class="item-head"><div><h3>${esc(o.product_name)}</h3><div class="meta">#${o.id} · ${fmtDate(o.created_at)} · <span class="num">${money(o.price)}</span>${Number(o.discount_pct) > 0 ? ` <span class="saved">وفّرت ${money(Number(o.list_price) - Number(o.price))}</span>` : ''}${o.expires_at && o.status === 'delivered' ? ` · ينتهي ${fmtDate(o.expires_at)}` : ''}</div></div><div class="row">${expiryBadge(o)}${pill(o.status)}</div></div>
             ${o.delivered_content && o.status !== 'refunded' ? secretBox(o.delivered_content) : ''}
             ${o.admin_note ? `<p class="small muted">ملاحظة: ${esc(o.admin_note)}</p>` : ''}
             ${rep ? `<p class="small">${rep.status === 'open' ? '<span class="badge warn">بلاغك قيد المراجعة</span>' : `<span class="badge ${rep.status === 'resolved' ? 'ok' : ''}">${rep.status === 'resolved' ? 'انحلّ البلاغ' : 'تمت مراجعة البلاغ'}</span>`}${rep.admin_reply ? ` <span class="muted">${esc(rep.admin_reply)}</span>` : ''}</p>` : ''}
@@ -332,7 +406,7 @@
               ${o.status === 'delivered' && !(rep && rep.status === 'open') ? `<button class="btn btn-ghost btn-sm" data-report="${o.id}">في مشكلة؟ بلّغ</button>` : ''}
               ${o.status === 'pending' ? `<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${waLink(waFor(o.products), `مرحباً، بستفسر عن طلبي #${o.id} (${o.product_name})`)}">${WA_ICON} استفسر عن الطلب</a>` : ''}
             </div>
-          </div>`; }).join('')}</div>` : '<div class="empty">ما عندك طلبات لسا. <a href="#shop" style="color:var(--accent)">تصفّح المتجر</a></div>'}`;
+          </div>`; }).join('')}</div>` : (myOrders.length ? '<div class="empty">ما في طلبات بهالقسم.</div>' : '<div class="empty">ما عندك طلبات لسا. <a href="#shop" style="color:var(--accent)">تصفّح المتجر</a></div>')}`;
     }
 
     function openReport(orderId) {
@@ -386,6 +460,9 @@
       const b = e.target.closest('[data-buy]'); if (b) { openBuy(b.dataset.buy); return; }
       const c = e.target.closest('[data-copy]'); if (c) { copy(c.dataset.copy, c); return; }
       const r = e.target.closest('[data-report]'); if (r) { openReport(r.dataset.report); return; }
+      const of = e.target.closest('[data-of]'); if (of) { ordersFilter = of.dataset.of; renderOrders(); return; }
+      const og = e.target.closest('[data-orders-filter]'); if (og) { ordersFilter = og.dataset.ordersFilter; return; }
+      if (e.target.closest('[data-show-tiers]')) { showTiers(); return; }
     });
     $('#bellBtn').addEventListener('click', openNotes);
     setInterval(() => { if (me && !document.hidden) { loadNotes(); } }, 60000);

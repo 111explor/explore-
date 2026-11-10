@@ -115,6 +115,20 @@ create table if not exists public.notifications (
 );
 create index if not exists notifications_user_idx on public.notifications (user_id, created_at desc);
 
+-- مستويات الامتياز: كل ما يصرف الزبون أكثر، بياخد خصم أكبر
+create table if not exists public.loyalty_tiers (
+  id            bigint generated always as identity primary key,
+  name          text not null,
+  min_spent     numeric(12,2) not null unique check (min_spent > 0),
+  discount_pct  numeric(5,2) not null check (discount_pct > 0 and discount_pct < 100)
+);
+insert into public.loyalty_tiers (name, min_spent, discount_pct)
+  select * from (values ('فضي', 5000::numeric, 2::numeric), ('ذهبي', 10000::numeric, 5::numeric)) v
+  where not exists (select 1 from public.loyalty_tiers);
+
+alter table public.orders add column if not exists list_price   numeric(12,2);
+alter table public.orders add column if not exists discount_pct numeric(5,2) not null default 0;
+
 -- إعدادات سرية (توكن بوت تلجرام…): ما في ولا policy، فما حدا بيقرأها من الموقع
 create table if not exists public.app_settings (
   key    text primary key,
@@ -159,6 +173,10 @@ declare
   v_bal     numeric;
   v_item    public.stock_items;
   v_order   public.orders;
+  v_disc    numeric;
+  v_price   numeric;
+  v_before  public.loyalty_tiers;
+  v_after   public.loyalty_tiers;
 begin
   if v_uid is null then raise exception 'not_authenticated'; end if;
 
@@ -167,7 +185,12 @@ begin
 
   select balance into v_bal from public.profiles where id = v_uid for update;
   if v_bal is null then raise exception 'profile_not_found'; end if;
-  if v_bal < v_prod.price then raise exception 'insufficient_balance'; end if;
+
+  -- خصم الامتياز حسب مجموع اللي صرفه الزبون
+  v_before := public.tier_for(public.customer_spent(v_uid));
+  v_disc   := coalesce(v_before.discount_pct, 0);
+  v_price  := round(v_prod.price * (100 - v_disc) / 100, 2);
+  if v_bal < v_price then raise exception 'insufficient_balance'; end if;
 
   if v_prod.delivery = 'auto' then
     select * into v_item from public.stock_items
@@ -178,11 +201,11 @@ begin
     if not found then raise exception 'out_of_stock'; end if;
   end if;
 
-  update public.profiles set balance = balance - v_prod.price where id = v_uid;
+  update public.profiles set balance = balance - v_price where id = v_uid;
 
-  insert into public.orders (user_id, product_id, product_name, price, status, delivered_content, customer_note, delivered_at, expires_at)
+  insert into public.orders (user_id, product_id, product_name, price, list_price, discount_pct, status, delivered_content, customer_note, delivered_at, expires_at)
   values (
-    v_uid, v_prod.id, v_prod.name, v_prod.price,
+    v_uid, v_prod.id, v_prod.name, v_price, v_prod.price, v_disc,
     case when v_item.id is not null then 'delivered' else 'pending' end,
     v_item.content,
     nullif(trim(coalesce(p_note, '')), ''),
@@ -196,7 +219,14 @@ begin
   end if;
 
   insert into public.wallet_tx (user_id, amount, kind, ref_id, note)
-  values (v_uid, -v_prod.price, 'purchase', v_order.id, v_prod.name);
+  values (v_uid, -v_price, 'purchase', v_order.id, v_prod.name || case when v_disc > 0 then ' (خصم ' || trim(to_char(v_disc, 'FM990.##'), '.') || '%)' else '' end);
+
+  -- إذا انتقل لمستوى أعلى، بلّغه
+  v_after := public.tier_for(public.customer_spent(v_uid));
+  if v_after.id is not null and v_after.id is distinct from v_before.id then
+    perform public.notify_user(v_uid, '🎉 مبروك! صرت عضو ' || v_after.name,
+      'من هلأ عندك خصم ' || trim(to_char(v_after.discount_pct, 'FM990.##'), '.') || '% على كل مشترياتك.', '#shop');
+  end if;
 
   return v_order;
 end $$;
@@ -638,6 +668,61 @@ grant execute on function public.mark_notifications_read() to authenticated;
 grant execute on function public.admin_set_setting(text, text) to authenticated;
 grant execute on function public.admin_get_settings() to authenticated;
 grant execute on function public.admin_test_telegram() to authenticated;
+
+-- =====================================================================
+--  v3: الامتيازات (خصم حسب مجموع المصروف)
+-- =====================================================================
+
+-- مجموع اللي صرفه الزبون (بدون المسترجع)
+create or replace function public.customer_spent(p_uid uuid) returns numeric
+language sql stable security definer set search_path = public as $$
+  select coalesce(sum(price), 0) from public.orders where user_id = p_uid and status <> 'refunded';
+$$;
+revoke execute on function public.customer_spent(uuid) from public, anon, authenticated;
+
+-- أعلى مستوى وصله المبلغ
+create or replace function public.tier_for(p_spent numeric) returns public.loyalty_tiers
+language sql stable security definer set search_path = public as $$
+  select * from public.loyalty_tiers where min_spent <= p_spent order by min_spent desc limit 1;
+$$;
+
+-- ملخص الزبون: رصيده، كم صرف، عملياته، مستواه، وكم باقيله للمستوى الجاي
+create or replace function public.my_summary()
+returns table (balance numeric, total_spent numeric, completed_count bigint, pending_count bigint,
+               tier_name text, discount_pct numeric, next_tier_name text, next_min_spent numeric, next_discount_pct numeric)
+language plpgsql stable security definer set search_path = public as $$
+declare v_uid uuid := auth.uid(); v_spent numeric; v_cur public.loyalty_tiers; v_next public.loyalty_tiers;
+begin
+  if v_uid is null then raise exception 'not_authenticated'; end if;
+  v_spent := public.customer_spent(v_uid);
+  v_cur := public.tier_for(v_spent);
+  select * into v_next from public.loyalty_tiers where min_spent > v_spent order by min_spent limit 1;
+  return query select
+    (select p.balance from public.profiles p where p.id = v_uid), v_spent,
+    (select count(*) from public.orders o where o.user_id = v_uid and o.status = 'delivered'),
+    (select count(*) from public.orders o where o.user_id = v_uid and o.status = 'pending'),
+    v_cur.name, coalesce(v_cur.discount_pct, 0), v_next.name, v_next.min_spent, v_next.discount_pct;
+end $$;
+
+-- للأدمن: مجموع مصروف كل زبون
+create or replace function public.admin_customer_spent()
+returns table (user_id uuid, total_spent numeric, orders_count bigint)
+language plpgsql stable security definer set search_path = public as $$
+begin
+  if not public.is_admin() then raise exception 'forbidden'; end if;
+  return query select o.user_id, sum(o.price), count(*) from public.orders o where o.status <> 'refunded' group by o.user_id;
+end $$;
+
+alter table public.loyalty_tiers enable row level security;
+drop policy if exists tiers_select on public.loyalty_tiers;
+create policy tiers_select on public.loyalty_tiers for select using (true);
+drop policy if exists tiers_admin on public.loyalty_tiers;
+create policy tiers_admin on public.loyalty_tiers for all using (public.is_admin()) with check (public.is_admin());
+
+revoke execute on function public.my_summary() from public, anon;
+revoke execute on function public.admin_customer_spent() from public, anon;
+grant execute on function public.my_summary() to authenticated;
+grant execute on function public.admin_customer_spent() to authenticated;
 
 -- =====================================================================
 --  بعد ما تعمل حسابك من صفحة المتجر، خلّي حالك أدمن بهالسطر (غيّر الرقم):
