@@ -94,7 +94,14 @@
 
     /* ---------- router ---------- */
     async function route() {
-      const r = (location.hash || '#shop').slice(1);
+      let r = (location.hash || '#shop').slice(1);
+      const buyMatch = r.match(/^buy-(\d+)$/);
+      if (buyMatch) {
+        // جاي من الصفحة الرئيسية بزر «اطلب»: بنفتح المتجر، وإذا مش مسجّل بنحوّله للدخول وبنكمّل بعدها
+        history.replaceState(null, '', location.pathname + location.search + '#shop');
+        r = 'shop';
+        pendingBuy = Number(buyMatch[1]);
+      }
       $$('[data-route]').forEach((a) => { if (a.dataset.route === r) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
       if ((r === 'wallet' || r === 'orders') && !me) { location.hash = '#login'; return; }
       app.innerHTML = '<div class="spinner"></div>';
@@ -102,7 +109,9 @@
         if (r === 'login') return renderAuth();
         if (r === 'wallet') return await renderWallet();
         if (r === 'orders') return await renderOrders();
-        return await renderShop();
+        await renderShop();
+        if (pendingBuy) { const id = pendingBuy; if (me) pendingBuy = null; openBuy(id); }
+        return;
       } catch (e) { app.innerHTML = `<div class="empty">${esc(errMsg(e))}</div>`; }
     }
 

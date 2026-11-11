@@ -396,6 +396,22 @@
     .btn-wa { background: #25d366; color: #05140a; width: 100%; height: 54px; font-size: 16px; }
     .btn-wa:hover { box-shadow: 0 14px 40px -12px rgba(37,211,102,.55); transform: translateY(-1px); }
 
+    .subs { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-bottom: 16px; }
+    .sub { display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); min-width: 0; transition: border-color .2s, transform .2s; }
+    .sub:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); transform: translateY(-2px); }
+    .sub.out { opacity: .6; }
+    .sub-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .sub-top b { font-family: 'Alexandria'; font-size: 17px; line-height: 1.4; min-width: 0; }
+    .sub-dur { flex: none; font-size: 12px; padding: 3px 9px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); }
+    .sub p { color: var(--muted); font-size: 13.5px; flex: 1; }
+    .sub-badge { align-self: flex-start; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+    .sub-badge.ok { color: #22c55e; background: rgba(34,197,94,.12); }
+    .sub-badge.warn { color: #f5a524; background: rgba(245,165,36,.14); }
+    .sub-badge.bad { color: #ef4444; background: rgba(239,68,68,.12); }
+    .sub-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; }
+    .sub-price { font-family: 'Alexandria'; font-weight: 800; font-size: 22px; }
+    .sub-all { align-items: center; justify-content: center; text-align: center; font-weight: 700; color: var(--accent); border-style: dashed; }
+    .store-band b { font-family: 'Alexandria'; font-size: clamp(18px, 2.4vw, 22px); }
     .store-band { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding: 32px; border-radius: var(--radius); border: 1px solid var(--border); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, var(--surface)), var(--surface) 70%); box-shadow: var(--card-shadow); }
     .store-band h2 { font-size: clamp(24px, 3.4vw, 34px); margin: 6px 0 8px; }
     .store-band p { color: var(--muted); max-width: 560px; }
@@ -567,14 +583,21 @@
       </div>
     </section>
 
-    <!-- ============ STORE PROMO ============ -->
+    <!-- ============ DIGITAL SUBSCRIPTIONS (live from the store) ============ -->
     <section class="block" id="store" style="padding-top:0">
       <div class="wrap">
-        <div class="store-band reveal">
+        <div class="sec-head reveal">
           <div>
             <div class="eyebrow" data-i18n="store_eyebrow">الاشتراكات الرقمية</div>
             <h2 data-i18n="store_title">اشتراكاتك بتسليم فوري</h2>
-            <p data-i18n="store_sub">اشحن محفظتك واشترِ بضغطة، وكل ما تشتري أكتر بتاخد خصم أكبر.</p>
+          </div>
+          <p data-i18n="store_sub">تصفّح الأسعار براحتك. لما تطلب بتعمل حساب برقم جوالك، وبيوصلك الاشتراك فوراً.</p>
+        </div>
+        <div class="subs" id="subsGrid" hidden></div>
+        <div class="store-band reveal">
+          <div>
+            <b data-i18n="store_band_t">كل ما تشتري أكتر، بتاخد خصم أكبر</b>
+            <p data-i18n="store_band_d">اشحن محفظتك مرة وحدة واشترِ بضغطة. التسليم تلقائي والدعم يومي.</p>
           </div>
           <a class="btn btn-primary" href="store.html" data-i18n="store_cta">ادخل المتجر</a>
         </div>
@@ -911,7 +934,7 @@
         f_err_name: 'اكتب اسمك لو سمحت', f_err_service: 'اختار الخدمة المطلوبة',
         msg_hello: 'مرحباً Explor Plus 👋', msg_want: 'بدي أطلب خدمة:', msg_name: 'الاسم / الصفحة', msg_service: 'الخدمة', msg_details: 'ملاحظات', msg_from_site: '(مرسلة من الموقع)',
         review_msg: 'مرحباً Explor Plus، حابب أشارككم رأيي بتجربتي معكم:',
-        rights: 'جميع الحقوق محفوظة', nav_store: 'المتجر', nav_store_full: 'المتجر · اشحن واشترِ', store_eyebrow: 'الاشتراكات الرقمية', store_title: 'اشتراكاتك بتسليم فوري', store_sub: 'اشحن محفظتك واشترِ بضغطة، وكل ما تشتري أكتر بتاخد خصم أكبر.', store_cta: 'ادخل المتجر', why_eyebrow: 'ليش تختارنا؟', why_title: 'شغل بتعتمد عليه', w1_t: 'خبرة من 2018', w1_d: 'أكتر من 8 سنين خبرة بالدعاية والإعلان والسوشال ميديا.', w2_t: 'سرعة بالتنفيذ', w2_d: 'منبلّش بشغلك بنفس اليوم، والتوثيق والاشتراكات بتوصلك خلال دقائق.', w3_t: 'أسعار مناسبة', w3_d: 'باقات لكل ميزانية، وخصومات للعملاء الدائمين.', w4_t: 'متابعة بعد البيع', w4_d: 'ما منختفي بعد الدفع: دعم يومي من 10 الصبح لـ 10 الليل.', admin_login: 'دخول الإدارة', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
+        rights: 'جميع الحقوق محفوظة', nav_store: 'المتجر', nav_store_full: 'المتجر · اشحن واشترِ', store_eyebrow: 'الاشتراكات الرقمية', store_title: 'اشتراكاتك بتسليم فوري', store_sub: 'تصفّح الأسعار براحتك. لما تطلب بتعمل حساب برقم جوالك، وبيوصلك الاشتراك فوراً.', store_band_t: 'كل ما تشتري أكتر، بتاخد خصم أكبر', store_band_d: 'اشحن محفظتك مرة وحدة واشترِ بضغطة. التسليم تلقائي والدعم يومي.', sub_order: 'اطلب', sub_out: 'نفدت', sub_stock: 'متوفر {n}', sub_low: 'باقي {n} بس', sub_manual: 'تنفيذ سريع', sub_all: 'شوف كل الاشتراكات ←', store_cta: 'ادخل المتجر', why_eyebrow: 'ليش تختارنا؟', why_title: 'شغل بتعتمد عليه', w1_t: 'خبرة من 2018', w1_d: 'أكتر من 8 سنين خبرة بالدعاية والإعلان والسوشال ميديا.', w2_t: 'سرعة بالتنفيذ', w2_d: 'منبلّش بشغلك بنفس اليوم، والتوثيق والاشتراكات بتوصلك خلال دقائق.', w3_t: 'أسعار مناسبة', w3_d: 'باقات لكل ميزانية، وخصومات للعملاء الدائمين.', w4_t: 'متابعة بعد البيع', w4_d: 'ما منختفي بعد الدفع: دعم يومي من 10 الصبح لـ 10 الليل.', admin_login: 'دخول الإدارة', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
       },
       en: {
         tagline: 'Advertising & Media', nav_services: 'Services', nav_process: 'Why us', nav_works: 'Our work', nav_reviews: 'Reviews', nav_contact: 'Contact',
@@ -940,7 +963,7 @@
         f_err_name: 'Please enter your name', f_err_service: 'Please choose a service',
         msg_hello: 'Hello Explor Plus 👋', msg_want: 'I would like to order a service:', msg_name: 'Name / page', msg_service: 'Service', msg_details: 'Notes', msg_from_site: '(sent from the website)',
         review_msg: 'Hello Explor Plus, I would like to share my experience with you:',
-        rights: 'All rights reserved', nav_store: 'Store', nav_store_full: 'Store · top up & buy', store_eyebrow: 'Digital subscriptions', store_title: 'Subscriptions delivered instantly', store_sub: 'Top up your wallet and buy in one tap, and the more you buy, the bigger your discount.', store_cta: 'Open the store', why_eyebrow: 'Why choose us?', why_title: 'Work you can rely on', w1_t: 'Experience since 2018', w1_d: 'Over 8 years of experience in advertising and social media.', w2_t: 'Fast delivery', w2_d: 'We start on your project the same day, and verification and subscriptions arrive within minutes.', w3_t: 'Fair prices', w3_d: 'Packages for every budget, plus discounts for loyal customers.', w4_t: 'After-sale support', w4_d: 'We don’t disappear after payment: daily support from 10 AM to 10 PM.', admin_login: 'Admin login', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
+        rights: 'All rights reserved', nav_store: 'Store', nav_store_full: 'Store · top up & buy', store_eyebrow: 'Digital subscriptions', store_title: 'Subscriptions delivered instantly', store_sub: 'Browse prices freely. When you order, you sign up with your phone number and get your subscription instantly.', store_band_t: 'The more you buy, the bigger your discount', store_band_d: 'Top up your wallet once and buy in one tap. Automatic delivery and daily support.', sub_order: 'Order', sub_out: 'Sold out', sub_stock: '{n} available', sub_low: 'Only {n} left', sub_manual: 'Fast delivery', sub_all: 'See all subscriptions →', store_cta: 'Open the store', why_eyebrow: 'Why choose us?', why_title: 'Work you can rely on', w1_t: 'Experience since 2018', w1_d: 'Over 8 years of experience in advertising and social media.', w2_t: 'Fast delivery', w2_d: 'We start on your project the same day, and verification and subscriptions arrive within minutes.', w3_t: 'Fair prices', w3_d: 'Packages for every budget, plus discounts for loyal customers.', w4_t: 'After-sale support', w4_d: 'We don’t disappear after payment: daily support from 10 AM to 10 PM.', admin_login: 'Admin login', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
       }
     };
 
@@ -954,6 +977,7 @@
     let lang = params.get('lang') || store.get('xp_lang') || 'ar';
     if (!I18N[lang]) lang = 'ar';
     const t = (k) => I18N[lang][k] ?? k;
+    window.__t = (k) => t(k);
     const icon = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
     const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const waLink = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
@@ -1104,6 +1128,7 @@
       $('#sendLink').href = waLink(buildMessage());
       observeReveal();
       store.set('xp_lang', lang);
+      if (window.__loadSubs) window.__loadSubs();
     }
 
     let io;
@@ -1176,6 +1201,35 @@
   <script>
   (function () {
     if (!window.XP || !XP.configured) return;
+    async function loadSubs() {
+      const grid = document.getElementById('subsGrid'); if (!grid) return;
+      try {
+        const [{ data: prods }, { data: st }] = await Promise.all([
+          XP.sb.from('products').select('id, category, name, name_en, description, price, duration, delivery, image_url').eq('active', true).order('sort').order('id'),
+          XP.sb.rpc('product_stock')
+        ]);
+        const stock = Object.fromEntries((st || []).map((r) => [r.product_id, Number(r.available)]));
+        const lang = document.documentElement.lang === 'en' ? 'en' : 'ar';
+        const T = (k, n) => (window.__t ? window.__t(k) : k).replace('{n}', n);
+        // الاشتراكات أول، وبعدها الخدمات
+        const list = (prods || []).sort((a, b) => (a.category === b.category ? 0 : a.category === 'subscription' ? -1 : 1)).slice(0, 8);
+        if (!list.length) { grid.hidden = true; return; }
+        grid.innerHTML = list.map((p) => {
+          const n = stock[p.id] || 0, auto = p.delivery === 'auto', out = auto && n <= 0;
+          const badge = !auto ? T('sub_manual') : out ? T('sub_out') : n <= 3 ? T('sub_low', n) : T('sub_stock', n);
+          const name = (lang === 'en' && p.name_en) ? p.name_en : p.name;
+          return `<article class="sub${out ? ' out' : ''}">
+            <div class="sub-top"><b>${XP.esc(name)}</b>${p.duration ? `<span class="sub-dur">${XP.esc(p.duration)}</span>` : ''}</div>
+            ${p.description ? `<p>${XP.esc(p.description)}</p>` : '<p></p>'}
+            <span class="sub-badge ${out ? 'bad' : (auto && n <= 3) ? 'warn' : 'ok'}">${XP.esc(badge)}</span>
+            <div class="sub-foot"><span class="sub-price">${XP.money(p.price)}</span>
+              ${out ? `<span class="btn btn-ghost btn-sm" aria-disabled="true">${T('sub_out')}</span>` : `<a class="btn btn-primary btn-sm" href="store.html#buy-${p.id}">${T('sub_order')}</a>`}</div>
+          </article>`;
+        }).join('') + `<a class="sub sub-all" href="store.html">${T('sub_all')}</a>`;
+        grid.hidden = false;
+      } catch (e) { grid.hidden = true; }
+    }
+    window.__loadSubs = loadSubs;
     const ICONS = {
       facebook: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.4 0-4.1 1.5-4.1 4.2v2.3H7.5V14h2.7v8h3.3Z"/></svg>',
       tiktok: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.8 5.8 0 1 0 4.9 5.7V9.1a7.4 7.4 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.2-1.6Z"/></svg>',
@@ -1199,6 +1253,9 @@
         const a = document.createElement('a'); a.href = so[k]; a.target = '_blank'; a.rel = 'noopener'; a.dataset.social = k; a.setAttribute('aria-label', k); a.innerHTML = ICONS[k];
         box.appendChild(a);
       });
+      // الاشتراكات الرقمية من المتجر (بتظهر للزائر بدون حساب)
+      loadSubs();
+
       // شريط العروض
       const bar = document.getElementById('offerBar'), offer = XP.announcements[0];
       if (bar && offer) {
