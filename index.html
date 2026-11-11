@@ -265,6 +265,20 @@
     .step h3 { font-size: 18px; margin: 10px 0 6px; }
     .step p { color: var(--muted); font-size: 14.5px; }
 
+    /* ad results */
+    .results-head { margin: 48px 0 18px; }
+    .results-head h3 { font-size: clamp(22px, 3vw, 28px); }
+    .results-head p { color: var(--muted); }
+    .results { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+    .result { display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); min-width: 0; }
+    .result-top { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; min-height: 44px; }
+    .result-tag { font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    .result-name { font-size: 13px; color: var(--muted); min-width: 0; }
+    .result-big { font-family: 'Alexandria'; font-weight: 800; font-size: 38px; line-height: 1.1; color: var(--text); }
+    .result-label { font-size: 14px; font-weight: 600; }
+    .result ul { list-style: none; display: grid; gap: 4px; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 13.5px; color: var(--muted); flex: 1; align-content: start; }
+    .result-proof { margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--accent); align-self: flex-start; }
+
     /* why us */
     .why { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     .why-item { padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); display: grid; gap: 8px; align-content: start; }
@@ -573,6 +587,12 @@
           <a class="btn btn-ghost btn-sm" href="https://www.instagram.com/explor.ps" target="_blank" rel="noopener" data-i18n="works_more">شوف المزيد على إنستغرام</a>
         </div>
         <div class="works" id="worksGrid"></div>
+
+        <div class="results-head reveal">
+          <h3 data-i18n="res_title">نتائج حملات إعلانية حقيقية</h3>
+          <p data-i18n="res_sub">أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.</p>
+        </div>
+        <div class="results" id="resultsGrid"></div>
       </div>
     </section>
 
@@ -737,6 +757,25 @@
         en: { t: 'We helped top creators reach bigger audiences', s: 'Including:' } }
     ];
 
+    // نتائج حملات إعلانية حقيقية (من سكرينات مدير إعلانات ميتا) — ضيف حملات جديدة بنفس الشكل
+    const RESULTS = [
+      { img: 'assets/works/ads-4.jpg', big: '313K', tag: { ar: 'وصول', en: 'Reach' },
+        ar: { t: 'حملة أبو وسيم', big: 'شخص وصلهم الإعلان خلال 7 أيام', rows: ['234 ألف تفاعل مع المنشور'] },
+        en: { t: 'Abu Wasim campaign', big: 'people reached in 7 days', rows: ['234K post engagements'] } },
+      { img: 'assets/works/ads-5.jpg', big: '287', tag: { ar: 'رسائل', en: 'Messages' },
+        ar: { t: 'متجر ملابس · تشكيلة البلاطين الشتوي', big: 'محادثة مع زباين جدد', rows: ['المبلغ المنفق: 89.96 ₪', 'تكلفة المحادثة: 0.31 ₪'] },
+        en: { t: 'Clothing store · winter trousers', big: 'conversations with new customers', rows: ['Spent: ₪89.96', 'Cost per conversation: ₪0.31'] } },
+      { img: 'assets/works/ads-1.jpg', big: '45,622', tag: { ar: 'وصول', en: 'Reach' },
+        ar: { t: 'منشور إنستغرام', big: 'شخص وصلهم الإعلان', rows: ['المبلغ المنفق: 15 ₪', 'تكلفة كل 1000 وصول: 0.33 ₪'] },
+        en: { t: 'Instagram post', big: 'people reached', rows: ['Spent: ₪15', 'Cost per 1,000 reached: ₪0.33'] } },
+      { img: 'assets/works/ads-2.jpg', big: '85', tag: { ar: 'رسائل', en: 'Messages' },
+        ar: { t: 'منشور إنستغرام', big: 'محادثة', rows: ['المبلغ المنفق: 24.57 ₪', 'تكلفة المحادثة: 0.29 ₪'] },
+        en: { t: 'Instagram post', big: 'conversations', rows: ['Spent: ₪24.57', 'Cost per conversation: ₪0.29'] } },
+      { img: 'assets/works/ads-3.jpg', big: '82', tag: { ar: 'رسائل', en: 'Messages' },
+        ar: { t: 'إعلان رسائل', big: 'محادثة', rows: ['9,190 مشاهدة', '6,032 مشاهد'] },
+        en: { t: 'Messages ad', big: 'conversations', rows: ['9,190 views', '6,032 viewers'] } }
+    ];
+
     // آراء العملاء — ضيف هون آراء حقيقية فقط (مثلاً من رسائل أو تعليقات الزباين بإذنهم)
     // مثال: { name: 'أبو محمد', role: { ar: 'صاحب مطعم', en: 'Restaurant owner' }, stars: 5, text: { ar: '...', en: '...' } }
     const REVIEWS = [];
@@ -758,7 +797,7 @@
         p2_t: 'نفهم ونخطط', p2_d: 'ندرس صفحتك وجمهورك ونقترح عليك الخطة والسعر الأنسب.',
         p3_t: 'ننفّذ', p3_d: 'تصوير، تصميم، إعلانات أو إدارة كاملة. بتابع معنا خطوة بخطوة.',
         p4_t: 'نتابع النتائج', p4_d: 'تقارير واضحة وتحسين مستمر لحتى توصل لهدفك.',
-        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
+        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', res_title: 'نتائج حملات إعلانية حقيقية', res_sub: 'أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.', res_proof: 'شوف الإثبات ↗', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
         reviews_eyebrow: 'آراء العملاء', reviews_title: 'شو بيحكوا عنّا',
         reviews_empty_t: 'اشتغلت معنا؟', reviews_empty_d: 'رأيك بيهمنا وبيساعد غيرك يختار صح. ابعتلنا تجربتك على واتساب.', reviews_empty_btn: 'شاركنا رأيك',
         contact_eyebrow: 'تواصل معنا', contact_title: 'جاهز نبلّش؟', contact_sub: 'عبّي الفورم، ورح تنفتح محادثة واتساب فيها طلبك جاهز. بس اضغط إرسال.',
@@ -787,7 +826,7 @@
         p2_t: 'Understand & plan', p2_d: 'We study your page and audience and suggest the best plan and price.',
         p3_t: 'Execute', p3_d: 'Shooting, design, ads or full management. You follow every step with us.',
         p4_t: 'Track results', p4_d: 'Clear reports and continuous optimization until you hit your goal.',
-        works_eyebrow: 'Our work', works_title: 'Work we are proud of', works_more: 'See more on Instagram', soon: 'Coming soon',
+        works_eyebrow: 'Our work', works_title: 'Work we are proud of', res_title: 'Real ad campaign results', res_sub: 'Numbers from Meta Ads Manager for campaigns we ran for our clients.', res_proof: 'See proof ↗', works_more: 'See more on Instagram', soon: 'Coming soon',
         reviews_eyebrow: 'Reviews', reviews_title: 'What clients say',
         reviews_empty_t: 'Worked with us?', reviews_empty_d: 'Your opinion matters and helps others choose right. Send us your experience on WhatsApp.', reviews_empty_btn: 'Share your review',
         contact_eyebrow: 'Contact', contact_title: 'Ready to start?', contact_sub: 'Fill in the form and a WhatsApp chat opens with your request ready. Just hit send.',
@@ -866,6 +905,19 @@
       }).join('');
     }
 
+    function renderResults() {
+      $('#resultsGrid').innerHTML = RESULTS.map((r) => {
+        const c = r[lang] || r.ar;
+        return `<article class="result reveal">
+          <div class="result-top"><span class="result-tag">${esc(r.tag[lang] || r.tag.ar)}</span><span class="result-name">${esc(c.t)}</span></div>
+          <div class="result-big num">${esc(r.big)}</div>
+          <div class="result-label">${esc(c.big)}</div>
+          <ul>${c.rows.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+          <a class="result-proof" href="${esc(r.img)}" target="_blank" rel="noopener">${t('res_proof')}</a>
+        </article>`;
+      }).join('');
+    }
+
     function renderReviews() {
       const wrap = $('#reviewsWrap');
       if (!REVIEWS.length) {
@@ -906,7 +958,7 @@
       document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
       document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
       $('#langBtn').textContent = lang === 'ar' ? 'EN' : 'ع';
-      renderServices(); renderWorks(); renderReviews(); renderForm(); updateOpenNow();
+      renderServices(); renderWorks(); renderResults(); renderReviews(); renderForm(); updateOpenNow();
       $('#preview').classList.remove('show');
       $('#formErr').hidden = true;
       $('#sendLink').href = waLink(buildMessage());
