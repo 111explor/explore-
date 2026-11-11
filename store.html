@@ -37,7 +37,7 @@
 
   <main class="wrap" id="app"><div class="spinner"></div></main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+  <script src="assets/vendor/supabase-2.118.0.js"></script>
   <script src="assets/config.js"></script>
   <script src="assets/store-core.js"></script>
   <script>
@@ -277,6 +277,7 @@
             ${mode === 'signup' ? `<div class="field"><label for="aName">الاسم</label><input id="aName" autocomplete="name" required placeholder="اسمك أو اسم صفحتك"></div>` : ''}
             <div class="field"><label for="aPhone">رقم الجوال</label><input id="aPhone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="059xxxxxxx" dir="ltr"><span class="hint">نفس رقم الواتساب لحتى نتواصل معك.</span></div>
             <div class="field"><label for="aPass">كلمة السر</label><input id="aPass" type="password" autocomplete="${mode === 'signup' ? 'new-password' : 'current-password'}" required minlength="6" placeholder="6 أحرف أو أكثر" dir="ltr"></div>
+            ${mode === 'signup' ? `<label class="check small"><input type="checkbox" id="aTerms"> <span>موافق على <a href="terms.html" target="_blank" rel="noopener" style="color:var(--accent)">الشروط وسياسة الاسترجاع والخصوصية</a></span></label>` : ''}
             <p class="form-msg err" id="authErr" hidden></p>
             <button class="btn btn-primary btn-block" type="submit">${mode === 'signup' ? 'إنشاء الحساب' : 'دخول'}</button>
             ${mode === 'login' ? `<a class="small muted" style="text-align:center" target="_blank" rel="noopener" href="${waLink(C.WA_SUBSCRIPTIONS, 'مرحباً، نسيت كلمة السر لحسابي بالمتجر. رقمي: ')}">نسيت كلمة السر؟ راسلنا على واتساب</a>` : ''}
@@ -290,6 +291,7 @@
         const phone = $('#aPhone').value, pass = $('#aPass').value;
         let m = '';
         if (mode === 'signup' && !name) m = 'اكتب اسمك.';
+        else if (mode === 'signup' && !$('#aTerms').checked) m = 'لازم توافق على الشروط لتكمل.';
         else if (!validPhone(phone)) m = 'اكتب رقم جوال صحيح، مثلاً 0597653989.';
         else if (pass.length < 6) m = 'كلمة السر لازم تكون 6 أحرف أو أكثر.';
         if (m) { err.textContent = m; err.hidden = false; return; }

@@ -8,11 +8,13 @@
   <meta name="theme-color" content="#07080b">
   <meta property="og:title" content="Explor Plus | للدعاية والإعلان">
   <meta property="og:description" content="نكبّر حضورك على السوشال ميديا: توثيق، إعلانات ممولة، إدارة صفحات، تصوير وتصميم.">
-  <meta property="og:image" content="https://explorplus.online/assets/icon.png">
+  <meta property="og:image" content="https://explorplus.online/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://explorplus.online/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ar_PS">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="keywords" content="دعاية وإعلان, شركة إعلانات فلسطين, توثيق حسابات, العلامة الزرقاء, استرجاع حسابات, إعلانات ممولة, إدارة صفحات, تصوير منتجات, تصوير فيديو إعلاني, منيو إلكتروني, اشتراك نتفلكس, Explor Plus">
   <link rel="canonical" href="https://explorplus.online/">
   <script type="application/ld+json">
@@ -554,7 +556,7 @@
           </div>
           <div class="stats">
             <div class="stat"><strong id="yearsStat">+8</strong><span data-i18n="stat_years">سنوات خبرة</span></div>
-            <div class="stat"><strong dir="ltr">+30,248</strong><span data-i18n="stat_services">خدمة خلال هذا العام</span></div>
+            <div class="stat"><strong dir="ltr" id="statServices">+30,248</strong><span data-i18n="stat_services">خدمة خلال هذا العام</span></div>
             <div class="stat"><strong dir="ltr">10–10</strong><span data-i18n="stat_hours">متواجدين يومياً</span></div>
           </div>
         </div>
@@ -733,6 +735,7 @@
   <footer>
     <div class="wrap foot">
       <div class="brand"><i class="brand-logo" aria-hidden="true"></i><span>Explor Plus<small>© <span id="year"></span> · <span data-i18n="rights">جميع الحقوق محفوظة</span></small></span></div>
+      <a class="admin-link" href="terms.html" data-i18n="terms_link">الشروط والخصوصية</a>
       <a class="admin-link" href="admin.html" data-i18n="admin_login">دخول الإدارة</a>
       <div class="socials">
         <a href="https://www.instagram.com/explor.ps" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a>
@@ -934,7 +937,7 @@
         f_err_name: 'اكتب اسمك لو سمحت', f_err_service: 'اختار الخدمة المطلوبة',
         msg_hello: 'مرحباً Explor Plus 👋', msg_want: 'بدي أطلب خدمة:', msg_name: 'الاسم / الصفحة', msg_service: 'الخدمة', msg_details: 'ملاحظات', msg_from_site: '(مرسلة من الموقع)',
         review_msg: 'مرحباً Explor Plus، حابب أشارككم رأيي بتجربتي معكم:',
-        rights: 'جميع الحقوق محفوظة', nav_store: 'المتجر', nav_store_full: 'المتجر · اشحن واشترِ', store_eyebrow: 'الاشتراكات الرقمية', store_title: 'اشتراكاتك بتسليم فوري', store_sub: 'تصفّح الأسعار براحتك. لما تطلب بتعمل حساب برقم جوالك، وبيوصلك الاشتراك فوراً.', store_band_t: 'كل ما تشتري أكتر، بتاخد خصم أكبر', store_band_d: 'اشحن محفظتك مرة وحدة واشترِ بضغطة. التسليم تلقائي والدعم يومي.', sub_order: 'اطلب', sub_out: 'نفدت', sub_stock: 'متوفر {n}', sub_low: 'باقي {n} بس', sub_manual: 'تنفيذ سريع', sub_all: 'شوف كل الاشتراكات ←', store_cta: 'ادخل المتجر', why_eyebrow: 'ليش تختارنا؟', why_title: 'شغل بتعتمد عليه', w1_t: 'خبرة من 2018', w1_d: 'أكتر من 8 سنين خبرة بالدعاية والإعلان والسوشال ميديا.', w2_t: 'سرعة بالتنفيذ', w2_d: 'منبلّش بشغلك بنفس اليوم، والتوثيق والاشتراكات بتوصلك خلال دقائق.', w3_t: 'أسعار مناسبة', w3_d: 'باقات لكل ميزانية، وخصومات للعملاء الدائمين.', w4_t: 'متابعة بعد البيع', w4_d: 'ما منختفي بعد الدفع: دعم يومي من 10 الصبح لـ 10 الليل.', admin_login: 'دخول الإدارة', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
+        rights: 'جميع الحقوق محفوظة', nav_store: 'المتجر', nav_store_full: 'المتجر · اشحن واشترِ', store_eyebrow: 'الاشتراكات الرقمية', store_title: 'اشتراكاتك بتسليم فوري', store_sub: 'تصفّح الأسعار براحتك. لما تطلب بتعمل حساب برقم جوالك، وبيوصلك الاشتراك فوراً.', store_band_t: 'كل ما تشتري أكتر، بتاخد خصم أكبر', store_band_d: 'اشحن محفظتك مرة وحدة واشترِ بضغطة. التسليم تلقائي والدعم يومي.', sub_order: 'اطلب', sub_out: 'نفدت', sub_stock: 'متوفر {n}', sub_low: 'باقي {n} بس', sub_manual: 'تنفيذ سريع', sub_all: 'شوف كل الاشتراكات ←', store_cta: 'ادخل المتجر', why_eyebrow: 'ليش تختارنا؟', why_title: 'شغل بتعتمد عليه', w1_t: 'خبرة من 2018', w1_d: 'أكتر من 8 سنين خبرة بالدعاية والإعلان والسوشال ميديا.', w2_t: 'سرعة بالتنفيذ', w2_d: 'منبلّش بشغلك بنفس اليوم، والتوثيق والاشتراكات بتوصلك خلال دقائق.', w3_t: 'أسعار مناسبة', w3_d: 'باقات لكل ميزانية، وخصومات للعملاء الدائمين.', w4_t: 'متابعة بعد البيع', w4_d: 'ما منختفي بعد الدفع: دعم يومي من 10 الصبح لـ 10 الليل.', admin_login: 'دخول الإدارة', terms_link: 'الشروط والخصوصية', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
       },
       en: {
         tagline: 'Advertising & Media', nav_services: 'Services', nav_process: 'Why us', nav_works: 'Our work', nav_reviews: 'Reviews', nav_contact: 'Contact',
@@ -963,7 +966,7 @@
         f_err_name: 'Please enter your name', f_err_service: 'Please choose a service',
         msg_hello: 'Hello Explor Plus 👋', msg_want: 'I would like to order a service:', msg_name: 'Name / page', msg_service: 'Service', msg_details: 'Notes', msg_from_site: '(sent from the website)',
         review_msg: 'Hello Explor Plus, I would like to share my experience with you:',
-        rights: 'All rights reserved', nav_store: 'Store', nav_store_full: 'Store · top up & buy', store_eyebrow: 'Digital subscriptions', store_title: 'Subscriptions delivered instantly', store_sub: 'Browse prices freely. When you order, you sign up with your phone number and get your subscription instantly.', store_band_t: 'The more you buy, the bigger your discount', store_band_d: 'Top up your wallet once and buy in one tap. Automatic delivery and daily support.', sub_order: 'Order', sub_out: 'Sold out', sub_stock: '{n} available', sub_low: 'Only {n} left', sub_manual: 'Fast delivery', sub_all: 'See all subscriptions →', store_cta: 'Open the store', why_eyebrow: 'Why choose us?', why_title: 'Work you can rely on', w1_t: 'Experience since 2018', w1_d: 'Over 8 years of experience in advertising and social media.', w2_t: 'Fast delivery', w2_d: 'We start on your project the same day, and verification and subscriptions arrive within minutes.', w3_t: 'Fair prices', w3_d: 'Packages for every budget, plus discounts for loyal customers.', w4_t: 'After-sale support', w4_d: 'We don’t disappear after payment: daily support from 10 AM to 10 PM.', admin_login: 'Admin login', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
+        rights: 'All rights reserved', nav_store: 'Store', nav_store_full: 'Store · top up & buy', store_eyebrow: 'Digital subscriptions', store_title: 'Subscriptions delivered instantly', store_sub: 'Browse prices freely. When you order, you sign up with your phone number and get your subscription instantly.', store_band_t: 'The more you buy, the bigger your discount', store_band_d: 'Top up your wallet once and buy in one tap. Automatic delivery and daily support.', sub_order: 'Order', sub_out: 'Sold out', sub_stock: '{n} available', sub_low: 'Only {n} left', sub_manual: 'Fast delivery', sub_all: 'See all subscriptions →', store_cta: 'Open the store', why_eyebrow: 'Why choose us?', why_title: 'Work you can rely on', w1_t: 'Experience since 2018', w1_d: 'Over 8 years of experience in advertising and social media.', w2_t: 'Fast delivery', w2_d: 'We start on your project the same day, and verification and subscriptions arrive within minutes.', w3_t: 'Fair prices', w3_d: 'Packages for every budget, plus discounts for loyal customers.', w4_t: 'After-sale support', w4_d: 'We don’t disappear after payment: daily support from 10 AM to 10 PM.', admin_login: 'Admin login', terms_link: 'Terms & privacy', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
       }
     };
 
@@ -1196,7 +1199,7 @@
     setInterval(updateOpenNow, 60000);
   </script>
   <!-- إعدادات الموقع من لوحة الإدارة (أرقام، تواصل، عروض) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+  <script src="assets/vendor/supabase-2.118.0.js"></script>
   <script src="assets/store-core.js"></script>
   <script>
   (function () {
@@ -1244,6 +1247,8 @@
       }
       // ساعات العمل (بالعربي)
       if (C.HOURS && document.documentElement.lang === 'ar') { const h = document.querySelector('[data-i18n="hours_val"]'); if (h) h.textContent = C.HOURS; }
+      // رقم الخدمات خلال العام (بيتعدّل من لوحة الأدمن)
+      if (C.STAT_SERVICES) { const st = document.getElementById('statServices'); if (st) st.textContent = '+' + String(C.STAT_SERVICES).replace(/^\+/, ''); }
       // صفحات التواصل
       const so = C.SOCIALS || {};
       if (so.instagram) document.querySelectorAll('a[href*="instagram.com"]').forEach((a) => { a.href = so.instagram; });

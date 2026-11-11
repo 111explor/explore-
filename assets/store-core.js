@@ -45,6 +45,8 @@
     content_required: 'اكتب البيانات الجديدة.',
     invalid_setting: 'إعداد غير معروف.',
     title_required: 'اكتب عنوان العرض.',
+    weak_password: 'كلمة السر لازم تكون 6 أحرف أو أكثر.',
+    profile_not_found: 'الحساب مش موجود.',
     'Invalid login credentials': 'رقم الجوال أو كلمة السر غلط.',
     'User already registered': 'هالرقم مسجّل من قبل. سجّل دخول بدل ما تعمل حساب جديد.',
     'already registered': 'هالرقم مسجّل من قبل. سجّل دخول بدل ما تعمل حساب جديد.',
@@ -143,6 +145,7 @@
       if (Array.isArray(v.payment_methods) && v.payment_methods.length) C.PAYMENT_METHODS = v.payment_methods;
       if (v.socials && typeof v.socials === 'object') C.SOCIALS = v.socials;
       if (typeof v.hours === 'string' && v.hours) C.HOURS = v.hours;
+      if (typeof v.stat_services === 'string' && v.stat_services) C.STAT_SERVICES = v.stat_services;
       announcements.length = 0;
       (ann || []).filter((a) => !a.ends_at || new Date(a.ends_at) > new Date()).forEach((a) => announcements.push(a));
     } catch (e) { /* بنضل على القيم الافتراضية */ }
