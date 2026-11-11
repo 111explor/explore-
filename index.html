@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-style="midnight">
+<html lang="ar" dir="rtl" data-style="bold">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Explor Plus | للدعاية والإعلان</title>
   <meta name="description" content="Explor Plus للدعاية والإعلان منذ 2018: توثيق واسترجاع الحسابات، الإعلانات الممولة، إدارة الصفحات، تصوير الفيديوهات والمنتجات، تصاميم السوشال ميديا والمنيو الإلكتروني.">
-  <meta name="theme-color" content="#07080b">
+  <meta name="theme-color" content="#8b5cf6">
   <meta property="og:title" content="Explor Plus | للدعاية والإعلان">
   <meta property="og:description" content="نكبّر حضورك على السوشال ميديا: توثيق، إعلانات ممولة، إدارة صفحات، تصوير وتصميم.">
   <meta property="og:image" content="https://explorplus.online/assets/og-image.jpg">
@@ -46,7 +46,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Cairo:wght@400;500;600;700;800&family=Alexandria:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
     /* ============ THEMES (الطوابع) ============ */
@@ -96,6 +96,103 @@
       --radius: 20px;
       --card-shadow: 0 0 0 1px rgba(255,255,255,.02) inset;
     }
+
+
+    /* ============ DESIGN 2: «ألوان تصاميمك» (بنفسجي ← برتقالي) ============ */
+    [data-style="bold"] {
+      --bg: #fff7f1; --bg-2: #fdeee3; --surface: #ffffff; --surface-2: #f6effd;
+      --text: #1d1530; --muted: #5f5378; --border: rgba(124,58,237,.14);
+      --accent: #7c3aed; --accent-2: #e2621f; --accent-ink: #ffffff; --glow: rgba(124,58,237,.35);
+      --radius: 26px; --card-shadow: 0 18px 40px -28px rgba(124,58,237,.35);
+      --grad: linear-gradient(115deg, #8b5cf6 0%, #c26ad0 45%, #ff8f4e 100%);
+    }
+    [data-style="bold"] body { font-family: 'Cairo', 'IBM Plex Sans Arabic', system-ui, sans-serif; }
+    [data-style="bold"] h1, [data-style="bold"] h2, [data-style="bold"] .stat strong, [data-style="bold"] .result-big,
+    [data-style="bold"] .why-item h3, [data-style="bold"] .work-celebs b, [data-style="bold"] .case-meta b {
+      font-family: 'Lalezar', 'Cairo', sans-serif; font-weight: 400; letter-spacing: 0;
+    }
+    [data-style="bold"] h3, [data-style="bold"] .brand, [data-style="bold"] .grow-nums, [data-style="bold"] .svc h3 { font-family: 'Cairo', sans-serif; font-weight: 800; }
+    [data-style="bold"] .bg-fx { background: var(--bg); }
+    [data-style="bold"] header.top { background: rgba(255,247,241,.88); }
+    [data-style="bold"] .btn-primary { background: #1d1530; color: #fff; box-shadow: 0 12px 30px -14px rgba(29,21,48,.6); }
+    [data-style="bold"] .btn-primary:hover { background: #2b2046; }
+    [data-style="bold"] .btn-ghost { background: #fff; border-color: var(--border); }
+    [data-style="bold"] .lang-btn, [data-style="bold"] .menu-btn { background: #fff; }
+
+    /* الواجهة: شريط متدرّج بزوايا مدوّرة تحت */
+    [data-style="bold"] .hero { background: var(--grad); color: #fff; border-radius: 0 0 44px 44px; padding-bottom: 0; overflow: hidden; }
+    [data-style="bold"] .hero h1 { font-size: clamp(46px, 7.6vw, 100px); line-height: 1.12; }
+    [data-style="bold"] .hero .grad { background: none; color: #fff; -webkit-text-fill-color: #fff; }
+    [data-style="bold"] .hero p.lead { color: #fff3ea; }
+    [data-style="bold"] .pill { background: #fff; border-color: transparent; color: #5f5378; }
+    [data-style="bold"] .pill b { background: var(--grad); color: #fff; }
+    [data-style="bold"] .hero .btn-primary { background: #1d1530; }
+    [data-style="bold"] .hero .btn-ghost { background: #fff; color: #1d1530; border-color: #fff; }
+    [data-style="bold"] .stat { background: #fff; border: 0; border-radius: 22px; box-shadow: none; }
+    [data-style="bold"] .stat strong { color: #7c3aed; font-size: 34px; line-height: 1.1; }
+    [data-style="bold"] .stat:nth-child(2) strong { color: #e2621f; }
+    [data-style="bold"] .orb { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.35); box-shadow: 0 40px 90px -40px rgba(29,21,48,.55); }
+    [data-style="bold"] .orb::before { display: none; }
+    [data-style="bold"] .orb .big-logo { background-image: url(assets/logo-light.png); }
+    [data-style="bold"] .chip { background: #fff; color: #1d1530; border: 0; box-shadow: 0 14px 30px -14px rgba(29,21,48,.45); }
+    [data-style="bold"] .chip .dot { background: #f6effd; color: #7c3aed; }
+    [data-style="bold"] .marquee { margin-top: 56px; background: rgba(29,21,48,.92); border: 0; }
+    [data-style="bold"] .marquee-track { color: #fff; }
+    [data-style="bold"] .marquee-track span::after { color: #ffb37d; }
+
+    /* العناوين والأقسام */
+    [data-style="bold"] .eyebrow { display: inline-block; background: #f6effd; color: #7c3aed; padding: 4px 14px; border-radius: 999px; font-weight: 700; }
+    [data-style="bold"] .sec-head h2 { font-size: clamp(34px, 5vw, 56px); line-height: 1.2; }
+
+    /* الخدمات: مربعات بأحجام وألوان */
+    [data-style="bold"] .svc { border: 2px solid var(--border); box-shadow: none; }
+    [data-style="bold"] .svc:nth-child(4n+2) { background: #f6effd; border-color: transparent; }
+    [data-style="bold"] .svc:nth-child(4n+3) { background: #ffe8da; border-color: transparent; }
+    [data-style="bold"] .svc:nth-child(4n+3) p, [data-style="bold"] .svc:nth-child(4n+3) .tag { color: #6b3d22; }
+    [data-style="bold"] .svc-ico { background: #fff; color: #7c3aed; }
+    [data-style="bold"] .svc-num { -webkit-text-stroke: 1px rgba(124,58,237,.25); }
+    [data-style="bold"] .tag { background: rgba(255,255,255,.7); }
+    [data-style="bold"] .svc.featured { background: #1d1530; color: #fff; border-color: #1d1530; }
+    [data-style="bold"] .svc.featured p, [data-style="bold"] .svc.featured .tag { color: #cfc6e6; }
+    [data-style="bold"] .svc.featured .tag { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.14); }
+    [data-style="bold"] .svc.featured .svc-ico { background: rgba(255,255,255,.1); color: #ffb37d; }
+    [data-style="bold"] .svc.featured .svc-num { -webkit-text-stroke: 1px rgba(255,255,255,.25); }
+    [data-style="bold"] .svc.featured .order { color: #ffb37d; }
+    [data-style="bold"] .svc.featured:last-of-type { background: var(--grad); border-color: transparent; }
+
+    /* ليش تختارنا + الأعمال */
+    [data-style="bold"] .why-item { border: 0; }
+    [data-style="bold"] .why-item:nth-child(odd) { background: #f6effd; }
+    [data-style="bold"] .why-item:nth-child(even) { background: #ffe8da; }
+    [data-style="bold"] .why-ico { background: #fff; color: #7c3aed; }
+    [data-style="bold"] .why-item h3 { font-size: 24px; }
+    [data-style="bold"] .work-case, [data-style="bold"] .result, [data-style="bold"] .grow, [data-style="bold"] .review { border: 2px solid var(--border); }
+    [data-style="bold"] .work-celebs { background: #1d1530; color: #fff; border: 0; }
+    [data-style="bold"] .work-celebs .muted-s { color: #cfc6e6; }
+    [data-style="bold"] .work-celebs li { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); }
+    [data-style="bold"] .work-celebs li::before, [data-style="bold"] .celebs-more { color: #ffb37d; }
+    [data-style="bold"] .result-big { font-size: 46px; color: #7c3aed; }
+    [data-style="bold"] .result:nth-child(even) .result-big { color: #e2621f; }
+    [data-style="bold"] .result-tag { background: #f6effd; }
+    [data-style="bold"] .grow { padding: 10px; background: var(--grad); border: 0; }
+    [data-style="bold"] .grow img { border-radius: 16px; }
+    [data-style="bold"] .grow figcaption, [data-style="bold"] .grow-handle, [data-style="bold"] .grow-nums .a { color: #fff; }
+    [data-style="bold"] .grow-nums .b { color: #fde3d3; }
+    [data-style="bold"] #verifyGrid .grow { background: linear-gradient(160deg, #3b82f6, #5eead4); }
+    [data-style="bold"] .review:nth-child(3n+1) { background: #f6effd; border-color: transparent; }
+    [data-style="bold"] .review:nth-child(3n+2) { background: #ffe8da; border-color: transparent; }
+    [data-style="bold"] .review .stars { color: #e2621f; }
+    [data-style="bold"] .review .av { background: var(--grad); }
+
+    /* التواصل */
+    [data-style="bold"] .contact .card { border: 2px solid var(--border); }
+    [data-style="bold"] .info { background: var(--bg); }
+    [data-style="bold"] .info .ico { background: #f6effd; color: #7c3aed; }
+    [data-style="bold"] .field input, [data-style="bold"] .field select, [data-style="bold"] .field textarea { background: var(--bg); }
+    [data-style="bold"] footer { background: #1d1530; color: #cfc6e6; border: 0; margin-top: 0; }
+    [data-style="bold"] footer .brand small { color: #a99cc7; }
+    [data-style="bold"] footer .socials a { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); color: #fff; }
+    [data-style="bold"] .admin-link { color: #cfc6e6; }
 
     /* ============ BASE ============ */
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -528,7 +625,7 @@
       </nav>
       <div class="nav-actions">
         <button class="lang-btn" id="langBtn" type="button" aria-label="Change language">EN</button>
-        <a href="store.html" class="btn btn-ghost btn-sm btn-cta" data-i18n="nav_store">المتجر</a>
+        <a href="https://explorplus.online/store" class="btn btn-ghost btn-sm btn-cta" data-i18n="nav_store">المتجر ↗</a>
         <a href="#contact" class="btn btn-primary btn-sm btn-cta" data-i18n="cta_order">اطلب خدمتك</a>
         <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -541,7 +638,7 @@
       <a href="#works" data-i18n="nav_works">أعمالنا</a>
       <a href="#reviews" data-i18n="nav_reviews">آراء العملاء</a>
       <a href="#contact" data-i18n="nav_contact">تواصل معنا</a>
-      <a href="store.html" data-i18n="nav_store_full">المتجر · اشحن واشترِ</a>
+      <a href="https://explorplus.online/store" data-i18n="nav_store_full">المتجر · اشحن واشترِ ↗</a>
     </nav>
   </header>
 
@@ -588,27 +685,6 @@
           <p data-i18n="services_sub">اختار الخدمة واضغط "اطلبها"، ورح نجهزلك رسالة واتساب جاهزة بثانية.</p>
         </div>
         <div class="services" id="servicesGrid"></div>
-      </div>
-    </section>
-
-    <!-- ============ DIGITAL SUBSCRIPTIONS (live from the store) ============ -->
-    <section class="block" id="store" style="padding-top:0">
-      <div class="wrap">
-        <div class="sec-head reveal">
-          <div>
-            <div class="eyebrow" data-i18n="store_eyebrow">الاشتراكات الرقمية</div>
-            <h2 data-i18n="store_title">اشتراكاتك بتسليم فوري</h2>
-          </div>
-          <p data-i18n="store_sub">تصفّح الأسعار براحتك. لما تطلب بتعمل حساب برقم جوالك، وبيوصلك الاشتراك فوراً.</p>
-        </div>
-        <div class="subs" id="subsGrid" hidden></div>
-        <div class="store-band reveal">
-          <div>
-            <b data-i18n="store_band_t">كل ما تشتري أكتر، بتاخد خصم أكبر</b>
-            <p data-i18n="store_band_d">اشحن محفظتك مرة وحدة واشترِ بضغطة. التسليم تلقائي والدعم يومي.</p>
-          </div>
-          <a class="btn btn-primary" href="store.html" data-i18n="store_cta">ادخل المتجر</a>
-        </div>
       </div>
     </section>
 
@@ -742,7 +818,6 @@
     <div class="wrap foot">
       <div class="brand"><i class="brand-logo" aria-hidden="true"></i><span>Explor Plus<small>© <span id="year"></span> · <span data-i18n="rights">جميع الحقوق محفوظة</span></small></span></div>
       <a class="admin-link" href="terms.html" data-i18n="terms_link">الشروط والخصوصية</a>
-      <a class="admin-link" href="admin.html" data-i18n="admin_login">دخول الإدارة</a>
       <div class="socials">
         <a href="https://www.instagram.com/explor.ps" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a>
         <a href="https://wa.me/972597653989" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg></a>
@@ -943,7 +1018,7 @@
         f_err_name: 'اكتب اسمك لو سمحت', f_err_service: 'اختار الخدمة المطلوبة',
         msg_hello: 'مرحباً Explor Plus 👋', msg_want: 'بدي أطلب خدمة:', msg_name: 'الاسم / الصفحة', msg_service: 'الخدمة', msg_details: 'ملاحظات', msg_from_site: '(مرسلة من الموقع)',
         review_msg: 'مرحباً Explor Plus، حابب أشارككم رأيي بتجربتي معكم:',
-        rights: 'جميع الحقوق محفوظة', nav_store: 'المتجر', nav_store_full: 'المتجر · اشحن واشترِ', store_eyebrow: 'الاشتراكات الرقمية', store_title: 'اشتراكاتك بتسليم فوري', store_sub: 'تصفّح الأسعار براحتك. لما تطلب بتعمل حساب برقم جوالك، وبيوصلك الاشتراك فوراً.', store_band_t: 'كل ما تشتري أكتر، بتاخد خصم أكبر', store_band_d: 'اشحن محفظتك مرة وحدة واشترِ بضغطة. التسليم تلقائي والدعم يومي.', sub_order: 'اطلب', sub_out: 'نفدت', sub_stock: 'متوفر {n}', sub_low: 'باقي {n} بس', sub_manual: 'تنفيذ سريع', sub_all: 'شوف كل الاشتراكات ←', store_cta: 'ادخل المتجر', why_eyebrow: 'ليش تختارنا؟', why_title: 'شغل بتعتمد عليه', w1_t: 'خبرة من 2018', w1_d: 'أكتر من 8 سنين خبرة بالدعاية والإعلان والسوشال ميديا.', w2_t: 'سرعة بالتنفيذ', w2_d: 'منبلّش بشغلك بنفس اليوم، والتوثيق والاشتراكات بتوصلك خلال دقائق.', w3_t: 'أسعار مناسبة', w3_d: 'باقات لكل ميزانية، وخصومات للعملاء الدائمين.', w4_t: 'متابعة بعد البيع', w4_d: 'ما منختفي بعد الدفع: دعم يومي من 10 الصبح لـ 10 الليل.', admin_login: 'دخول الإدارة', terms_link: 'الشروط والخصوصية', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
+        rights: 'جميع الحقوق محفوظة', nav_store: 'المتجر ↗', nav_store_full: 'المتجر · اشحن واشترِ', store_eyebrow: 'الاشتراكات الرقمية', store_title: 'اشتراكاتك بتسليم فوري', store_sub: 'تصفّح الأسعار براحتك. لما تطلب بتعمل حساب برقم جوالك، وبيوصلك الاشتراك فوراً.', store_band_t: 'كل ما تشتري أكتر، بتاخد خصم أكبر', store_band_d: 'اشحن محفظتك مرة وحدة واشترِ بضغطة. التسليم تلقائي والدعم يومي.', sub_order: 'اطلب', sub_out: 'نفدت', sub_stock: 'متوفر {n}', sub_low: 'باقي {n} بس', sub_manual: 'تنفيذ سريع', sub_all: 'شوف كل الاشتراكات ←', store_cta: 'ادخل المتجر', why_eyebrow: 'ليش تختارنا؟', why_title: 'شغل بتعتمد عليه', w1_t: 'خبرة من 2018', w1_d: 'أكتر من 8 سنين خبرة بالدعاية والإعلان والسوشال ميديا.', w2_t: 'سرعة بالتنفيذ', w2_d: 'منبلّش بشغلك بنفس اليوم، والتوثيق والاشتراكات بتوصلك خلال دقائق.', w3_t: 'أسعار مناسبة', w3_d: 'باقات لكل ميزانية، وخصومات للعملاء الدائمين.', w4_t: 'متابعة بعد البيع', w4_d: 'ما منختفي بعد الدفع: دعم يومي من 10 الصبح لـ 10 الليل.', admin_login: 'دخول الإدارة', terms_link: 'الشروط والخصوصية', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
       },
       en: {
         tagline: 'Advertising & Media', nav_services: 'Services', nav_process: 'Why us', nav_works: 'Our work', nav_reviews: 'Reviews', nav_contact: 'Contact',
@@ -972,7 +1047,7 @@
         f_err_name: 'Please enter your name', f_err_service: 'Please choose a service',
         msg_hello: 'Hello Explor Plus 👋', msg_want: 'I would like to order a service:', msg_name: 'Name / page', msg_service: 'Service', msg_details: 'Notes', msg_from_site: '(sent from the website)',
         review_msg: 'Hello Explor Plus, I would like to share my experience with you:',
-        rights: 'All rights reserved', nav_store: 'Store', nav_store_full: 'Store · top up & buy', store_eyebrow: 'Digital subscriptions', store_title: 'Subscriptions delivered instantly', store_sub: 'Browse prices freely. When you order, you sign up with your phone number and get your subscription instantly.', store_band_t: 'The more you buy, the bigger your discount', store_band_d: 'Top up your wallet once and buy in one tap. Automatic delivery and daily support.', sub_order: 'Order', sub_out: 'Sold out', sub_stock: '{n} available', sub_low: 'Only {n} left', sub_manual: 'Fast delivery', sub_all: 'See all subscriptions →', store_cta: 'Open the store', why_eyebrow: 'Why choose us?', why_title: 'Work you can rely on', w1_t: 'Experience since 2018', w1_d: 'Over 8 years of experience in advertising and social media.', w2_t: 'Fast delivery', w2_d: 'We start on your project the same day, and verification and subscriptions arrive within minutes.', w3_t: 'Fair prices', w3_d: 'Packages for every budget, plus discounts for loyal customers.', w4_t: 'After-sale support', w4_d: 'We don’t disappear after payment: daily support from 10 AM to 10 PM.', admin_login: 'Admin login', terms_link: 'Terms & privacy', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
+        rights: 'All rights reserved', nav_store: 'Store ↗', nav_store_full: 'Store · top up & buy', store_eyebrow: 'Digital subscriptions', store_title: 'Subscriptions delivered instantly', store_sub: 'Browse prices freely. When you order, you sign up with your phone number and get your subscription instantly.', store_band_t: 'The more you buy, the bigger your discount', store_band_d: 'Top up your wallet once and buy in one tap. Automatic delivery and daily support.', sub_order: 'Order', sub_out: 'Sold out', sub_stock: '{n} available', sub_low: 'Only {n} left', sub_manual: 'Fast delivery', sub_all: 'See all subscriptions →', store_cta: 'Open the store', why_eyebrow: 'Why choose us?', why_title: 'Work you can rely on', w1_t: 'Experience since 2018', w1_d: 'Over 8 years of experience in advertising and social media.', w2_t: 'Fast delivery', w2_d: 'We start on your project the same day, and verification and subscriptions arrive within minutes.', w3_t: 'Fair prices', w3_d: 'Packages for every budget, plus discounts for loyal customers.', w4_t: 'After-sale support', w4_d: 'We don’t disappear after payment: daily support from 10 AM to 10 PM.', admin_login: 'Admin login', terms_link: 'Terms & privacy', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
       }
     };
 
@@ -992,11 +1067,11 @@
     const waLink = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
 
     function setStyle(s) {
-      if (!['midnight', 'clean', 'aurora'].includes(s)) s = 'midnight';
+      if (!['bold', 'midnight', 'clean', 'aurora'].includes(s)) s = 'bold';
       document.documentElement.dataset.style = s;
-      document.documentElement.style.setProperty('--logo', s === 'clean' ? 'url(assets/logo-dark.png)' : 'url(assets/logo-light.png)');
+      document.documentElement.style.setProperty('--logo', (s === 'clean' || s === 'bold') ? 'url(assets/logo-dark.png)' : 'url(assets/logo-light.png)');
       document.querySelectorAll('[data-set-style]').forEach(b => b.setAttribute('aria-pressed', b.dataset.setStyle === s));
-      $('meta[name="theme-color"]').content = s === 'clean' ? '#f5f6f8' : (s === 'aurora' ? '#050611' : '#07080b');
+      $('meta[name="theme-color"]').content = s === 'bold' ? '#8b5cf6' : s === 'clean' ? '#f5f6f8' : (s === 'aurora' ? '#050611' : '#07080b');
       store.set('xp_style', s);
     }
 
@@ -1199,7 +1274,7 @@
     /* init */
     $('#year').textContent = new Date().getFullYear();
     $('#yearsStat').textContent = '+' + (new Date().getFullYear() - FOUNDED);
-    setStyle(params.get('style') || 'midnight');
+    setStyle(params.get('style') || 'bold');
     if (params.get('picker') === '1') $('#picker').hidden = false;
     applyLang();
     setInterval(updateOpenNow, 60000);
@@ -1265,13 +1340,12 @@
         box.appendChild(a);
       });
       // الاشتراكات الرقمية من المتجر (بتظهر للزائر بدون حساب)
-      loadSubs();
       XP.trackVisits('/');
 
       // شريط العروض
       const bar = document.getElementById('offerBar'), offer = XP.announcements[0];
       if (bar && offer) {
-        const link = !offer.link ? 'store.html' : offer.link.startsWith('#') ? 'store.html' + offer.link : offer.link;
+        const link = !offer.link ? 'https://explorplus.online/store' : offer.link.startsWith('#') ? 'https://explorplus.online/store.html' + offer.link : offer.link;
         bar.innerHTML = `🎁 <b>${XP.esc(offer.title)}</b>${offer.body ? ` <span>${XP.esc(offer.body)}</span>` : ''} <a href="${XP.esc(link)}">شوف العرض</a>`;
         bar.hidden = false;
       }

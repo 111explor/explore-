@@ -68,7 +68,7 @@
       app.innerHTML = `<form class="auth card stack" id="loginForm" novalidate>
         <h1 style="font-size:22px">دخول الإدارة</h1>
         ${msg ? `<p class="form-msg err">${esc(msg)}</p>` : ''}
-        <div class="field"><label for="lPhone">الإيميل</label><input id="lPhone" type="email" inputmode="email" autocomplete="username" dir="ltr" required placeholder="name@gmail.com"></div>
+        <div class="field"><label for="lPhone">رقم الواتساب</label><input id="lPhone" type="tel" inputmode="tel" autocomplete="username" dir="ltr" required placeholder="059xxxxxxx"></div>
         <div class="field"><label for="lPass">كلمة السر</label><input id="lPass" type="password" autocomplete="current-password" dir="ltr" required></div>
         <p class="form-msg err" id="lErr" hidden></p>
         <button class="btn btn-primary btn-block" type="submit">دخول</button>
@@ -197,7 +197,7 @@
               <div>${who(t.profiles)}<div class="meta">#${t.id} · ${fmtDate(t.created_at)}</div></div>
               <div class="row">${pill(t.status, 'topup')}${waCustomer(t.profiles, t.status === 'approved' ? `مرحباً ${t.profiles?.full_name || ''} 👋\nتم شحن رصيدك بمبلغ ${money(t.amount)} ✅\nبتقدر تشتري هلأ من المتجر.` : '')}</div>
             </div>
-            <div class="row small"><span class="badge">${esc(t.method)}</span><b class="num">${money(t.amount)}</b>${t.reference ? `<span class="muted">مرجع: ${esc(t.reference)}</span>` : ''}${t.receipt_path && urls[t.receipt_path] ? `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="${esc(urls[t.receipt_path])}">عرض الإيصال</a>` : '<span class="muted">بدون إيصال</span>'}</div>
+            <div class="row small"><span class="badge">${esc(t.method)}</span><b class="num">${money(t.amount)}</b>${t.reference ? `<span class="muted">المحوّل: <b>${esc(t.reference)}</b></span>` : ''}${t.receipt_path && urls[t.receipt_path] ? `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="${esc(urls[t.receipt_path])}">عرض الإيصال</a>` : '<span class="muted">بدون إيصال</span>'}</div>
             ${t.admin_note ? `<p class="small muted">ملاحظة: ${esc(t.admin_note)}</p>` : ''}
             ${t.status === 'pending' ? `
               <div class="row">

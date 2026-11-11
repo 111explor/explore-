@@ -26,7 +26,7 @@
 <body>
   <header class="top">
     <div class="wrap bar">
-      <a class="brand" href="index.html"><img src="assets/logo-light.png" alt=""><span>Explor Plus<small>المتجر</small></span></a>
+      <a class="brand" href="#shop"><img src="assets/logo-light.png" alt=""><span>Explor Plus<small>المتجر</small></span></a>
       <div class="bar-actions">
         <button class="bell" id="bellBtn" type="button" aria-label="الإشعارات" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="count" id="bellCount" hidden></span></button>
         <a class="balance-chip" href="#wallet" id="balanceChip" hidden><span class="hide-sm">الرصيد</span> <b class="num" id="balanceVal">0</b></a>
@@ -39,7 +39,6 @@
       <a class="tab" href="#shop" data-route="shop">المتجر</a>
       <a class="tab" href="#wallet" data-route="wallet">محفظتي</a>
       <a class="tab" href="#orders" data-route="orders" data-orders-filter="all">طلباتي</a>
-      <a class="tab" href="index.html">الموقع الرئيسي</a>
     </nav>
   </header>
 
@@ -284,15 +283,14 @@
           </div>` : '';
       let body = '';
       if (mode === 'login') body = `
-            <div class="field"><label for="aId">الإيميل</label><input id="aId" type="email" inputmode="email" autocomplete="username" required placeholder="name@gmail.com" dir="ltr"></div>
+            <div class="field"><label for="aId">رقم الواتساب</label><input id="aId" type="tel" inputmode="tel" autocomplete="username" required placeholder="059xxxxxxx" dir="ltr"></div>
             <div class="field"><label for="aPass">كلمة السر</label><input id="aPass" type="password" autocomplete="current-password" required minlength="6" dir="ltr"></div>
             <p class="form-msg err" id="authErr" hidden></p>
             <button class="btn btn-primary btn-block" type="submit">دخول</button>
-            <a class="small muted" style="text-align:center" target="_blank" rel="noopener" href="${waLink(C.WA_SUBSCRIPTIONS, 'مرحباً، نسيت كلمة السر لحسابي بالمتجر. إيميلي: ')}">نسيت كلمة السر؟ راسلنا على واتساب</a>`;
+            <a class="small muted" style="text-align:center" target="_blank" rel="noopener" href="${waLink(C.WA_SUBSCRIPTIONS, 'مرحباً، نسيت كلمة السر لحسابي بالمتجر. رقمي: ')}">نسيت كلمة السر؟ راسلنا على واتساب</a>`;
       if (mode === 'signup') body = `
             <div class="field"><label for="aName">الاسم</label><input id="aName" autocomplete="name" required placeholder="اسمك أو اسم صفحتك"></div>
-            <div class="field"><label for="aEmail">الإيميل</label><input id="aEmail" type="email" inputmode="email" autocomplete="email" required placeholder="name@gmail.com" dir="ltr"><span class="hint">بتدخل فيه على حسابك.</span></div>
-            <div class="field"><label for="aPhone">رقم الجوال (واتساب)</label><input id="aPhone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="059xxxxxxx" dir="ltr"><span class="hint">لحتى نتواصل معك بخصوص طلباتك.</span></div>
+            <div class="field"><label for="aPhone">رقم الواتساب</label><input id="aPhone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="059xxxxxxx" dir="ltr"><span class="hint">بتدخل فيه على حسابك، ومنتواصل معك عليه بخصوص طلباتك.</span></div>
             <div class="field"><label for="aPass">كلمة السر</label><input id="aPass" type="password" autocomplete="new-password" required minlength="6" placeholder="6 أحرف أو أكثر" dir="ltr"></div>
             <label class="check small"><input type="checkbox" id="aTerms"> <span>موافق على <a href="terms.html" target="_blank" rel="noopener" style="color:var(--accent)">الشروط وسياسة الاسترجاع والخصوصية</a></span></label>
             <p class="form-msg err" id="authErr" hidden></p>
@@ -342,24 +340,20 @@
         try {
           if (mode === 'login') {
             const id = val('aId'), pass = $('#aPass').value;
-            if (!XP.isEmail(id) && !validPhone(id)) return showErr('اكتب إيميلك صح.');
+            if (!validPhone(id) && !XP.isEmail(id)) return showErr('اكتب رقم واتساب صحيح، مثلاً 0597653989.');
             if (pass.length < 6) return showErr('كلمة السر لازم تكون 6 أحرف أو أكثر.');
             btn.disabled = true;
-            try { await signIn(id, pass); }
-            catch (ex) { if (/Email not confirmed/.test(ex.message || '') && XP.isEmail(id)) { authEmail = id.toLowerCase(); try { await XP.resendCode(authEmail); } catch (x) {} return renderAuth('verify'); } throw ex; }
+            await signIn(id, pass);
             return await done('أهلاً فيك من جديد');
           }
           if (mode === 'signup') {
-            const name = val('aName'), email = val('aEmail'), phone = val('aPhone'), pass = $('#aPass').value;
+            const name = val('aName'), phone = val('aPhone'), pass = $('#aPass').value;
             if (!name) return showErr('اكتب اسمك.');
-            if (!XP.isEmail(email)) return showErr('اكتب إيميل صحيح، مثلاً name@gmail.com.');
-            if (!validPhone(phone)) return showErr('اكتب رقم جوال صحيح، مثلاً 0597653989.');
+            if (!validPhone(phone)) return showErr('اكتب رقم واتساب صحيح، مثلاً 0597653989.');
             if (pass.length < 6) return showErr('كلمة السر لازم تكون 6 أحرف أو أكثر.');
             if (!$('#aTerms').checked) return showErr('لازم توافق على الشروط لتكمل.');
             btn.disabled = true;
-            const r = await signUp(name, email, phone, pass);
-            authEmail = email.toLowerCase();
-            if (r.needsCode) { toast('بعتنالك رمز تأكيد على إيميلك ✉️'); return renderAuth('verify'); }
+            await signUp(name, XP.phoneEmail(phone), phone, pass);
             return await done(`أهلاً ${name}! حسابك جاهز`);
           }
           if (mode === 'verify') {
@@ -410,7 +404,7 @@
                 <select id="tMethod">${methods.map((m) => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('')}</select></div>
               <div class="pay-details" id="payDetails"></div>
               <div class="field"><label for="tAmount">المبلغ (${esc(C.CURRENCY || '₪')})</label><input id="tAmount" type="number" inputmode="decimal" min="${C.MIN_TOPUP || 1}" step="any" required dir="ltr" placeholder="${C.MIN_TOPUP || 10}"></div>
-              <div class="field"><label for="tRef">رقم العملية / اسم المحوّل</label><input id="tRef" placeholder="اختياري بس بيسرّع المراجعة"></div>
+              <div class="field"><label for="tRef">رقم المحوّل منه أو اسم صاحب التحويل</label><input id="tRef" required placeholder="مثلاً: 0599123456 أو محمد أحمد"><span class="hint">لحتى نلاقي تحويلك ونأكّده بسرعة.</span></div>
               <div class="field"><label for="tFile">صورة الإيصال</label><input id="tFile" type="file" accept="image/*"><span class="hint">سكرين شوت من التحويل.</span></div>
               <p class="form-msg err" id="tErr" hidden></p>
               <button class="btn btn-primary btn-block" type="submit">أرسل طلب الشحن</button>
@@ -438,6 +432,7 @@
         const err = $('#tErr'), btn = e.target.querySelector('button[type=submit]');
         const amount = Number($('#tAmount').value), file = $('#tFile').files[0];
         const method = methods.find((x) => x.id === $('#tMethod').value);
+        if (!$('#tRef').value.trim()) { err.textContent = 'اكتب رقم المحوّل منه أو اسم صاحب التحويل.'; err.hidden = false; $('#tRef').focus(); return; }
         if (!(amount >= (C.MIN_TOPUP || 1))) { err.textContent = `أقل مبلغ للشحن ${money(C.MIN_TOPUP || 1)}.`; err.hidden = false; return; }
         if (file && file.size > 8 * 1024 * 1024) { err.textContent = 'الصورة كبيرة كتير (أكثر من 8MB).'; err.hidden = false; return; }
         btn.disabled = true; btn.textContent = 'جاري الإرسال…'; err.hidden = true;
