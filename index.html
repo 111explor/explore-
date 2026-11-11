@@ -265,6 +265,14 @@
     .step h3 { font-size: 18px; margin: 10px 0 6px; }
     .step p { color: var(--muted); font-size: 14.5px; }
 
+    /* why us */
+    .why { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .why-item { padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); display: grid; gap: 8px; align-content: start; }
+    .why-ico { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); margin-bottom: 6px; }
+    .why-ico svg { width: 24px; height: 24px; }
+    .why-item h3 { font-size: 18px; }
+    .why-item p { color: var(--muted); font-size: 14.5px; }
+
     /* works */
     .works { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .work {
@@ -383,7 +391,7 @@
       .hero-grid { grid-template-columns: 1fr; }
       .hero-visual { max-width: 360px; order: -1; }
       .services, .works, .reviews { grid-template-columns: repeat(2, 1fr); }
-      .steps { grid-template-columns: repeat(2, 1fr); }
+      .steps, .why { grid-template-columns: repeat(2, 1fr); }
       .contact { grid-template-columns: 1fr; }
       .nav-links { display: none; }
       .menu-btn { display: grid; }
@@ -395,7 +403,7 @@
     @media (max-width: 640px) {
       .hero { padding-top: 36px; }
       section.block { padding: 64px 0; }
-      .services, .works, .reviews, .steps { grid-template-columns: 1fr; }
+      .services, .works, .reviews, .steps, .why { grid-template-columns: 1fr; }
       .svc.featured { grid-column: auto; }
       form .row { grid-template-columns: 1fr; }
       .chip-2 { inset-inline-start: 0; }
@@ -430,7 +438,7 @@
       </a>
       <nav class="nav-links" aria-label="main">
         <a href="#services" data-i18n="nav_services">خدماتنا</a>
-        <a href="#process" data-i18n="nav_process">كيف نشتغل</a>
+        <a href="#why" data-i18n="nav_process">ليش نحنا</a>
         <a href="#works" data-i18n="nav_works">أعمالنا</a>
         <a href="#reviews" data-i18n="nav_reviews">آراء العملاء</a>
         <a href="#contact" data-i18n="nav_contact">تواصل معنا</a>
@@ -446,7 +454,7 @@
     </div>
     <nav class="mobile-nav" id="mobileNav" aria-label="mobile">
       <a href="#services" data-i18n="nav_services">خدماتنا</a>
-      <a href="#process" data-i18n="nav_process">كيف نشتغل</a>
+      <a href="#why" data-i18n="nav_process">ليش نحنا</a>
       <a href="#works" data-i18n="nav_works">أعمالنا</a>
       <a href="#reviews" data-i18n="nav_reviews">آراء العملاء</a>
       <a href="#contact" data-i18n="nav_contact">تواصل معنا</a>
@@ -506,28 +514,28 @@
         <div class="store-band reveal">
           <div>
             <div class="eyebrow" data-i18n="store_eyebrow">الاشتراكات الرقمية</div>
-            <h2 data-i18n="store_title">اشحن رصيدك واستلم اشتراكك فوراً</h2>
-            <p data-i18n="store_sub">اعمل حساب برقم جوالك، اشحن محفظتك، واشترِ اشتراكاتك وبتوصلك بياناتها مباشرة بدون انتظار.</p>
+            <h2 data-i18n="store_title">اشتراكاتك بتسليم فوري</h2>
+            <p data-i18n="store_sub">اشحن محفظتك واشترِ بضغطة، وكل ما تشتري أكتر بتاخد خصم أكبر.</p>
           </div>
           <a class="btn btn-primary" href="store.html" data-i18n="store_cta">ادخل المتجر</a>
         </div>
       </div>
     </section>
 
-    <!-- ============ PROCESS ============ -->
-    <section class="block" id="process" style="padding-top:0">
+    <!-- ============ WHY US ============ -->
+    <section class="block" id="why" style="padding-top:0">
       <div class="wrap">
         <div class="sec-head reveal">
           <div>
-            <div class="eyebrow" data-i18n="process_eyebrow">كيف نشتغل</div>
-            <h2 data-i18n="process_title">من أول رسالة لحد النتيجة</h2>
+            <div class="eyebrow" data-i18n="why_eyebrow">ليش تختارنا؟</div>
+            <h2 data-i18n="why_title">شغل بتعتمد عليه</h2>
           </div>
         </div>
-        <div class="steps">
-          <div class="step reveal"><h3 data-i18n="p1_t">تواصل معنا</h3><p data-i18n="p1_d">احكيلنا عن نشاطك والخدمة اللي بدك إياها عبر الفورم أو واتساب.</p></div>
-          <div class="step reveal"><h3 data-i18n="p2_t">نفهم ونخطط</h3><p data-i18n="p2_d">ندرس صفحتك وجمهورك ونقترح عليك الخطة والسعر الأنسب.</p></div>
-          <div class="step reveal"><h3 data-i18n="p3_t">ننفّذ</h3><p data-i18n="p3_d">تصوير، تصميم، إعلانات أو إدارة كاملة. بتابع معنا خطوة بخطوة.</p></div>
-          <div class="step reveal"><h3 data-i18n="p4_t">نتابع النتائج</h3><p data-i18n="p4_d">تقارير واضحة وتحسين مستمر لحتى توصل لهدفك.</p></div>
+        <div class="why">
+          <div class="why-item reveal"><span class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><h3 data-i18n="w1_t">خبرة من 2018</h3><p data-i18n="w1_d">أكتر من 8 سنين خبرة بالدعاية والإعلان والسوشال ميديا.</p></div>
+          <div class="why-item reveal"><span class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span><h3 data-i18n="w2_t">سرعة بالتنفيذ</h3><p data-i18n="w2_d">منبلّش بشغلك بنفس اليوم، والتوثيق والاشتراكات بتوصلك خلال دقائق.</p></div>
+          <div class="why-item reveal"><span class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor"/></svg></span><h3 data-i18n="w3_t">أسعار مناسبة</h3><p data-i18n="w3_d">باقات لكل ميزانية، وخصومات للعملاء الدائمين.</p></div>
+          <div class="why-item reveal"><span class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5a9 9 0 0 1 18 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg></span><h3 data-i18n="w4_t">متابعة بعد البيع</h3><p data-i18n="w4_d">ما منختفي بعد الدفع: دعم يومي من 10 الصبح لـ 10 الليل.</p></div>
         </div>
       </div>
     </section>
@@ -706,7 +714,7 @@
     /* ================= النصوص (عربي / إنجليزي) ================= */
     const I18N = {
       ar: {
-        tagline: 'للدعاية والإعلان', nav_services: 'خدماتنا', nav_process: 'كيف نشتغل', nav_works: 'أعمالنا', nav_reviews: 'آراء العملاء', nav_contact: 'تواصل معنا',
+        tagline: 'للدعاية والإعلان', nav_services: 'خدماتنا', nav_process: 'ليش نحنا', nav_works: 'أعمالنا', nav_reviews: 'آراء العملاء', nav_contact: 'تواصل معنا',
         cta_order: 'اطلب خدمتك', since: 'منذ 2018', pill_text: 'وكالة إبداعية',
         hero_1: 'شريكك الرقمي', hero_2: 'نحو النجاح والتطوير.',
         hero_lead: 'منظومة تسويقية متكاملة تمنح علامتك التجارية الظهور الذي تستحقه، وتصل بك إلى جمهورك المستهدف بدقة.',
@@ -732,10 +740,10 @@
         f_err_name: 'اكتب اسمك لو سمحت', f_err_service: 'اختار الخدمة المطلوبة',
         msg_hello: 'مرحباً Explor Plus 👋', msg_want: 'بدي أطلب خدمة:', msg_name: 'الاسم / الصفحة', msg_service: 'الخدمة', msg_details: 'ملاحظات', msg_from_site: '(مرسلة من الموقع)',
         review_msg: 'مرحباً Explor Plus، حابب أشارككم رأيي بتجربتي معكم:',
-        rights: 'جميع الحقوق محفوظة', nav_store: 'المتجر', nav_store_full: 'المتجر · اشحن واشترِ', store_eyebrow: 'الاشتراكات الرقمية', store_title: 'اشحن رصيدك واستلم اشتراكك فوراً', store_sub: 'اعمل حساب برقم جوالك، اشحن محفظتك، واشترِ اشتراكاتك وبتوصلك بياناتها مباشرة بدون انتظار.', store_cta: 'ادخل المتجر', admin_login: 'دخول الإدارة', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
+        rights: 'جميع الحقوق محفوظة', nav_store: 'المتجر', nav_store_full: 'المتجر · اشحن واشترِ', store_eyebrow: 'الاشتراكات الرقمية', store_title: 'اشتراكاتك بتسليم فوري', store_sub: 'اشحن محفظتك واشترِ بضغطة، وكل ما تشتري أكتر بتاخد خصم أكبر.', store_cta: 'ادخل المتجر', why_eyebrow: 'ليش تختارنا؟', why_title: 'شغل بتعتمد عليه', w1_t: 'خبرة من 2018', w1_d: 'أكتر من 8 سنين خبرة بالدعاية والإعلان والسوشال ميديا.', w2_t: 'سرعة بالتنفيذ', w2_d: 'منبلّش بشغلك بنفس اليوم، والتوثيق والاشتراكات بتوصلك خلال دقائق.', w3_t: 'أسعار مناسبة', w3_d: 'باقات لكل ميزانية، وخصومات للعملاء الدائمين.', w4_t: 'متابعة بعد البيع', w4_d: 'ما منختفي بعد الدفع: دعم يومي من 10 الصبح لـ 10 الليل.', admin_login: 'دخول الإدارة', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
       },
       en: {
-        tagline: 'Advertising & Media', nav_services: 'Services', nav_process: 'How we work', nav_works: 'Our work', nav_reviews: 'Reviews', nav_contact: 'Contact',
+        tagline: 'Advertising & Media', nav_services: 'Services', nav_process: 'Why us', nav_works: 'Our work', nav_reviews: 'Reviews', nav_contact: 'Contact',
         cta_order: 'Order a service', since: 'Since 2018', pill_text: 'Creative agency',
         hero_1: 'Your digital partner', hero_2: 'for growth and success.',
         hero_lead: 'A complete marketing system that gives your brand the visibility it deserves and reaches your target audience with precision.',
@@ -761,7 +769,7 @@
         f_err_name: 'Please enter your name', f_err_service: 'Please choose a service',
         msg_hello: 'Hello Explor Plus 👋', msg_want: 'I would like to order a service:', msg_name: 'Name / page', msg_service: 'Service', msg_details: 'Notes', msg_from_site: '(sent from the website)',
         review_msg: 'Hello Explor Plus, I would like to share my experience with you:',
-        rights: 'All rights reserved', nav_store: 'Store', nav_store_full: 'Store · top up & buy', store_eyebrow: 'Digital subscriptions', store_title: 'Top up your wallet and get your subscription instantly', store_sub: 'Create an account with your phone number, top up your wallet, and buy subscriptions that are delivered to you right away.', store_cta: 'Open the store', admin_login: 'Admin login', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
+        rights: 'All rights reserved', nav_store: 'Store', nav_store_full: 'Store · top up & buy', store_eyebrow: 'Digital subscriptions', store_title: 'Subscriptions delivered instantly', store_sub: 'Top up your wallet and buy in one tap, and the more you buy, the bigger your discount.', store_cta: 'Open the store', why_eyebrow: 'Why choose us?', why_title: 'Work you can rely on', w1_t: 'Experience since 2018', w1_d: 'Over 8 years of experience in advertising and social media.', w2_t: 'Fast delivery', w2_d: 'We start on your project the same day, and verification and subscriptions arrive within minutes.', w3_t: 'Fair prices', w3_d: 'Packages for every budget, plus discounts for loyal customers.', w4_t: 'After-sale support', w4_d: 'We don’t disappear after payment: daily support from 10 AM to 10 PM.', admin_login: 'Admin login', picker_title: 'Pick a style', st_midnight: 'Midnight', st_clean: 'Light', st_aurora: 'Aurora'
       }
     };
 
