@@ -68,7 +68,7 @@
       app.innerHTML = `<form class="auth card stack" id="loginForm" novalidate>
         <h1 style="font-size:22px">دخول الإدارة</h1>
         ${msg ? `<p class="form-msg err">${esc(msg)}</p>` : ''}
-        <div class="field"><label for="lPhone">رقم الجوال</label><input id="lPhone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" required></div>
+        <div class="field"><label for="lPhone">الإيميل</label><input id="lPhone" type="email" inputmode="email" autocomplete="username" dir="ltr" required placeholder="name@gmail.com"></div>
         <div class="field"><label for="lPass">كلمة السر</label><input id="lPass" type="password" autocomplete="current-password" dir="ltr" required></div>
         <p class="form-msg err" id="lErr" hidden></p>
         <button class="btn btn-primary btn-block" type="submit">دخول</button>
@@ -120,6 +120,17 @@
     }
 
     /* ---------- home ---------- */
+    let trafficTimer = null;
+    async function loadTraffic() {
+      if (!$('#tNow')) { clearInterval(trafficTimer); trafficTimer = null; return; }
+      const { data, error } = await sb.rpc('admin_traffic');
+      if (error) { $('#trafficTiles').innerHTML = '<p class="muted small">عداد الزيارات بحاجة تحديث قاعدة البيانات (ملف update-2026-11-traffic.sql).</p>'; clearInterval(trafficTimer); trafficTimer = null; return; }
+      const t = (data && data[0]) || {};
+      $('#tNow').textContent = t.active_now ?? 0; $('#tStore').textContent = t.store_now ?? 0;
+      $('#tToday').textContent = `${t.visits_today ?? 0}`; $('#tToday').title = `${t.visitors_today ?? 0} زائر مختلف`;
+      $('#tWeek').textContent = t.visits_7d ?? 0;
+    }
+
     async function renderHome() {
       const start = new Date(); start.setHours(0, 0, 0, 0);
       const soon = new Date(Date.now() + 7 * 86400000).toISOString();
@@ -138,6 +149,12 @@
       app.innerHTML = `
         <div class="page-head"><div><h1>أهلاً ${esc(me.full_name)} 👋</h1><p>ملخص اليوم.</p></div><button class="btn btn-ghost" type="button" data-backup>⬇ تنزيل نسخة احتياطية</button></div>
         <p class="muted small" style="margin:-8px 0 14px">نزّل نسخة كل أسبوع وخزّنها بـ Google Drive. فيها الزباين والأرصدة والطلبات والمخزون.</p>
+        <div class="grid grid-4" id="trafficTiles" style="margin-bottom:14px">
+          <div class="stat"><b class="num" id="tNow">…</b><span><i class="live-dot" aria-hidden="true"></i>نشط بالموقع الآن</span></div>
+          <div class="stat"><b class="num" id="tStore">…</b><span>منهم بالمتجر</span></div>
+          <div class="stat"><b class="num" id="tToday">…</b><span>زيارات اليوم</span></div>
+          <div class="stat"><b class="num" id="tWeek">…</b><span>زيارات آخر 7 أيام</span></div>
+        </div>
         <div class="grid grid-4">
           <a class="stat" href="#topups"><b class="num">${counts.topups}</b><span>طلبات شحن بانتظارك</span></a>
           <a class="stat" href="#orders"><b class="num">${counts.orders}</b><span>طلبات قيد التنفيذ</span></a>
@@ -157,6 +174,7 @@
             return `<div class="spread" style="padding:8px 0;border-bottom:1px solid var(--border)"><span>${who(o.profiles)}<span class="small muted">${esc(o.product_name)} · #${o.id}</span></span><span class="row"><span class="badge ${n <= 3 ? 'warn' : ''}">باقي ${n} ${n === 1 ? 'يوم' : 'أيام'}</span>${waCustomer(o.profiles, `مرحباً ${o.profiles?.full_name || ''} 👋\nاشتراك ${o.product_name} تبعك بيخلص بعد ${n} ${n === 1 ? 'يوم' : 'أيام'}.\nجدّده من المتجر بضغطة، أو رد علينا هون ومنجددلك 🙏`)}</span></div>`;
           }).join('') : '<p class="muted small">ما في اشتراكات بتخلص هالأسبوع.</p>'}
         </div>`;
+      loadTraffic(); if (!trafficTimer) trafficTimer = setInterval(loadTraffic, 20000);
     }
 
     /* ---------- topups ---------- */

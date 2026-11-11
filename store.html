@@ -265,44 +265,121 @@
     }
 
     /* ---------- auth ---------- */
+    // mode: login | signup | verify | forgot | reset
+    let authEmail = '';
     function renderAuth(mode = 'login') {
-      if (me) { location.hash = '#shop'; return; }
-      app.innerHTML = `
-        <div class="auth card">
+      if (me && mode !== 'reset') { location.hash = '#shop'; return; }
+      const tabs = (mode === 'login' || mode === 'signup') ? `
           <div class="switch" role="group">
             <button type="button" data-mode="login" aria-pressed="${mode === 'login'}">تسجيل الدخول</button>
             <button type="button" data-mode="signup" aria-pressed="${mode === 'signup'}">حساب جديد</button>
-          </div>
-          <form class="stack" id="authForm" novalidate>
-            ${mode === 'signup' ? `<div class="field"><label for="aName">الاسم</label><input id="aName" autocomplete="name" required placeholder="اسمك أو اسم صفحتك"></div>` : ''}
-            <div class="field"><label for="aPhone">رقم الجوال</label><input id="aPhone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="059xxxxxxx" dir="ltr"><span class="hint">نفس رقم الواتساب لحتى نتواصل معك.</span></div>
-            <div class="field"><label for="aPass">كلمة السر</label><input id="aPass" type="password" autocomplete="${mode === 'signup' ? 'new-password' : 'current-password'}" required minlength="6" placeholder="6 أحرف أو أكثر" dir="ltr"></div>
-            ${mode === 'signup' ? `<label class="check small"><input type="checkbox" id="aTerms"> <span>موافق على <a href="terms.html" target="_blank" rel="noopener" style="color:var(--accent)">الشروط وسياسة الاسترجاع والخصوصية</a></span></label>` : ''}
+          </div>` : '';
+      let body = '';
+      if (mode === 'login') body = `
+            <div class="field"><label for="aId">الإيميل</label><input id="aId" type="email" inputmode="email" autocomplete="username" required placeholder="name@gmail.com" dir="ltr"></div>
+            <div class="field"><label for="aPass">كلمة السر</label><input id="aPass" type="password" autocomplete="current-password" required minlength="6" dir="ltr"></div>
             <p class="form-msg err" id="authErr" hidden></p>
-            <button class="btn btn-primary btn-block" type="submit">${mode === 'signup' ? 'إنشاء الحساب' : 'دخول'}</button>
-            ${mode === 'login' ? `<a class="small muted" style="text-align:center" target="_blank" rel="noopener" href="${waLink(C.WA_SUBSCRIPTIONS, 'مرحباً، نسيت كلمة السر لحسابي بالمتجر. رقمي: ')}">نسيت كلمة السر؟ راسلنا على واتساب</a>` : ''}
-          </form>
-        </div>`;
+            <button class="btn btn-primary btn-block" type="submit">دخول</button>
+            <div class="spread small"><button class="linkish" type="button" data-mode="forgot">نسيت كلمة السر؟</button><button class="linkish" type="button" data-mode="verify">عندي رمز تأكيد</button></div>`;
+      if (mode === 'signup') body = `
+            <div class="field"><label for="aName">الاسم</label><input id="aName" autocomplete="name" required placeholder="اسمك أو اسم صفحتك"></div>
+            <div class="field"><label for="aEmail">الإيميل</label><input id="aEmail" type="email" inputmode="email" autocomplete="email" required placeholder="name@gmail.com" dir="ltr"><span class="hint">رح يوصلك عليه رمز تأكيد.</span></div>
+            <div class="field"><label for="aPhone">رقم الجوال (واتساب)</label><input id="aPhone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="059xxxxxxx" dir="ltr"><span class="hint">لحتى نتواصل معك بخصوص طلباتك.</span></div>
+            <div class="field"><label for="aPass">كلمة السر</label><input id="aPass" type="password" autocomplete="new-password" required minlength="6" placeholder="6 أحرف أو أكثر" dir="ltr"></div>
+            <label class="check small"><input type="checkbox" id="aTerms"> <span>موافق على <a href="terms.html" target="_blank" rel="noopener" style="color:var(--accent)">الشروط وسياسة الاسترجاع والخصوصية</a></span></label>
+            <p class="form-msg err" id="authErr" hidden></p>
+            <button class="btn btn-primary btn-block" type="submit">إنشاء الحساب</button>`;
+      if (mode === 'verify') body = `
+            <h2 style="font-size:20px">✉️ أكّد إيميلك</h2>
+            <p class="muted small">${authEmail ? `بعتنا رمز على <b dir="ltr">${esc(authEmail)}</b>. شوف كمان مجلد الرسائل غير المرغوب فيها (Spam).` : 'دخّل إيميلك والرمز اللي وصلك.'}</p>
+            <div class="field" ${authEmail ? 'hidden' : ''}><label for="aEmail">الإيميل</label><input id="aEmail" type="email" inputmode="email" autocomplete="email" dir="ltr" value="${esc(authEmail)}"></div>
+            <div class="field"><label for="aCode">رمز التأكيد</label><input id="aCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" dir="ltr" class="code-input" placeholder="••••••"></div>
+            <p class="form-msg err" id="authErr" hidden></p>
+            <button class="btn btn-primary btn-block" type="submit">تأكيد</button>
+            <div class="spread small"><button class="linkish" type="button" id="resendBtn">ابعتلي رمز جديد</button><button class="linkish" type="button" data-mode="login">رجوع</button></div>`;
+      if (mode === 'forgot') body = `
+            <h2 style="font-size:20px">🔑 نسيت كلمة السر</h2>
+            <p class="muted small">اكتب إيميلك وبنبعتلك رمز لتعمل كلمة سر جديدة.</p>
+            <div class="field"><label for="aEmail">الإيميل</label><input id="aEmail" type="email" inputmode="email" autocomplete="email" dir="ltr" value="${esc(authEmail)}"></div>
+            <p class="form-msg err" id="authErr" hidden></p>
+            <button class="btn btn-primary btn-block" type="submit">ابعتلي الرمز</button>
+            <div class="spread small"><a class="linkish" target="_blank" rel="noopener" href="${waLink(C.WA_SUBSCRIPTIONS, 'مرحباً، نسيت كلمة السر لحسابي بالمتجر ومش واصلني رمز. رقمي: ')}">ما وصلني إشي؟ راسلنا</a><button class="linkish" type="button" data-mode="login">رجوع</button></div>`;
+      if (mode === 'reset') body = `
+            <h2 style="font-size:20px">🔑 كلمة سر جديدة</h2>
+            <p class="muted small">بعتنا رمز على <b dir="ltr">${esc(authEmail)}</b>.</p>
+            <div class="field"><label for="aCode">الرمز</label><input id="aCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" dir="ltr" class="code-input" placeholder="••••••"></div>
+            <div class="field"><label for="aPass">كلمة السر الجديدة</label><input id="aPass" type="password" autocomplete="new-password" minlength="6" dir="ltr"></div>
+            <p class="form-msg err" id="authErr" hidden></p>
+            <button class="btn btn-primary btn-block" type="submit">حفظ والدخول</button>
+            <div class="spread small"><button class="linkish" type="button" data-mode="forgot">ابعتلي رمز جديد</button><button class="linkish" type="button" data-mode="login">رجوع</button></div>`;
+      app.innerHTML = `<div class="auth card">${tabs}<form class="stack" id="authForm" novalidate>${body}</form></div>`;
       $$('[data-mode]', app).forEach((b) => b.addEventListener('click', () => renderAuth(b.dataset.mode)));
+      const first = app.querySelector('input:not([hidden]):not([type=checkbox])'); if (first && mode !== 'login') first.focus();
+      const showErr = (m) => { const e = $('#authErr'); e.textContent = m; e.hidden = false; };
+      const done = async (msg) => {
+        await refreshMe(); toast(msg); location.hash = '#shop';
+        if (pendingBuy) { const id = pendingBuy; pendingBuy = null; setTimeout(() => openBuy(id), 400); }
+        else route();
+      };
+      const rb = $('#resendBtn');
+      if (rb) rb.addEventListener('click', async () => {
+        const em = authEmail || ($('#aEmail') && $('#aEmail').value.trim());
+        if (!XP.isEmail(em)) return showErr('اكتب إيميلك أول.');
+        try { await XP.resendCode(em); toast('بعتنالك رمز جديد ✉️'); } catch (ex) { showErr(errMsg(ex)); }
+      });
       $('#authForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const err = $('#authErr'), btn = e.target.querySelector('button[type=submit]');
-        const name = $('#aName') ? $('#aName').value.trim() : '';
-        const phone = $('#aPhone').value, pass = $('#aPass').value;
-        let m = '';
-        if (mode === 'signup' && !name) m = 'اكتب اسمك.';
-        else if (mode === 'signup' && !$('#aTerms').checked) m = 'لازم توافق على الشروط لتكمل.';
-        else if (!validPhone(phone)) m = 'اكتب رقم جوال صحيح، مثلاً 0597653989.';
-        else if (pass.length < 6) m = 'كلمة السر لازم تكون 6 أحرف أو أكثر.';
-        if (m) { err.textContent = m; err.hidden = false; return; }
-        btn.disabled = true; err.hidden = true;
+        const btn = e.target.querySelector('button[type=submit]'); $('#authErr').hidden = true;
+        const val = (id) => ($('#' + id) ? $('#' + id).value.trim() : '');
         try {
-          if (mode === 'signup') await signUp(name, phone, pass); else await signIn(phone, pass);
-          await refreshMe();
-          toast(mode === 'signup' ? `أهلاً ${name}! حسابك جاهز` : 'أهلاً فيك من جديد');
-          location.hash = '#shop';
-          if (pendingBuy) { const id = pendingBuy; pendingBuy = null; setTimeout(() => openBuy(id), 400); }
-        } catch (ex) { err.textContent = errMsg(ex); err.hidden = false; btn.disabled = false; }
+          if (mode === 'login') {
+            const id = val('aId'), pass = $('#aPass').value;
+            if (!XP.isEmail(id) && !validPhone(id)) return showErr('اكتب إيميلك صح.');
+            if (pass.length < 6) return showErr('كلمة السر لازم تكون 6 أحرف أو أكثر.');
+            btn.disabled = true;
+            try { await signIn(id, pass); }
+            catch (ex) { if (/Email not confirmed/.test(ex.message || '') && XP.isEmail(id)) { authEmail = id.toLowerCase(); try { await XP.resendCode(authEmail); } catch (x) {} return renderAuth('verify'); } throw ex; }
+            return await done('أهلاً فيك من جديد');
+          }
+          if (mode === 'signup') {
+            const name = val('aName'), email = val('aEmail'), phone = val('aPhone'), pass = $('#aPass').value;
+            if (!name) return showErr('اكتب اسمك.');
+            if (!XP.isEmail(email)) return showErr('اكتب إيميل صحيح، مثلاً name@gmail.com.');
+            if (!validPhone(phone)) return showErr('اكتب رقم جوال صحيح، مثلاً 0597653989.');
+            if (pass.length < 6) return showErr('كلمة السر لازم تكون 6 أحرف أو أكثر.');
+            if (!$('#aTerms').checked) return showErr('لازم توافق على الشروط لتكمل.');
+            btn.disabled = true;
+            const r = await signUp(name, email, phone, pass);
+            authEmail = email.toLowerCase();
+            if (r.needsCode) { toast('بعتنالك رمز تأكيد على إيميلك ✉️'); return renderAuth('verify'); }
+            return await done(`أهلاً ${name}! حسابك جاهز`);
+          }
+          if (mode === 'verify') {
+            const em = authEmail || val('aEmail'), code = val('aCode');
+            if (!XP.isEmail(em)) return showErr('اكتب إيميلك.');
+            if (code.replace(/\D/g, '').length < 6) return showErr('اكتب الرمز كامل.');
+            btn.disabled = true;
+            await XP.verifyCode(em, code, 'signup');
+            return await done('تأكد إيميلك ✓ حسابك جاهز');
+          }
+          if (mode === 'forgot') {
+            const em = val('aEmail');
+            if (!XP.isEmail(em)) return showErr('اكتب إيميلك صح.');
+            btn.disabled = true;
+            await XP.sendResetCode(em);
+            authEmail = em.toLowerCase(); toast('بعتنالك رمز ✉️');
+            return renderAuth('reset');
+          }
+          if (mode === 'reset') {
+            const code = val('aCode'), pass = $('#aPass').value;
+            if (code.replace(/\D/g, '').length < 6) return showErr('اكتب الرمز كامل.');
+            if (pass.length < 6) return showErr('كلمة السر لازم تكون 6 أحرف أو أكثر.');
+            btn.disabled = true;
+            await XP.verifyCode(authEmail, code, 'recovery');
+            await XP.setNewPassword(pass);
+            return await done('تغيّرت كلمة السر ✓');
+          }
+        } catch (ex) { showErr(errMsg(ex)); btn.disabled = false; }
       });
     }
 
@@ -488,7 +565,7 @@
     window.addEventListener('hashchange', () => { closeSheet(); route(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
 
-    (async () => { await XP.loadSiteConfig(); await refreshMe(); route(); loadNotes(); })();
+    (async () => { await XP.loadSiteConfig(); await refreshMe(); route(); loadNotes(); XP.trackVisits('/store'); })();
   })();
   </script>
 </body>

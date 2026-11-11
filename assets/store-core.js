@@ -46,13 +46,21 @@
     invalid_setting: 'إعداد غير معروف.',
     title_required: 'اكتب عنوان العرض.',
     weak_password: 'كلمة السر لازم تكون 6 أحرف أو أكثر.',
+    email_taken: 'هالإيميل مسجّل من قبل. سجّل دخول، أو استخدم «نسيت كلمة السر».',
+    'Token has expired or is invalid': 'الرمز غلط أو انتهت صلاحيته. اطلب رمز جديد.',
+    'Database error saving new user': 'رقم الجوال هاد مسجّل بحساب تاني. إذا هو رقمك راسلنا على واتساب.',
+    'For security purposes': 'استنى دقيقة قبل ما تطلب رمز جديد.',
+    'Email rate limit exceeded': 'انبعتت رسائل كتير. استنى شوي وجرّب.',
+    'Unable to validate email address': 'الإيميل مش صحيح.',
+    'is invalid': 'الإيميل مش صحيح.',
+    'Email not confirmed': 'لازم تأكد إيميلك أول. استخدم «عندي رمز» ودخّل الرمز اللي وصلك.',
+    'New password should be different': 'اختار كلمة سر غير القديمة.',
     profile_not_found: 'الحساب مش موجود.',
     'Invalid login credentials': 'رقم الجوال أو كلمة السر غلط.',
     'User already registered': 'هالرقم مسجّل من قبل. سجّل دخول بدل ما تعمل حساب جديد.',
     'already registered': 'هالرقم مسجّل من قبل. سجّل دخول بدل ما تعمل حساب جديد.',
     'duplicate key': 'هالرقم مسجّل من قبل.',
     'Password should be at least': 'كلمة السر لازم تكون 6 أحرف أو أكثر.',
-    'Email not confirmed': 'الحساب بحاجة تفعيل. راسل الإدارة.',
     'Failed to fetch': 'في مشكلة بالاتصال. تأكد من النت وجرّب كمان مرة.',
     'rate limit': 'محاولات كثيرة. استنى دقيقة وجرّب.'
   };
@@ -114,17 +122,54 @@
     return data;
   }
 
-  async function signIn(phone, password) {
-    const { error } = await sb.auth.signInWithPassword({ email: phoneEmail(phone), password });
+  const isEmail = (x) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(x || '').trim());
+  // الدخول بالإيميل، أو برقم الجوال للحسابات القديمة
+  const loginId = (x) => (isEmail(x) ? String(x).trim().toLowerCase() : phoneEmail(x));
+
+  async function signIn(idOrPhone, password) {
+    const { error } = await sb.auth.signInWithPassword({ email: loginId(idOrPhone), password });
     if (error) throw error;
   }
-  async function signUp(name, phone, password) {
+  // تسجيل بالإيميل: بيرجع needsCode=true إذا لازم الزبون يدخل الرمز اللي وصله
+  async function signUp(name, email, phone, password) {
     const { data, error } = await sb.auth.signUp({
-      email: phoneEmail(phone), password,
+      email: String(email).trim().toLowerCase(), password,
       options: { data: { full_name: name.trim(), phone: normPhone(phone) } }
     });
     if (error) throw error;
-    if (!data.session) await signIn(phone, password); // إذا التفعيل بالإيميل مطفّى بيرجع session مباشرة
+    if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) throw new Error('email_taken');
+    return { needsCode: !data.session };
+  }
+  async function verifyCode(email, code, type) {
+    const { error } = await sb.auth.verifyOtp({ email: String(email).trim().toLowerCase(), token: String(code).replace(/\D/g, ''), type });
+    if (error) throw error;
+  }
+  async function resendCode(email) {
+    const { error } = await sb.auth.resend({ type: 'signup', email: String(email).trim().toLowerCase() });
+    if (error) throw error;
+  }
+  async function sendResetCode(email) {
+    const { error } = await sb.auth.resetPasswordForEmail(String(email).trim().toLowerCase());
+    if (error) throw error;
+  }
+  async function setNewPassword(password) {
+    const { error } = await sb.auth.updateUser({ password });
+    if (error) throw error;
+  }
+
+  // عدّاد الزيارات و«نشط الآن» (ما بيجمع أي بيانات شخصية: رقم عشوائي بس)
+  function trackVisits(path) {
+    if (!sb) return;
+    let id = null;
+    try { id = localStorage.getItem('xp_vid'); } catch (e) {}
+    if (!id || !/^[a-z0-9]{8,40}$/.test(id)) {
+      id = (Date.now().toString(36) + Math.random().toString(36).slice(2, 12)).replace(/[^a-z0-9]/g, '').slice(0, 24);
+      try { localStorage.setItem('xp_vid', id); } catch (e) {}
+    }
+    const ping = () => { if (!document.hidden) sb.rpc('track_visit', { p_visitor: id, p_path: path }).then(() => {}, () => {}); };
+    ping();
+    setInterval(ping, 60000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) ping(); });
   }
 
   // إعدادات الموقع من قاعدة البيانات (الأدمن بيعدّلها) — بتغطي على config.js
@@ -153,5 +198,5 @@
   }
   const prettyPhone = (n) => { const d = String(n || ''); return d.length >= 11 ? `+${d.slice(0, 3)} ${d.slice(3, 5)} ${d.slice(5, 8)} ${d.slice(8)}` : '+' + d; };
 
-  window.XP = { loadSiteConfig, announcements, prettyPhone, C, sb, configured, $, $$, esc, normPhone, validPhone, phoneEmail, intlPhone, money, fmtDate, waLink, errMsg, toast, copy, twoStep, pill, TX_KIND, setupNotice, getProfile, signIn, signUp };
+  window.XP = { trackVisits, isEmail, verifyCode, resendCode, sendResetCode, setNewPassword, loadSiteConfig, announcements, prettyPhone, C, sb, configured, $, $$, esc, normPhone, validPhone, phoneEmail, intlPhone, money, fmtDate, waLink, errMsg, toast, copy, twoStep, pill, TX_KIND, setupNotice, getProfile, signIn, signUp };
 })();
