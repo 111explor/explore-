@@ -7,6 +7,13 @@
   <meta name="description" content="شروط استخدام متجر Explor Plus وسياسة الاسترجاع والخصوصية.">
   <link rel="canonical" href="https://explorplus.online/terms.html">
   <link rel="icon" href="assets/icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Explor Plus">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
@@ -69,5 +76,6 @@
 
     <p class="muted" style="margin-top:30px">أي سؤال؟ تواصل معنا على واتساب من <a href="index.html#contact" style="color:var(--accent)">صفحة التواصل</a>.</p>
   </main>
+  <script>if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));</script>
 </body>
 </html>

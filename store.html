@@ -7,6 +7,13 @@
   <meta name="description" content="اشحن رصيدك واشترِ اشتراكاتك الرقمية وخدمات Explor Plus واستلمها فوراً.">
   <meta name="theme-color" content="#07080b">
   <link rel="icon" href="assets/icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Explor Plus">
+
   <link rel="canonical" href="https://explorplus.online/store.html">
   <meta property="og:title" content="متجر Explor Plus: اشتراكات رقمية بتسليم فوري">
   <meta property="og:description" content="اشحن رصيدك واشترِ اشتراكاتك الرقمية واستلمها فوراً، مع خصومات للعملاء الدائمين.">
@@ -23,6 +30,7 @@
       <div class="bar-actions">
         <button class="bell" id="bellBtn" type="button" aria-label="الإشعارات" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="count" id="bellCount" hidden></span></button>
         <a class="balance-chip" href="#wallet" id="balanceChip" hidden><span class="hide-sm">الرصيد</span> <b class="num" id="balanceVal">0</b></a>
+        <button class="btn btn-ghost btn-sm" id="installBtn" type="button" hidden>📲 ثبّت التطبيق</button>
         <a class="btn btn-primary btn-sm" href="#login" id="loginBtn">تسجيل الدخول</a>
         <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button" hidden>خروج</button>
       </div>
@@ -560,6 +568,19 @@
       if (e.target.closest('[data-show-tiers]')) { showTiers(); return; }
     });
     $('#bellBtn').addEventListener('click', openNotes);
+    // تثبيت التطبيق (أندرويد/كروم: زر مباشر · آيفون: شرح الخطوتين)
+    let installEvt = null;
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; $('#installBtn').hidden = false; });
+    if (isIOS && !standalone) $('#installBtn').hidden = false;
+    $('#installBtn').addEventListener('click', async () => {
+      if (installEvt) { installEvt.prompt(); const r = await installEvt.userChoice; if (r.outcome === 'accepted') { $('#installBtn').hidden = true; toast('انضاف التطبيق لشاشتك ✓'); } installEvt = null; return; }
+      openSheet(`<div class="spread"><h2>📲 ثبّت Explor Plus</h2><button class="btn btn-ghost btn-sm" data-close>إغلاق</button></div>
+        <ol class="steps-list"><li>افتح المتجر من <b>Safari</b>.</li><li>اضغط زر <b>المشاركة</b> (المربع والسهم ⬆️) تحت.</li><li>اختار <b>«إضافة إلى الشاشة الرئيسية»</b> ← <b>إضافة</b>.</li></ol>
+        <p class="muted small">بيصير عندك أيقونة Explor Plus وبيفتح متل التطبيق.</p>`);
+    });
+    window.addEventListener('appinstalled', () => { $('#installBtn').hidden = true; });
     setInterval(() => { if (me && !document.hidden) { loadNotes(); } }, 60000);
     $('#logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); me = null; await refreshMe(); location.hash = '#shop'; toast('سجّلت خروج'); });
     window.addEventListener('hashchange', () => { closeSheet(); route(); });
@@ -568,5 +589,6 @@
     (async () => { await XP.loadSiteConfig(); await refreshMe(); route(); loadNotes(); XP.trackVisits('/store'); })();
   })();
   </script>
+  <script>if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));</script>
 </body>
 </html>

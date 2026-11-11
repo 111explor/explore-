@@ -36,8 +36,14 @@
   </script>
 
   <link rel="icon" href="assets/icon.png">
-  <link rel="apple-touch-icon" href="assets/icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Explor Plus">
 
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
@@ -813,19 +819,19 @@
     ];
 
     // أعمالنا — ضيف صورك هون لما تجهز (حط الصور بمجلد assets/works)
-    // مثال: { img: 'assets/works/burger.jpg', ar: { t: 'مطعم ...', s: 'تصوير منتجات' }, en: { t: '...', s: 'Product photography' } }
+    // مثال: { img: 'assets/works/burger.webp', ar: { t: 'مطعم ...', s: 'تصوير منتجات' }, en: { t: '...', s: 'Product photography' } }
     // أنواع البطاقات: case = قبل وبعد · celebs = مشاهير تعاملوا معنا · img/video = صورة أو فيديو عادي
     const WORKS = [
-      { type: 'case', before: 'assets/works/unban-nana-before.jpg', after: 'assets/works/unban-nana-after.jpg',
+      { type: 'case', before: 'assets/works/unban-nana-before.webp', after: 'assets/works/unban-nana-after.webp',
         ar: { t: 'فك باند نهائي لحساب صانعة محتوى', s: '494K متابع · حساب معطّل نهائياً', b: 'قبل: معطّل', a: 'بعد: رجع ✔️' },
         en: { t: 'Permanent ban lifted for a creator', s: '494K followers · permanently disabled', b: 'Before: disabled', a: 'After: restored ✔️' } },
-      { type: 'case', before: 'assets/works/unban-rita-before.jpg', after: 'assets/works/unban-rita-after.jpg',
+      { type: 'case', before: 'assets/works/unban-rita-before.webp', after: 'assets/works/unban-rita-after.webp',
         ar: { t: 'استرجاع حساب ريتا المصري', s: '138K متابع · حساب موقوف', b: 'قبل: معطّل', a: 'بعد: رجع ✔️' },
         en: { t: 'Rita Almasri’s account recovered', s: '138K followers · suspended', b: 'Before: disabled', a: 'After: restored ✔️' } },
-      { type: 'case', before: 'assets/works/unban-maslama-before.jpg', after: 'assets/works/unban-maslama-after.jpg',
+      { type: 'case', before: 'assets/works/unban-maslama-before.webp', after: 'assets/works/unban-maslama-after.webp',
         ar: { t: 'فك باند حساب المتداول مسلمة', s: '24.6K متابع · «لا يمكن طلب مراجعة»', b: 'قبل: معطّل', a: 'بعد: رجع ✔️' },
         en: { t: 'Unbanned trader Maslama’s account', s: '24.6K followers · “no further review”', b: 'Before: disabled', a: 'After: restored ✔️' } },
-      { type: 'case', before: 'assets/works/abood-before.jpg', after: 'assets/works/abood-after.jpg',
+      { type: 'case', before: 'assets/works/abood-before.webp', after: 'assets/works/abood-after.webp',
         ar: { t: 'فك باند حساب المتداول عبود عمر', s: '25.5K متابع · 16/9/2025', b: 'قبل: معطّل', a: 'بعد: رجع ✔️' },
         en: { t: 'Unbanned trader Abood Omer’s account', s: '25.5K followers · 16/9/2025', b: 'Before: disabled', a: 'After: restored ✔️' } },
       { type: 'celebs', names: { ar: ['شادي العشي', 'هيا سويد', 'محمد الخطيب (دبدوب)'], en: ['Shadi Al-Ashi', 'Haya Sweid', 'Mohammad Al-Khatib (Dabdoob)'] },
@@ -835,57 +841,57 @@
 
     // نتائج حملات إعلانية حقيقية (من سكرينات مدير إعلانات ميتا) — ضيف حملات جديدة بنفس الشكل
     const RESULTS = [
-      { img: 'assets/works/ads-4.jpg', big: '313K', tag: { ar: 'وصول', en: 'Reach' },
+      { img: 'assets/works/ads-4.webp', big: '313K', tag: { ar: 'وصول', en: 'Reach' },
         ar: { t: 'حملة أبو وسيم', big: 'شخص وصلهم الإعلان خلال 7 أيام', rows: ['234 ألف تفاعل مع المنشور'] },
         en: { t: 'Abu Wasim campaign', big: 'people reached in 7 days', rows: ['234K post engagements'] } },
-      { img: 'assets/works/ads-5.jpg', big: '287', tag: { ar: 'رسائل', en: 'Messages' },
+      { img: 'assets/works/ads-5.webp', big: '287', tag: { ar: 'رسائل', en: 'Messages' },
         ar: { t: 'متجر ملابس · تشكيلة البلاطين الشتوي', big: 'محادثة مع زباين جدد', rows: ['المبلغ المنفق: 89.96 ₪', 'تكلفة المحادثة: 0.31 ₪'] },
         en: { t: 'Clothing store · winter trousers', big: 'conversations with new customers', rows: ['Spent: ₪89.96', 'Cost per conversation: ₪0.31'] } },
-      { img: 'assets/works/ads-1.jpg', big: '45,622', tag: { ar: 'وصول', en: 'Reach' },
+      { img: 'assets/works/ads-1.webp', big: '45,622', tag: { ar: 'وصول', en: 'Reach' },
         ar: { t: 'منشور إنستغرام', big: 'شخص وصلهم الإعلان', rows: ['المبلغ المنفق: 15 ₪', 'تكلفة كل 1000 وصول: 0.33 ₪'] },
         en: { t: 'Instagram post', big: 'people reached', rows: ['Spent: ₪15', 'Cost per 1,000 reached: ₪0.33'] } },
-      { img: 'assets/works/ads-2.jpg', big: '85', tag: { ar: 'رسائل', en: 'Messages' },
+      { img: 'assets/works/ads-2.webp', big: '85', tag: { ar: 'رسائل', en: 'Messages' },
         ar: { t: 'منشور إنستغرام', big: 'محادثة', rows: ['المبلغ المنفق: 24.57 ₪', 'تكلفة المحادثة: 0.29 ₪'] },
         en: { t: 'Instagram post', big: 'conversations', rows: ['Spent: ₪24.57', 'Cost per conversation: ₪0.29'] } },
-      { img: 'assets/works/ads-3.jpg', big: '82', tag: { ar: 'رسائل', en: 'Messages' },
+      { img: 'assets/works/ads-3.webp', big: '82', tag: { ar: 'رسائل', en: 'Messages' },
         ar: { t: 'إعلان رسائل', big: 'محادثة', rows: ['9,190 مشاهدة', '6,032 مشاهد'] },
         en: { t: 'Messages ad', big: 'conversations', rows: ['9,190 views', '6,032 viewers'] } }
     ];
 
     // ضخ متابعين: قبل وبعد (الأرقام زي ما هي بالحسابات) — ضيف حسابات جديدة بنفس الشكل
     const GROWTH = [
-      { img: 'assets/works/growth-01.jpg', handle: 'ibrahim_drees', before: '117', after: '20.9K' },
-      { img: 'assets/works/growth-02.jpg', handle: 'abedallah3804', before: '513', after: '12.6K' },
-      { img: 'assets/works/growth-03.jpg', handle: 'mohmd.mk6r', before: '2,356', after: '12.1K' },
-      { img: 'assets/works/growth-04.jpg', handle: '93o97', before: '1,006', after: '12.9K' },
-      { img: 'assets/works/growth-05.jpg', handle: 'hasn_altore_7', before: '3,176', after: '13.3K' },
-      { img: 'assets/works/growth-06.jpg', handle: 'yose_abo_nidal', before: '376', after: '10.2K' },
-      { img: 'assets/works/growth-07.jpg', handle: 'shami_evra', before: '943', after: '11.6K' },
-      { img: 'assets/works/growth-08.jpg', handle: 'roleen.tours', before: '3,948', after: '14.7K' },
-      { img: 'assets/works/growth-09.jpg', handle: 'ahzo_0_online', before: '22', after: '10.9K' },
-      { img: 'assets/works/growth-10.jpg', handle: 'mosa_emwasy', before: '1,281', after: '12.3K' },
-      { img: 'assets/works/growth-11.jpg', handle: 'shadi.alsokar', before: '18.2K', after: '78.4K' },
-      { img: 'assets/works/growth-12.jpg', handle: 'loay_z_qarash', before: '524', after: '54.6K' },
-      { img: 'assets/works/growth-13.jpg', handle: 'samedwajjeh', before: '6,820', after: '25.3K' },
-      { img: 'assets/works/growth-14.jpg', handle: 'mr.cpa.ins', before: '55', after: '5,922' },
-      { img: 'assets/works/growth-15.jpg', handle: 'dr.mohammadjawadzalloum', before: '413', after: '13.4K' },
-      { img: 'assets/works/growth-16.jpg', handle: 'studiors.design', before: '3,622', after: '15.9K' }
+      { img: 'assets/works/growth-01.webp', handle: 'ibrahim_drees', before: '117', after: '20.9K' },
+      { img: 'assets/works/growth-02.webp', handle: 'abedallah3804', before: '513', after: '12.6K' },
+      { img: 'assets/works/growth-03.webp', handle: 'mohmd.mk6r', before: '2,356', after: '12.1K' },
+      { img: 'assets/works/growth-04.webp', handle: '93o97', before: '1,006', after: '12.9K' },
+      { img: 'assets/works/growth-05.webp', handle: 'hasn_altore_7', before: '3,176', after: '13.3K' },
+      { img: 'assets/works/growth-06.webp', handle: 'yose_abo_nidal', before: '376', after: '10.2K' },
+      { img: 'assets/works/growth-07.webp', handle: 'shami_evra', before: '943', after: '11.6K' },
+      { img: 'assets/works/growth-08.webp', handle: 'roleen.tours', before: '3,948', after: '14.7K' },
+      { img: 'assets/works/growth-09.webp', handle: 'ahzo_0_online', before: '22', after: '10.9K' },
+      { img: 'assets/works/growth-10.webp', handle: 'mosa_emwasy', before: '1,281', after: '12.3K' },
+      { img: 'assets/works/growth-11.webp', handle: 'shadi.alsokar', before: '18.2K', after: '78.4K' },
+      { img: 'assets/works/growth-12.webp', handle: 'loay_z_qarash', before: '524', after: '54.6K' },
+      { img: 'assets/works/growth-13.webp', handle: 'samedwajjeh', before: '6,820', after: '25.3K' },
+      { img: 'assets/works/growth-14.webp', handle: 'mr.cpa.ins', before: '55', after: '5,922' },
+      { img: 'assets/works/growth-15.webp', handle: 'dr.mohammadjawadzalloum', before: '413', after: '13.4K' },
+      { img: 'assets/works/growth-16.webp', handle: 'studiors.design', before: '3,622', after: '15.9K' }
     ];
     const SHOW_FIRST = 6;
     // حسابات وثّقناها (قبل وبعد)
     const VERIFIED = [
-      { img: 'assets/works/verify-01.jpg', handle: 'hania.wishah11', followers: '49.4K' },
-      { img: 'assets/works/verify-02.jpg', handle: 'ii_taallaa', followers: '126K' },
-      { img: 'assets/works/verify-04.jpg', handle: 'its._.mo3tasem', followers: '14K' },
-      { img: 'assets/works/verify-05.jpg', handle: 'huda_abd.albagi', followers: '94.9K' },
-      { img: 'assets/works/verify-06.jpg', handle: 'narmeen.100', followers: '152K' },
-      { img: 'assets/works/verify-07.jpg', handle: 'amal_amoola2002', followers: '21.8K' },
-      { img: 'assets/works/verify-08.jpg', handle: 'lame.a.mabhoh', followers: '4,836' },
-      { img: 'assets/works/verify-09.jpg', handle: 'anaszeno7', followers: '391K' },
-      { img: 'assets/works/verify-10.jpg', handle: 'anas.qahwaji', followers: '10.5K' },
-      { img: 'assets/works/verify-11.jpg', handle: 'lama_mhamad8', followers: '30.6K' },
-      { img: 'assets/works/verify-12.jpg', handle: 'mm.e.mm.o.246', followers: '4,603' },
-      { img: 'assets/works/verify-13.jpg', handle: 'rawaa.abushamma', followers: '27.9K' }
+      { img: 'assets/works/verify-01.webp', handle: 'hania.wishah11', followers: '49.4K' },
+      { img: 'assets/works/verify-02.webp', handle: 'ii_taallaa', followers: '126K' },
+      { img: 'assets/works/verify-04.webp', handle: 'its._.mo3tasem', followers: '14K' },
+      { img: 'assets/works/verify-05.webp', handle: 'huda_abd.albagi', followers: '94.9K' },
+      { img: 'assets/works/verify-06.webp', handle: 'narmeen.100', followers: '152K' },
+      { img: 'assets/works/verify-07.webp', handle: 'amal_amoola2002', followers: '21.8K' },
+      { img: 'assets/works/verify-08.webp', handle: 'lame.a.mabhoh', followers: '4,836' },
+      { img: 'assets/works/verify-09.webp', handle: 'anaszeno7', followers: '391K' },
+      { img: 'assets/works/verify-10.webp', handle: 'anas.qahwaji', followers: '10.5K' },
+      { img: 'assets/works/verify-11.webp', handle: 'lama_mhamad8', followers: '30.6K' },
+      { img: 'assets/works/verify-12.webp', handle: 'mm.e.mm.o.246', followers: '4,603' },
+      { img: 'assets/works/verify-13.webp', handle: 'rawaa.abushamma', followers: '27.9K' }
     ];
     let verifyAll = false;
     let growthAll = false;
@@ -894,17 +900,17 @@
     // مثال: { name: 'أبو محمد', role: { ar: 'صاحب مطعم', en: 'Restaurant owner' }, stars: 5, text: { ar: '...', en: '...' } }
     // نصوص الآراء منقولة من رسائل الزباين الحقيقية (السكرين بزر «شوف المحادثة»)
     const REVIEWS = [
-      { stars: 5, img: 'assets/works/review-3.jpg', role: { ar: 'توثيق حساب', en: 'Account verification' },
+      { stars: 5, img: 'assets/works/review-3.webp', role: { ar: 'توثيق حساب', en: 'Account verification' },
         text: { ar: 'والله بعدد تعاملكم فشش والمصداقية، وخصوصاً بعد ما اتوثق حسابي. يسلموا كتير، وبنصح الكل: أي حدا بدو يوثّق حسابه أو عنده مشكلة يحلّها عندكم.', en: 'Your service and honesty are unmatched, especially after my account got verified. Thank you so much. I recommend you to anyone who wants verification or has an account problem.' } },
-      { stars: 5, img: 'assets/works/review-5.jpg', role: { ar: 'اشتراك رقمي', en: 'Digital subscription' },
+      { stars: 5, img: 'assets/works/review-5.webp', role: { ar: 'اشتراك رقمي', en: 'Digital subscription' },
         text: { ar: 'أقسم بالله أسرع من هيك فش! توقعت يقعد يوم أو يومين. الأمانة إشي بجنن.', en: 'I swear nothing is faster! I expected it to take a day or two. Amazing honesty.' } },
-      { stars: 5, img: 'assets/works/review-4.jpg', role: { ar: 'توثيق حساب', en: 'Account verification' },
+      { stars: 5, img: 'assets/works/review-4.webp', role: { ar: 'توثيق حساب', en: 'Account verification' },
         text: { ar: 'كل الشكر والتقدير لشركة Explor Plus، ساعدتني ع توثيق حسابي. شكراً كتير ❤️', en: 'All my thanks to Explor Plus for helping me verify my account. Thank you so much ❤️' } },
-      { stars: 5, img: 'assets/works/review-1.jpg', 
+      { stars: 5, img: 'assets/works/review-1.webp', 
         text: { ar: 'عنوان للثقة والأمانة وأفضل خدمة. بنصح الجميع يتعامل معكم، مصداقية عالية 🤍', en: 'A name for trust and honesty, and the best service. I recommend you to everyone 🤍' } },
-      { stars: 5, img: 'assets/works/review-2.jpg', 
+      { stars: 5, img: 'assets/works/review-2.webp', 
         text: { ar: 'تعاملكم واو، وبنصح الكل يتعامل معكم. شركة إكسبلور بلس الأفضل 💖', en: 'Your service is wow, I recommend you to everyone. Explor Plus is the best 💖' } },
-      { stars: 5, img: 'assets/works/review-6.jpg', 
+      { stars: 5, img: 'assets/works/review-6.webp', 
         text: { ar: 'تعاملكم روعة، والمصداقية عالية. يعطيكم العافية.', en: 'Wonderful service and great honesty. Thank you.' } }
     ];
 
@@ -1272,5 +1278,6 @@
     });
   })();
   </script>
+  <script>if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));</script>
 </body>
 </html>
