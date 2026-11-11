@@ -292,6 +292,24 @@
     .work.has-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 50%, rgba(0,0,0,.75)); }
     .work.has-media .meta { z-index: 1; color: #fff; }
     .work.has-media .meta span { color: #d0d4dd; }
+    .work-case { grid-column: span 2; display: grid; gap: 14px; padding: 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+    .case-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .case-imgs figure { position: relative; margin: 0; border-radius: calc(var(--radius) - 6px); overflow: hidden; aspect-ratio: 3/4; background: #000; border: 1px solid var(--border); }
+    .case-imgs img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .case-imgs figcaption { position: absolute; inset-inline-start: 10px; bottom: 10px; padding: 5px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .case-imgs figcaption.bad { background: rgba(239,68,68,.85); color: #fff; }
+    .case-imgs figcaption.good { background: rgba(34,197,94,.9); color: #04150a; }
+    .case-meta { display: grid; gap: 2px; padding: 0 4px; }
+    .case-meta b { font-family: 'Alexandria'; font-size: 18px; }
+    .case-meta span { color: var(--muted); font-size: 13.5px; }
+    .work-celebs { display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 28px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--card-shadow);
+      background: radial-gradient(120% 80% at 80% 0%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 60%), var(--surface); }
+    .celebs-ico { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 24px; color: #ffd66b; background: rgba(255,214,107,.12); }
+    .work-celebs b { font-family: 'Alexandria'; font-size: 21px; line-height: 1.4; }
+    .work-celebs .muted-s { color: var(--muted); font-size: 14px; }
+    .work-celebs ul { list-style: none; display: grid; gap: 8px; }
+    .work-celebs li { padding: 10px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); font-weight: 600; }
+    .work-celebs li::before { content: "✔ "; color: var(--accent); }
 
     /* testimonials */
     .reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -391,6 +409,7 @@
       .hero-grid { grid-template-columns: 1fr; }
       .hero-visual { max-width: 360px; order: -1; }
       .services, .works, .reviews { grid-template-columns: repeat(2, 1fr); }
+      .work-case { grid-column: 1 / -1; }
       .steps, .why { grid-template-columns: repeat(2, 1fr); }
       .contact { grid-template-columns: 1fr; }
       .nav-links { display: none; }
@@ -405,6 +424,9 @@
       section.block { padding: 64px 0; }
       .services, .works, .reviews, .steps, .why { grid-template-columns: 1fr; }
       .svc.featured { grid-column: auto; }
+      .work-case { grid-column: auto; }
+      .case-imgs figcaption { font-size: 11px; padding: 3px 8px; bottom: 6px; inset-inline-start: 6px; }
+      .case-imgs { gap: 8px; }
       form .row { grid-template-columns: 1fr; }
       .chip-2 { inset-inline-start: 0; }
       .chip-3 { inset-inline-end: 0; }
@@ -705,7 +727,15 @@
 
     // أعمالنا — ضيف صورك هون لما تجهز (حط الصور بمجلد assets/works)
     // مثال: { img: 'assets/works/burger.jpg', ar: { t: 'مطعم ...', s: 'تصوير منتجات' }, en: { t: '...', s: 'Product photography' } }
-    const WORKS = [];
+    // أنواع البطاقات: case = قبل وبعد · celebs = مشاهير تعاملوا معنا · img/video = صورة أو فيديو عادي
+    const WORKS = [
+      { type: 'case', before: 'assets/works/abood-before.jpg', after: 'assets/works/abood-after.jpg',
+        ar: { t: 'فك باند حساب المتداول عبود عمر', s: 'استرجاع حسابات · 16/9/2025', b: 'قبل: الحساب معطّل', a: 'بعد: رجع الحساب ✔️' },
+        en: { t: 'Unbanning trader Abood Omer’s account', s: 'Account recovery · 16/9/2025', b: 'Before: account disabled', a: 'After: account restored ✔️' } },
+      { type: 'celebs', names: { ar: ['شادي العشي', 'هيا سويد', 'محمد الخطيب (دبدوب)'], en: ['Shadi Al-Ashi', 'Haya Sweid', 'Mohammad Al-Khatib (Dabdoob)'] },
+        ar: { t: 'ساعدنا أكبر المشاهير يوصلوا لجمهور أكبر', s: 'ومن ضمنهم:' },
+        en: { t: 'We helped top creators reach bigger audiences', s: 'Including:' } }
+    ];
 
     // آراء العملاء — ضيف هون آراء حقيقية فقط (مثلاً من رسائل أو تعليقات الزباين بإذنهم)
     // مثال: { name: 'أبو محمد', role: { ar: 'صاحب مطعم', en: 'Restaurant owner' }, stars: 5, text: { ar: '...', en: '...' } }
@@ -817,6 +847,19 @@
         .map(s => ({ placeholder: true, [lang]: { t: s[lang].t, s: t('soon') } }));
       $('#worksGrid').innerHTML = items.map(w => {
         const c = w[lang] || w.ar;
+        if (w.type === 'case') return `<article class="work-case reveal">
+          <div class="case-imgs">
+            <figure><img src="${esc(w.before)}" alt="${esc(c.b)}" loading="lazy"><figcaption class="bad">${esc(c.b)}</figcaption></figure>
+            <figure><img src="${esc(w.after)}" alt="${esc(c.a)}" loading="lazy"><figcaption class="good">${esc(c.a)}</figcaption></figure>
+          </div>
+          <div class="case-meta"><b>${esc(c.t)}</b><span>${esc(c.s)}</span></div>
+        </article>`;
+        if (w.type === 'celebs') return `<article class="work-celebs reveal">
+          <span class="celebs-ico" aria-hidden="true">★</span>
+          <b>${esc(c.t)}</b>
+          <span class="muted-s">${esc(c.s)}</span>
+          <ul>${(w.names[lang] || w.names.ar).map(n => `<li>${esc(n)}</li>`).join('')}</ul>
+        </article>`;
         if (w.placeholder) return `<div class="work reveal"><i class="work-logo"></i><span class="soon">${t('soon')}</span><div class="meta"><b>${esc(c.t)}</b></div></div>`;
         const media = w.video ? `<video src="${esc(w.video)}" muted loop playsinline autoplay></video>` : `<img src="${esc(w.img)}" alt="${esc(c.t)}" loading="lazy">`;
         return `<div class="work has-media reveal">${media}<div class="meta"><b>${esc(c.t)}</b><span>${esc(c.s || '')}</span></div></div>`;
