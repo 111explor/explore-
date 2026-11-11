@@ -3,8 +3,8 @@
    ===================================================================== */
 window.EXPLOR_CONFIG = {
   // من Supabase → Project Settings → API (الـ anon key عام وآمن يكون بالموقع)
-  SUPABASE_URL: '',
-  SUPABASE_ANON_KEY: '',
+  SUPABASE_URL: 'https://evevrfazxoncwomqvzlo.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_oTyWXt1avECLgfOz07Ap0A_TUgjU44q',
 
   // أرقام الواتساب (بدون + وبدون أصفار بالبداية)
   WA_SUBSCRIPTIONS: '972597653989', // رقم الاشتراكات الرقمية والشحن
