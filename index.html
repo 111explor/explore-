@@ -279,6 +279,18 @@
     .result ul { list-style: none; display: grid; gap: 4px; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 13.5px; color: var(--muted); flex: 1; align-content: start; }
     .result-proof { margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--accent); align-self: flex-start; }
 
+    /* follower growth */
+    .growth { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grow { margin: 0; border-radius: var(--radius); overflow: hidden; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); display: flex; flex-direction: column; }
+    .grow img { width: 100%; aspect-ratio: 640/545; object-fit: cover; display: block; }
+    .grow figcaption { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; font-size: 13.5px; }
+    .grow-handle { font-weight: 600; color: var(--muted); min-width: 0; overflow-wrap: anywhere; flex: 1 1 100%; text-align: start; }
+    .grow-nums { font-family: 'Alexandria'; font-weight: 700; font-size: 16px; }
+    .grow-nums .b { color: var(--muted); font-weight: 500; }
+    .grow-nums .a { color: var(--text); }
+    .grow-x { margin-inline-start: auto; font-size: 12.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; color: #04150a; background: #22c55e; }
+    .growth-more { display: flex; justify-content: center; margin-top: 16px; }
+
     /* why us */
     .why { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     .why-item { padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); display: grid; gap: 8px; align-content: start; }
@@ -424,6 +436,7 @@
       .hero-visual { max-width: 360px; order: -1; }
       .services, .works, .reviews { grid-template-columns: repeat(2, 1fr); }
       .work-case { grid-column: 1 / -1; }
+      .growth { grid-template-columns: repeat(2, 1fr); }
       .steps, .why { grid-template-columns: repeat(2, 1fr); }
       .contact { grid-template-columns: 1fr; }
       .nav-links { display: none; }
@@ -441,6 +454,7 @@
       .work-case { grid-column: auto; }
       .case-imgs figcaption { font-size: 11px; padding: 3px 8px; bottom: 6px; inset-inline-start: 6px; }
       .case-imgs { gap: 8px; }
+      .growth { grid-template-columns: 1fr; }
       form .row { grid-template-columns: 1fr; }
       .chip-2 { inset-inline-start: 0; }
       .chip-3 { inset-inline-end: 0; }
@@ -593,6 +607,13 @@
           <p data-i18n="res_sub">أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.</p>
         </div>
         <div class="results" id="resultsGrid"></div>
+
+        <div class="results-head reveal">
+          <h3 data-i18n="grow_title">ضخ متابعين: قبل وبعد</h3>
+          <p data-i18n="grow_sub">المتابعين مش بس للمظهر، هم قوة لحسابك قدام زبونك. هاي حسابات ساعدناها تكبر:</p>
+        </div>
+        <div class="growth" id="growthGrid"></div>
+        <div class="growth-more"><button class="btn btn-ghost" type="button" id="growthMore"></button></div>
       </div>
     </section>
 
@@ -776,6 +797,28 @@
         en: { t: 'Messages ad', big: 'conversations', rows: ['9,190 views', '6,032 viewers'] } }
     ];
 
+    // ضخ متابعين: قبل وبعد (الأرقام زي ما هي بالحسابات) — ضيف حسابات جديدة بنفس الشكل
+    const GROWTH = [
+      { img: 'assets/works/growth-01.jpg', handle: 'ibrahim_drees', before: '117', after: '20.9K' },
+      { img: 'assets/works/growth-02.jpg', handle: 'abedallah3804', before: '513', after: '12.6K' },
+      { img: 'assets/works/growth-03.jpg', handle: 'mohmd.mk6r', before: '2,356', after: '12.1K' },
+      { img: 'assets/works/growth-04.jpg', handle: '93o97', before: '1,006', after: '12.9K' },
+      { img: 'assets/works/growth-05.jpg', handle: 'hasn_altore_7', before: '3,176', after: '13.3K' },
+      { img: 'assets/works/growth-06.jpg', handle: 'yose_abo_nidal', before: '376', after: '10.2K' },
+      { img: 'assets/works/growth-07.jpg', handle: 'shami_evra', before: '943', after: '11.6K' },
+      { img: 'assets/works/growth-08.jpg', handle: 'roleen.tours', before: '3,948', after: '14.7K' },
+      { img: 'assets/works/growth-09.jpg', handle: 'ahzo_0_online', before: '22', after: '10.9K' },
+      { img: 'assets/works/growth-10.jpg', handle: 'mosa_emwasy', before: '1,281', after: '12.3K' },
+      { img: 'assets/works/growth-11.jpg', handle: 'shadi.alsokar', before: '18.2K', after: '78.4K' },
+      { img: 'assets/works/growth-12.jpg', handle: 'loay_z_qarash', before: '524', after: '54.6K' },
+      { img: 'assets/works/growth-13.jpg', handle: 'samedwajjeh', before: '6,820', after: '25.3K' },
+      { img: 'assets/works/growth-14.jpg', handle: 'mr.cpa.ins', before: '55', after: '5,922' },
+      { img: 'assets/works/growth-15.jpg', handle: 'dr.mohammadjawadzalloum', before: '413', after: '13.4K' },
+      { img: 'assets/works/growth-16.jpg', handle: 'studiors.design', before: '3,622', after: '15.9K' }
+    ];
+    const SHOW_FIRST = 6;
+    let growthAll = false;
+
     // آراء العملاء — ضيف هون آراء حقيقية فقط (مثلاً من رسائل أو تعليقات الزباين بإذنهم)
     // مثال: { name: 'أبو محمد', role: { ar: 'صاحب مطعم', en: 'Restaurant owner' }, stars: 5, text: { ar: '...', en: '...' } }
     const REVIEWS = [];
@@ -797,7 +840,7 @@
         p2_t: 'نفهم ونخطط', p2_d: 'ندرس صفحتك وجمهورك ونقترح عليك الخطة والسعر الأنسب.',
         p3_t: 'ننفّذ', p3_d: 'تصوير، تصميم، إعلانات أو إدارة كاملة. بتابع معنا خطوة بخطوة.',
         p4_t: 'نتابع النتائج', p4_d: 'تقارير واضحة وتحسين مستمر لحتى توصل لهدفك.',
-        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', res_title: 'نتائج حملات إعلانية حقيقية', res_sub: 'أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.', res_proof: 'شوف الإثبات ↗', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
+        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', res_title: 'نتائج حملات إعلانية حقيقية', res_sub: 'أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.', res_proof: 'شوف الإثبات ↗', grow_title: 'ضخ متابعين: قبل وبعد', grow_sub: 'المتابعين مش بس للمظهر، هم قوة لحسابك قدام زبونك. هاي حسابات ساعدناها تكبر:', grow_all: 'شوف كل النتائج ({n})', grow_less: 'عرض أقل', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
         reviews_eyebrow: 'آراء العملاء', reviews_title: 'شو بيحكوا عنّا',
         reviews_empty_t: 'اشتغلت معنا؟', reviews_empty_d: 'رأيك بيهمنا وبيساعد غيرك يختار صح. ابعتلنا تجربتك على واتساب.', reviews_empty_btn: 'شاركنا رأيك',
         contact_eyebrow: 'تواصل معنا', contact_title: 'جاهز نبلّش؟', contact_sub: 'عبّي الفورم، ورح تنفتح محادثة واتساب فيها طلبك جاهز. بس اضغط إرسال.',
@@ -826,7 +869,7 @@
         p2_t: 'Understand & plan', p2_d: 'We study your page and audience and suggest the best plan and price.',
         p3_t: 'Execute', p3_d: 'Shooting, design, ads or full management. You follow every step with us.',
         p4_t: 'Track results', p4_d: 'Clear reports and continuous optimization until you hit your goal.',
-        works_eyebrow: 'Our work', works_title: 'Work we are proud of', res_title: 'Real ad campaign results', res_sub: 'Numbers from Meta Ads Manager for campaigns we ran for our clients.', res_proof: 'See proof ↗', works_more: 'See more on Instagram', soon: 'Coming soon',
+        works_eyebrow: 'Our work', works_title: 'Work we are proud of', res_title: 'Real ad campaign results', res_sub: 'Numbers from Meta Ads Manager for campaigns we ran for our clients.', res_proof: 'See proof ↗', grow_title: 'Follower growth: before & after', grow_sub: 'Followers aren’t just for looks, they give your account credibility with customers. Accounts we helped grow:', grow_all: 'See all results ({n})', grow_less: 'Show less', works_more: 'See more on Instagram', soon: 'Coming soon',
         reviews_eyebrow: 'Reviews', reviews_title: 'What clients say',
         reviews_empty_t: 'Worked with us?', reviews_empty_d: 'Your opinion matters and helps others choose right. Send us your experience on WhatsApp.', reviews_empty_btn: 'Share your review',
         contact_eyebrow: 'Contact', contact_title: 'Ready to start?', contact_sub: 'Fill in the form and a WhatsApp chat opens with your request ready. Just hit send.',
@@ -918,6 +961,25 @@
       }).join('');
     }
 
+    const toNum = (x) => { const v = parseFloat(String(x).replace(/,/g, '')); return /k$/i.test(x) ? v * 1000 : v; };
+    function renderGrowth() {
+      const list = GROWTH.map((g) => ({ ...g, mult: toNum(g.after) / Math.max(1, toNum(g.before)) }))
+        .sort((a, b) => toNum(b.after) - toNum(a.after));
+      const shown = growthAll ? list : list.slice(0, SHOW_FIRST);
+      $('#growthGrid').innerHTML = shown.map((g) => `<figure class="grow reveal">
+          <img src="${esc(g.img)}" alt="@${esc(g.handle)}" loading="lazy">
+          <figcaption>
+            <span class="grow-handle" dir="ltr">@${esc(g.handle)}</span>
+            <span class="grow-nums" dir="ltr"><span class="b">${esc(g.before)}</span> → <span class="a">${esc(g.after)}</span></span>
+            <span class="grow-x">×${g.mult >= 10 ? Math.round(g.mult) : g.mult.toFixed(1)}</span>
+          </figcaption>
+        </figure>`).join('');
+      const btn = $('#growthMore');
+      btn.hidden = GROWTH.length <= SHOW_FIRST;
+      btn.textContent = growthAll ? t('grow_less') : t('grow_all').replace('{n}', GROWTH.length);
+      observeReveal();
+    }
+
     function renderReviews() {
       const wrap = $('#reviewsWrap');
       if (!REVIEWS.length) {
@@ -958,7 +1020,7 @@
       document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
       document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
       $('#langBtn').textContent = lang === 'ar' ? 'EN' : 'ع';
-      renderServices(); renderWorks(); renderResults(); renderReviews(); renderForm(); updateOpenNow();
+      renderServices(); renderWorks(); renderResults(); renderGrowth(); renderReviews(); renderForm(); updateOpenNow();
       $('#preview').classList.remove('show');
       $('#formErr').hidden = true;
       $('#sendLink').href = waLink(buildMessage());
@@ -985,6 +1047,7 @@
     }
 
     /* events */
+    $('#growthMore').addEventListener('click', () => { growthAll = !growthAll; renderGrowth(); if (!growthAll) $('#growthGrid').scrollIntoView({ block: 'start' }); });
     $('#langBtn').addEventListener('click', () => { lang = lang === 'ar' ? 'en' : 'ar'; applyLang(); });
     $('#menuBtn').addEventListener('click', () => {
       const nav = $('#mobileNav'), open = nav.classList.toggle('open');
