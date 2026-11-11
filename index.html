@@ -289,6 +289,7 @@
     .grow-nums .b { color: var(--muted); font-weight: 500; }
     .grow-nums .a { color: var(--text); }
     .grow-x { margin-inline-start: auto; font-size: 12.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; color: #04150a; background: #22c55e; }
+    .grow-x.ver { color: #fff; background: #0a84ff; }
     .growth-more { display: flex; justify-content: center; margin-top: 16px; }
 
     /* why us */
@@ -614,6 +615,13 @@
         </div>
         <div class="growth" id="growthGrid"></div>
         <div class="growth-more"><button class="btn btn-ghost" type="button" id="growthMore"></button></div>
+
+        <div class="results-head reveal">
+          <h3 data-i18n="ver_title">مبروك التوثيق ✔️</h3>
+          <p data-i18n="ver_sub">التوثيق مش مجرد إشارة، هو ثقة جمهورك وحماية لأثرك. حسابات وثّقناها:</p>
+        </div>
+        <div class="growth" id="verifyGrid"></div>
+        <div class="growth-more"><button class="btn btn-ghost" type="button" id="verifyMore"></button></div>
       </div>
     </section>
 
@@ -817,6 +825,22 @@
       { img: 'assets/works/growth-16.jpg', handle: 'studiors.design', before: '3,622', after: '15.9K' }
     ];
     const SHOW_FIRST = 6;
+    // حسابات وثّقناها (قبل وبعد)
+    const VERIFIED = [
+      { img: 'assets/works/verify-01.jpg', handle: 'hania.wishah11', followers: '49.4K' },
+      { img: 'assets/works/verify-02.jpg', handle: 'ii_taallaa', followers: '126K' },
+      { img: 'assets/works/verify-04.jpg', handle: 'its._.mo3tasem', followers: '14K' },
+      { img: 'assets/works/verify-05.jpg', handle: 'huda_abd.albagi', followers: '94.9K' },
+      { img: 'assets/works/verify-06.jpg', handle: 'narmeen.100', followers: '152K' },
+      { img: 'assets/works/verify-07.jpg', handle: 'amal_amoola2002', followers: '21.8K' },
+      { img: 'assets/works/verify-08.jpg', handle: 'lame.a.mabhoh', followers: '4,836' },
+      { img: 'assets/works/verify-09.jpg', handle: 'anaszeno7', followers: '391K' },
+      { img: 'assets/works/verify-10.jpg', handle: 'anas.qahwaji', followers: '10.5K' },
+      { img: 'assets/works/verify-11.jpg', handle: 'lama_mhamad8', followers: '30.6K' },
+      { img: 'assets/works/verify-12.jpg', handle: 'mm.e.mm.o.246', followers: '4,603' },
+      { img: 'assets/works/verify-13.jpg', handle: 'rawaa.abushamma', followers: '27.9K' }
+    ];
+    let verifyAll = false;
     let growthAll = false;
 
     // آراء العملاء — ضيف هون آراء حقيقية فقط (مثلاً من رسائل أو تعليقات الزباين بإذنهم)
@@ -840,7 +864,7 @@
         p2_t: 'نفهم ونخطط', p2_d: 'ندرس صفحتك وجمهورك ونقترح عليك الخطة والسعر الأنسب.',
         p3_t: 'ننفّذ', p3_d: 'تصوير، تصميم، إعلانات أو إدارة كاملة. بتابع معنا خطوة بخطوة.',
         p4_t: 'نتابع النتائج', p4_d: 'تقارير واضحة وتحسين مستمر لحتى توصل لهدفك.',
-        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', res_title: 'نتائج حملات إعلانية حقيقية', res_sub: 'أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.', res_proof: 'شوف الإثبات ↗', grow_title: 'ضخ متابعين: قبل وبعد', grow_sub: 'المتابعين مش بس للمظهر، هم قوة لحسابك قدام زبونك. هاي حسابات ساعدناها تكبر:', grow_all: 'شوف كل النتائج ({n})', grow_less: 'عرض أقل', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
+        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', res_title: 'نتائج حملات إعلانية حقيقية', res_sub: 'أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.', res_proof: 'شوف الإثبات ↗', grow_title: 'ضخ متابعين: قبل وبعد', grow_sub: 'المتابعين مش بس للمظهر، هم قوة لحسابك قدام زبونك. هاي حسابات ساعدناها تكبر:', grow_all: 'شوف كل النتائج ({n})', grow_less: 'عرض أقل', ver_title: 'مبروك التوثيق ✔️', ver_sub: 'التوثيق مش مجرد إشارة، هو ثقة جمهورك وحماية لأثرك. حسابات وثّقناها:', ver_followers: 'متابع', ver_badge: 'موثّق', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
         reviews_eyebrow: 'آراء العملاء', reviews_title: 'شو بيحكوا عنّا',
         reviews_empty_t: 'اشتغلت معنا؟', reviews_empty_d: 'رأيك بيهمنا وبيساعد غيرك يختار صح. ابعتلنا تجربتك على واتساب.', reviews_empty_btn: 'شاركنا رأيك',
         contact_eyebrow: 'تواصل معنا', contact_title: 'جاهز نبلّش؟', contact_sub: 'عبّي الفورم، ورح تنفتح محادثة واتساب فيها طلبك جاهز. بس اضغط إرسال.',
@@ -869,7 +893,7 @@
         p2_t: 'Understand & plan', p2_d: 'We study your page and audience and suggest the best plan and price.',
         p3_t: 'Execute', p3_d: 'Shooting, design, ads or full management. You follow every step with us.',
         p4_t: 'Track results', p4_d: 'Clear reports and continuous optimization until you hit your goal.',
-        works_eyebrow: 'Our work', works_title: 'Work we are proud of', res_title: 'Real ad campaign results', res_sub: 'Numbers from Meta Ads Manager for campaigns we ran for our clients.', res_proof: 'See proof ↗', grow_title: 'Follower growth: before & after', grow_sub: 'Followers aren’t just for looks, they give your account credibility with customers. Accounts we helped grow:', grow_all: 'See all results ({n})', grow_less: 'Show less', works_more: 'See more on Instagram', soon: 'Coming soon',
+        works_eyebrow: 'Our work', works_title: 'Work we are proud of', res_title: 'Real ad campaign results', res_sub: 'Numbers from Meta Ads Manager for campaigns we ran for our clients.', res_proof: 'See proof ↗', grow_title: 'Follower growth: before & after', grow_sub: 'Followers aren’t just for looks, they give your account credibility with customers. Accounts we helped grow:', grow_all: 'See all results ({n})', grow_less: 'Show less', ver_title: 'Verified ✔️', ver_sub: 'Verification isn’t just a badge, it’s your audience’s trust and protection for your work. Accounts we verified:', ver_followers: 'followers', ver_badge: 'Verified', works_more: 'See more on Instagram', soon: 'Coming soon',
         reviews_eyebrow: 'Reviews', reviews_title: 'What clients say',
         reviews_empty_t: 'Worked with us?', reviews_empty_d: 'Your opinion matters and helps others choose right. Send us your experience on WhatsApp.', reviews_empty_btn: 'Share your review',
         contact_eyebrow: 'Contact', contact_title: 'Ready to start?', contact_sub: 'Fill in the form and a WhatsApp chat opens with your request ready. Just hit send.',
@@ -980,6 +1004,23 @@
       observeReveal();
     }
 
+    function renderVerified() {
+      const list = [...VERIFIED].sort((a, b) => toNum(b.followers) - toNum(a.followers));
+      const shown = verifyAll ? list : list.slice(0, SHOW_FIRST);
+      $('#verifyGrid').innerHTML = shown.map((v) => `<figure class="grow reveal">
+          <img src="${esc(v.img)}" alt="@${esc(v.handle)}" loading="lazy">
+          <figcaption>
+            <span class="grow-handle" dir="ltr">@${esc(v.handle)}</span>
+            <span class="grow-nums" dir="ltr"><span class="a">${esc(v.followers)}</span> <span class="b">${t('ver_followers')}</span></span>
+            <span class="grow-x ver">✔ ${t('ver_badge')}</span>
+          </figcaption>
+        </figure>`).join('');
+      const btn = $('#verifyMore');
+      btn.hidden = VERIFIED.length <= SHOW_FIRST;
+      btn.textContent = verifyAll ? t('grow_less') : t('grow_all').replace('{n}', VERIFIED.length);
+      observeReveal();
+    }
+
     function renderReviews() {
       const wrap = $('#reviewsWrap');
       if (!REVIEWS.length) {
@@ -1020,7 +1061,7 @@
       document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
       document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
       $('#langBtn').textContent = lang === 'ar' ? 'EN' : 'ع';
-      renderServices(); renderWorks(); renderResults(); renderGrowth(); renderReviews(); renderForm(); updateOpenNow();
+      renderServices(); renderWorks(); renderResults(); renderGrowth(); renderVerified(); renderReviews(); renderForm(); updateOpenNow();
       $('#preview').classList.remove('show');
       $('#formErr').hidden = true;
       $('#sendLink').href = waLink(buildMessage());
@@ -1047,6 +1088,7 @@
     }
 
     /* events */
+    $('#verifyMore').addEventListener('click', () => { verifyAll = !verifyAll; renderVerified(); if (!verifyAll) $('#verifyGrid').scrollIntoView({ block: 'start' }); });
     $('#growthMore').addEventListener('click', () => { growthAll = !growthAll; renderGrowth(); if (!growthAll) $('#growthGrid').scrollIntoView({ block: 'start' }); });
     $('#langBtn').addEventListener('click', () => { lang = lang === 'ar' ? 'en' : 'ar'; applyLang(); });
     $('#menuBtn').addEventListener('click', () => {
