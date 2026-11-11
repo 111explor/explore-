@@ -280,10 +280,10 @@
             <div class="field"><label for="aPass">كلمة السر</label><input id="aPass" type="password" autocomplete="current-password" required minlength="6" dir="ltr"></div>
             <p class="form-msg err" id="authErr" hidden></p>
             <button class="btn btn-primary btn-block" type="submit">دخول</button>
-            <div class="spread small"><button class="linkish" type="button" data-mode="forgot">نسيت كلمة السر؟</button><button class="linkish" type="button" data-mode="verify">عندي رمز تأكيد</button></div>`;
+            <a class="small muted" style="text-align:center" target="_blank" rel="noopener" href="${waLink(C.WA_SUBSCRIPTIONS, 'مرحباً، نسيت كلمة السر لحسابي بالمتجر. إيميلي: ')}">نسيت كلمة السر؟ راسلنا على واتساب</a>`;
       if (mode === 'signup') body = `
             <div class="field"><label for="aName">الاسم</label><input id="aName" autocomplete="name" required placeholder="اسمك أو اسم صفحتك"></div>
-            <div class="field"><label for="aEmail">الإيميل</label><input id="aEmail" type="email" inputmode="email" autocomplete="email" required placeholder="name@gmail.com" dir="ltr"><span class="hint">رح يوصلك عليه رمز تأكيد.</span></div>
+            <div class="field"><label for="aEmail">الإيميل</label><input id="aEmail" type="email" inputmode="email" autocomplete="email" required placeholder="name@gmail.com" dir="ltr"><span class="hint">بتدخل فيه على حسابك.</span></div>
             <div class="field"><label for="aPhone">رقم الجوال (واتساب)</label><input id="aPhone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="059xxxxxxx" dir="ltr"><span class="hint">لحتى نتواصل معك بخصوص طلباتك.</span></div>
             <div class="field"><label for="aPass">كلمة السر</label><input id="aPass" type="password" autocomplete="new-password" required minlength="6" placeholder="6 أحرف أو أكثر" dir="ltr"></div>
             <label class="check small"><input type="checkbox" id="aTerms"> <span>موافق على <a href="terms.html" target="_blank" rel="noopener" style="color:var(--accent)">الشروط وسياسة الاسترجاع والخصوصية</a></span></label>
