@@ -663,21 +663,21 @@
 
     // الخدمات — عدّل النصوص من هون
     const SERVICES = [
-      { id: 'verify', icon: 'verify', featured: true,
+      { id: 'ads', icon: 'ads', featured: true,
+        ar: { t: 'الإعلانات الممولة', d: 'إعلانات مدروسة على فيسبوك وإنستغرام وتيك توك بتوصلك لزبونك الصح، مع تقارير واضحة.', tags: ['مبيعات', 'تفاعل', 'مشاهدات'] },
+        en: { t: 'Sponsored Ads', d: 'Well-planned ads on Facebook, Instagram and TikTok that reach the right customers, with clear reports.', tags: ['Sales', 'Engagement', 'Reach'] } },
+      { id: 'verify', icon: 'verify',
         ar: { t: 'توثيق الحسابات', d: 'نوثّق حسابك رسمياً بالعلامة الزرقاء خلال 10 دقائق، باشتراك شهري أو 6 شهور أو سنوي.', tags: ['فيسبوك', 'إنستغرام', 'تيك توك', 'شهر · 6 شهور · سنة'] },
         en: { t: 'Account Verification', d: 'Get your account officially verified with the blue badge in about 10 minutes, on a monthly, 6‑month or yearly plan.', tags: ['Facebook', 'Instagram', 'TikTok', '1M · 6M · 1Y'] } },
       { id: 'recover', icon: 'recover',
         ar: { t: 'استرجاع الحسابات', d: 'نسترجع حسابك سواء كان معطّلاً مؤقتاً أو محظوراً نهائياً، ونرجّعلك تحكمك فيه.', tags: ['باند نهائي', 'تقييد', 'تعطيل مؤقت'] },
         en: { t: 'Account Recovery', d: 'We recover your account whether it was temporarily disabled or permanently banned, and get you back in control.', tags: ['Permanent ban', 'Restricted', 'Disabled'] } },
       { id: 'growth', icon: 'growth',
-        ar: { t: 'زيادة المتابعين والتفاعل', d: 'ننمّي حسابك بمتابعين حقيقيين حسب الطلب ونرفع التفاعل على منشوراتك.', tags: ['متابعين', 'لايكات', 'مشاهدات'] },
-        en: { t: 'Followers & Engagement', d: 'Grow your account with real followers on demand and boost engagement on your posts.', tags: ['Followers', 'Likes', 'Views'] } },
-      { id: 'ads', icon: 'ads',
-        ar: { t: 'الإعلانات الممولة', d: 'ندير حملتك الإعلانية من الإعداد حتى الإطلاق، مع استهداف دقيق وتقارير واضحة للنتائج.', tags: ['مبيعات', 'تفاعل', 'مشاهدات'] },
-        en: { t: 'Sponsored Ads', d: 'We run your ad campaigns from setup to launch, with precise targeting and clear result reports.', tags: ['Sales', 'Engagement', 'Reach'] } },
+        ar: { t: 'زيادة المتابعين والتفاعل', d: 'متابعين وتفاعل حقيقي بيرفع ظهور صفحتك وبيجيبلك زباين أكتر.', tags: ['متابعين', 'لايكات', 'مشاهدات'] },
+        en: { t: 'Followers & Engagement', d: 'Real followers and engagement that boost your page’s reach and bring you more customers.', tags: ['Followers', 'Likes', 'Views'] } },
       { id: 'manage', icon: 'manage', featured: true,
-        ar: { t: 'الإدارة الكاملة للصفحات', d: 'نتولى إدارة صفحاتك بالكامل: من التصميم والإنتاج والنشر، للإعلانات والرد على الرسائل.', tags: ['تصميم', 'زيارات', 'إعلانات', 'نشر'] },
-        en: { t: 'Full Page Management', d: 'We fully manage your pages: design, production and publishing, through to ads and replying to messages.', tags: ['Design', 'Visits', 'Ads', 'Publishing'] } },
+        ar: { t: 'الإدارة الكاملة للصفحات', d: 'تفرّغ لتطوير شغلك وزباينك، وسيب وجع راس السوشال ميديا علينا: من الفكرة والتصميم للإعلانات والردود. ابعتلنا عالواتساب وخلّينا نمسك صفحتك صح.', tags: ['تصميم', 'زيارات', 'إعلانات', 'نشر'] },
+        en: { t: 'Full Page Management', d: 'Focus on growing your business and customers, and leave the social media headache to us: from ideas and design to ads and replies. Message us on WhatsApp and let us run your page right.', tags: ['Design', 'Visits', 'Ads', 'Publishing'] } },
       { id: 'video', icon: 'video',
         ar: { t: 'تصوير فيديوهات إعلانية', d: 'ننتج فيديوهات إعلانية احترافية للمطاعم والمحلات والشركات، من الفكرة للمونتاج.', tags: ['تصوير', 'مونتاج', 'إخراج'] },
         en: { t: 'Promo Video Production', d: 'Professional promo videos for restaurants, shops and companies, from concept to final edit.', tags: ['Filming', 'Editing', 'Directing'] } },
@@ -685,14 +685,14 @@
         ar: { t: 'تصميم المنيو الإلكتروني', d: 'نصمم منيو إلكتروني عصري يعرض أصنافك بوضوح وبيفتح بكود QR من موبايل الزبون.', tags: ['تصميم', 'تصوير', 'تطوير'] },
         en: { t: 'Digital Menu Design', d: 'A modern digital menu that shows your items clearly and opens from a QR code on any phone.', tags: ['Design', 'Photography', 'Development'] } },
       { id: 'product', icon: 'camera',
-        ar: { t: 'تصوير المنتجات والأصناف', d: 'نصوّر منتجاتك وأصنافك بجودة احترافية تُظهر تفاصيلها وتشجّع على الشراء.', tags: ['تصوير', 'تحسين', 'تعديل'] },
-        en: { t: 'Product Photography', d: 'Professional photos of your products and dishes that show every detail and drive sales.', tags: ['Shooting', 'Retouching', 'Editing'] } },
+        ar: { t: 'تصوير المنتجات والأصناف', d: 'تصوير احترافي لمنتجاتك وأصنافك.', tags: ['تصوير', 'تحسين', 'تعديل'] },
+        en: { t: 'Product Photography', d: 'Professional photography for your products and dishes.', tags: ['Shooting', 'Retouching', 'Editing'] } },
       { id: 'design', icon: 'design',
-        ar: { t: 'تصاميم السوشال ميديا', d: 'نصمم محتوى بصري احترافي يبرز خدماتك وعروضك ويخلّي صفحتك بهوية واحدة.', tags: ['فكرة', 'رؤية', 'تصميم'] },
-        en: { t: 'Social Media Design', d: 'Professional visuals that showcase your services and offers with one consistent identity.', tags: ['Idea', 'Vision', 'Design'] } },
+        ar: { t: 'تصاميم السوشال ميديا', d: 'من اللوجو والهوية لبوستات وستوريات بتلفت النظر وبتخلّي صفحتك مميّزة.', tags: ['فكرة', 'رؤية', 'تصميم'] },
+        en: { t: 'Social Media Design', d: 'From logo and brand identity to eye-catching posts and stories that make your page stand out.', tags: ['Idea', 'Vision', 'Design'] } },
       { id: 'setup', icon: 'launch',
-        ar: { t: 'تأسيس وتجهيز الصفحات التجارية', d: 'نؤسس صفحتك من الصفر بكل عناصرها: الاسم، النبذة، الصور، والإعدادات الصحيحة.', tags: ['تفكير', 'تخطيط', 'تنفيذ'] },
-        en: { t: 'Business Page Setup', d: 'We build your page from scratch with every element: name, bio, visuals and the right settings.', tags: ['Thinking', 'Planning', 'Execution'] } }
+        ar: { t: 'تأسيس وتجهيز الصفحات التجارية', d: 'مشروعك جديد؟ نأسسلك صفحاتك صح من أول يوم: الاسم، النبذة، الصور، والإعدادات.', tags: ['تفكير', 'تخطيط', 'تنفيذ'] },
+        en: { t: 'Business Page Setup', d: 'New business? We set up your pages right from day one: name, bio, visuals and settings.', tags: ['Thinking', 'Planning', 'Execution'] } }
     ];
 
     // أعمالنا — ضيف صورك هون لما تجهز (حط الصور بمجلد assets/works)
