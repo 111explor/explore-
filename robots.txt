@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /explore-/admin.html
 Disallow: /admin.html
 
-Sitemap: https://111explor.github.io/explore-/sitemap.xml
+Sitemap: https://explorplus.online/sitemap.xml
