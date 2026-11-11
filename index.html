@@ -346,6 +346,11 @@
     .review .who { display: flex; align-items: center; gap: 10px; }
     .review .av { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 700; }
     .review .who span { display: block; font-size: 13px; color: var(--muted); }
+    .review { display: flex; flex-direction: column; }
+    .review p { flex: 1; }
+    .review .who span.av { display: grid; font-size: 16px; color: var(--accent-ink); flex: none; }
+    .rev-proof { margin-inline-start: auto; font-size: 12.5px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+    .reviews-cta { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; color: var(--muted); }
     .reviews-empty {
       display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
       padding: 32px; border-radius: var(--radius); border: 1px dashed var(--border); background: color-mix(in srgb, var(--surface) 60%, transparent);
@@ -845,7 +850,21 @@
 
     // آراء العملاء — ضيف هون آراء حقيقية فقط (مثلاً من رسائل أو تعليقات الزباين بإذنهم)
     // مثال: { name: 'أبو محمد', role: { ar: 'صاحب مطعم', en: 'Restaurant owner' }, stars: 5, text: { ar: '...', en: '...' } }
-    const REVIEWS = [];
+    // نصوص الآراء منقولة من رسائل الزباين الحقيقية (السكرين بزر «شوف المحادثة»)
+    const REVIEWS = [
+      { stars: 5, img: 'assets/works/review-3.jpg', role: { ar: 'توثيق حساب', en: 'Account verification' },
+        text: { ar: 'والله بعدد تعاملكم فشش والمصداقية، وخصوصاً بعد ما اتوثق حسابي. يسلموا كتير، وبنصح الكل: أي حدا بدو يوثّق حسابه أو عنده مشكلة يحلّها عندكم.', en: 'Your service and honesty are unmatched, especially after my account got verified. Thank you so much. I recommend you to anyone who wants verification or has an account problem.' } },
+      { stars: 5, img: 'assets/works/review-5.jpg', role: { ar: 'اشتراك رقمي', en: 'Digital subscription' },
+        text: { ar: 'أقسم بالله أسرع من هيك فش! توقعت يقعد يوم أو يومين. الأمانة إشي بجنن.', en: 'I swear nothing is faster! I expected it to take a day or two. Amazing honesty.' } },
+      { stars: 5, img: 'assets/works/review-4.jpg', role: { ar: 'توثيق حساب', en: 'Account verification' },
+        text: { ar: 'كل الشكر والتقدير لشركة Explor Plus، ساعدتني ع توثيق حسابي. شكراً كتير ❤️', en: 'All my thanks to Explor Plus for helping me verify my account. Thank you so much ❤️' } },
+      { stars: 5, img: 'assets/works/review-1.jpg', 
+        text: { ar: 'عنوان للثقة والأمانة وأفضل خدمة. بنصح الجميع يتعامل معكم، مصداقية عالية 🤍', en: 'A name for trust and honesty, and the best service. I recommend you to everyone 🤍' } },
+      { stars: 5, img: 'assets/works/review-2.jpg', 
+        text: { ar: 'تعاملكم واو، وبنصح الكل يتعامل معكم. شركة إكسبلور بلس الأفضل 💖', en: 'Your service is wow, I recommend you to everyone. Explor Plus is the best 💖' } },
+      { stars: 5, img: 'assets/works/review-6.jpg', 
+        text: { ar: 'تعاملكم روعة، والمصداقية عالية. يعطيكم العافية.', en: 'Wonderful service and great honesty. Thank you.' } }
+    ];
 
     /* ================= النصوص (عربي / إنجليزي) ================= */
     const I18N = {
@@ -864,7 +883,7 @@
         p2_t: 'نفهم ونخطط', p2_d: 'ندرس صفحتك وجمهورك ونقترح عليك الخطة والسعر الأنسب.',
         p3_t: 'ننفّذ', p3_d: 'تصوير، تصميم، إعلانات أو إدارة كاملة. بتابع معنا خطوة بخطوة.',
         p4_t: 'نتابع النتائج', p4_d: 'تقارير واضحة وتحسين مستمر لحتى توصل لهدفك.',
-        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', res_title: 'نتائج حملات إعلانية حقيقية', res_sub: 'أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.', res_proof: 'شوف الإثبات ↗', grow_title: 'ضخ متابعين: قبل وبعد', grow_sub: 'المتابعين مش بس للمظهر، هم قوة لحسابك قدام زبونك. هاي حسابات ساعدناها تكبر:', grow_all: 'شوف كل النتائج ({n})', grow_less: 'عرض أقل', ver_title: 'مبروك التوثيق ✔️', ver_sub: 'التوثيق مش مجرد إشارة، هو ثقة جمهورك وحماية لأثرك. حسابات وثّقناها:', ver_followers: 'متابع', ver_badge: 'موثّق', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
+        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', res_title: 'نتائج حملات إعلانية حقيقية', res_sub: 'أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.', res_proof: 'شوف الإثبات ↗', grow_title: 'ضخ متابعين: قبل وبعد', grow_sub: 'المتابعين مش بس للمظهر، هم قوة لحسابك قدام زبونك. هاي حسابات ساعدناها تكبر:', grow_all: 'شوف كل النتائج ({n})', grow_less: 'عرض أقل', rev_client: 'عميل موثّق', rev_proof: 'شوف المحادثة ↗', ver_title: 'مبروك التوثيق ✔️', ver_sub: 'التوثيق مش مجرد إشارة، هو ثقة جمهورك وحماية لأثرك. حسابات وثّقناها:', ver_followers: 'متابع', ver_badge: 'موثّق', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
         reviews_eyebrow: 'آراء العملاء', reviews_title: 'شو بيحكوا عنّا',
         reviews_empty_t: 'اشتغلت معنا؟', reviews_empty_d: 'رأيك بيهمنا وبيساعد غيرك يختار صح. ابعتلنا تجربتك على واتساب.', reviews_empty_btn: 'شاركنا رأيك',
         contact_eyebrow: 'تواصل معنا', contact_title: 'جاهز نبلّش؟', contact_sub: 'عبّي الفورم، ورح تنفتح محادثة واتساب فيها طلبك جاهز. بس اضغط إرسال.',
@@ -893,7 +912,7 @@
         p2_t: 'Understand & plan', p2_d: 'We study your page and audience and suggest the best plan and price.',
         p3_t: 'Execute', p3_d: 'Shooting, design, ads or full management. You follow every step with us.',
         p4_t: 'Track results', p4_d: 'Clear reports and continuous optimization until you hit your goal.',
-        works_eyebrow: 'Our work', works_title: 'Work we are proud of', res_title: 'Real ad campaign results', res_sub: 'Numbers from Meta Ads Manager for campaigns we ran for our clients.', res_proof: 'See proof ↗', grow_title: 'Follower growth: before & after', grow_sub: 'Followers aren’t just for looks, they give your account credibility with customers. Accounts we helped grow:', grow_all: 'See all results ({n})', grow_less: 'Show less', ver_title: 'Verified ✔️', ver_sub: 'Verification isn’t just a badge, it’s your audience’s trust and protection for your work. Accounts we verified:', ver_followers: 'followers', ver_badge: 'Verified', works_more: 'See more on Instagram', soon: 'Coming soon',
+        works_eyebrow: 'Our work', works_title: 'Work we are proud of', res_title: 'Real ad campaign results', res_sub: 'Numbers from Meta Ads Manager for campaigns we ran for our clients.', res_proof: 'See proof ↗', grow_title: 'Follower growth: before & after', grow_sub: 'Followers aren’t just for looks, they give your account credibility with customers. Accounts we helped grow:', grow_all: 'See all results ({n})', grow_less: 'Show less', rev_client: 'Verified client', rev_proof: 'See the chat ↗', ver_title: 'Verified ✔️', ver_sub: 'Verification isn’t just a badge, it’s your audience’s trust and protection for your work. Accounts we verified:', ver_followers: 'followers', ver_badge: 'Verified', works_more: 'See more on Instagram', soon: 'Coming soon',
         reviews_eyebrow: 'Reviews', reviews_title: 'What clients say',
         reviews_empty_t: 'Worked with us?', reviews_empty_d: 'Your opinion matters and helps others choose right. Send us your experience on WhatsApp.', reviews_empty_btn: 'Share your review',
         contact_eyebrow: 'Contact', contact_title: 'Ready to start?', contact_sub: 'Fill in the form and a WhatsApp chat opens with your request ready. Just hit send.',
@@ -1033,8 +1052,9 @@
       wrap.innerHTML = `<div class="reviews">${REVIEWS.map(r => `<figure class="review reveal">
           <div class="stars" aria-label="${r.stars}/5">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
           <p>${esc(r.text[lang] || r.text.ar)}</p>
-          <figcaption class="who"><span class="av">${esc(r.name.trim()[0])}</span><span><b>${esc(r.name)}</b><span>${esc(r.role?.[lang] || '')}</span></span></figcaption>
-        </figure>`).join('')}</div>`;
+          <figcaption class="who"><span class="av" aria-hidden="true">${r.name ? esc(r.name.trim()[0]) : '★'}</span><span><b>${esc(r.name || t('rev_client'))}</b><span>${esc(r.role?.[lang] || '')}</span></span>${r.img ? `<a class="rev-proof" href="${esc(r.img)}" target="_blank" rel="noopener">${t('rev_proof')}</a>` : ''}</figcaption>
+        </figure>`).join('')}</div>
+        <div class="reviews-cta reveal"><span>${t('reviews_empty_t')}</span><a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="${waLink(t('review_msg'))}">${t('reviews_empty_btn')}</a></div>`;
     }
 
     function renderForm() {
