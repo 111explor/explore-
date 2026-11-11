@@ -301,7 +301,7 @@
     .why-item p { color: var(--muted); font-size: 14.5px; }
 
     /* works */
-    .works { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .works { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .work {
       aspect-ratio: 4/5; border-radius: var(--radius); overflow: hidden; position: relative;
       background: var(--surface); border: 1px solid var(--border); display: flex; align-items: flex-end; padding: 20px;
@@ -319,7 +319,10 @@
     .work.has-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 50%, rgba(0,0,0,.75)); }
     .work.has-media .meta { z-index: 1; color: #fff; }
     .work.has-media .meta span { color: #d0d4dd; }
-    .work-case { grid-column: span 2; display: grid; gap: 14px; padding: 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+    .work-celebs { grid-column: 1 / -1; }
+    .work-celebs ul { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    .celebs-more { font-weight: 700; color: var(--accent); }
+    .work-case { grid-column: auto; display: grid; gap: 14px; padding: 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
     .case-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .case-imgs figure { position: relative; margin: 0; border-radius: calc(var(--radius) - 6px); overflow: hidden; aspect-ratio: 3/4; background: #000; border: 1px solid var(--border); }
     .case-imgs img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
@@ -441,7 +444,7 @@
       .hero-grid { grid-template-columns: 1fr; }
       .hero-visual { max-width: 360px; order: -1; }
       .services, .works, .reviews { grid-template-columns: repeat(2, 1fr); }
-      .work-case { grid-column: 1 / -1; }
+      .work-case { grid-column: auto; }
       .growth { grid-template-columns: repeat(2, 1fr); }
       .steps, .why { grid-template-columns: repeat(2, 1fr); }
       .contact { grid-template-columns: 1fr; }
@@ -457,7 +460,7 @@
       section.block { padding: 64px 0; }
       .services, .works, .reviews, .steps, .why { grid-template-columns: 1fr; }
       .svc.featured { grid-column: auto; }
-      .work-case { grid-column: auto; }
+      .works { grid-template-columns: 1fr; }
       .case-imgs figcaption { font-size: 11px; padding: 3px 8px; bottom: 6px; inset-inline-start: 6px; }
       .case-imgs { gap: 8px; }
       .growth { grid-template-columns: 1fr; }
@@ -605,6 +608,10 @@
             <h2 data-i18n="works_title">شغل بنفتخر فيه</h2>
           </div>
           <a class="btn btn-ghost btn-sm" href="https://www.instagram.com/explor.ps" target="_blank" rel="noopener" data-i18n="works_more">شوف المزيد على إنستغرام</a>
+        </div>
+        <div class="results-head reveal" style="margin-top:0">
+          <h3 data-i18n="unban_title">فك باند واسترجاع حسابات</h3>
+          <p data-i18n="unban_sub">حسابات معطّلة نهائياً ومكتوب عليها «ما بتقدر تطلب مراجعة»، ورجّعناها لأصحابها.</p>
         </div>
         <div class="works" id="worksGrid"></div>
 
@@ -783,9 +790,18 @@
     // مثال: { img: 'assets/works/burger.jpg', ar: { t: 'مطعم ...', s: 'تصوير منتجات' }, en: { t: '...', s: 'Product photography' } }
     // أنواع البطاقات: case = قبل وبعد · celebs = مشاهير تعاملوا معنا · img/video = صورة أو فيديو عادي
     const WORKS = [
+      { type: 'case', before: 'assets/works/unban-nana-before.jpg', after: 'assets/works/unban-nana-after.jpg',
+        ar: { t: 'فك باند نهائي لحساب صانعة محتوى', s: '494K متابع · حساب معطّل نهائياً', b: 'قبل: معطّل', a: 'بعد: رجع ✔️' },
+        en: { t: 'Permanent ban lifted for a creator', s: '494K followers · permanently disabled', b: 'Before: disabled', a: 'After: restored ✔️' } },
+      { type: 'case', before: 'assets/works/unban-rita-before.jpg', after: 'assets/works/unban-rita-after.jpg',
+        ar: { t: 'استرجاع حساب ريتا المصري', s: '138K متابع · حساب موقوف', b: 'قبل: معطّل', a: 'بعد: رجع ✔️' },
+        en: { t: 'Rita Almasri’s account recovered', s: '138K followers · suspended', b: 'Before: disabled', a: 'After: restored ✔️' } },
+      { type: 'case', before: 'assets/works/unban-maslama-before.jpg', after: 'assets/works/unban-maslama-after.jpg',
+        ar: { t: 'فك باند حساب المتداول مسلمة', s: '24.6K متابع · «لا يمكن طلب مراجعة»', b: 'قبل: معطّل', a: 'بعد: رجع ✔️' },
+        en: { t: 'Unbanned trader Maslama’s account', s: '24.6K followers · “no further review”', b: 'Before: disabled', a: 'After: restored ✔️' } },
       { type: 'case', before: 'assets/works/abood-before.jpg', after: 'assets/works/abood-after.jpg',
-        ar: { t: 'فك باند حساب المتداول عبود عمر', s: 'استرجاع حسابات · 16/9/2025', b: 'قبل: الحساب معطّل', a: 'بعد: رجع الحساب ✔️' },
-        en: { t: 'Unbanning trader Abood Omer’s account', s: 'Account recovery · 16/9/2025', b: 'Before: account disabled', a: 'After: account restored ✔️' } },
+        ar: { t: 'فك باند حساب المتداول عبود عمر', s: '25.5K متابع · 16/9/2025', b: 'قبل: معطّل', a: 'بعد: رجع ✔️' },
+        en: { t: 'Unbanned trader Abood Omer’s account', s: '25.5K followers · 16/9/2025', b: 'Before: disabled', a: 'After: restored ✔️' } },
       { type: 'celebs', names: { ar: ['شادي العشي', 'هيا سويد', 'محمد الخطيب (دبدوب)'], en: ['Shadi Al-Ashi', 'Haya Sweid', 'Mohammad Al-Khatib (Dabdoob)'] },
         ar: { t: 'ساعدنا أكبر المشاهير يوصلوا لجمهور أكبر', s: 'ومن ضمنهم:' },
         en: { t: 'We helped top creators reach bigger audiences', s: 'Including:' } }
@@ -883,7 +899,7 @@
         p2_t: 'نفهم ونخطط', p2_d: 'ندرس صفحتك وجمهورك ونقترح عليك الخطة والسعر الأنسب.',
         p3_t: 'ننفّذ', p3_d: 'تصوير، تصميم، إعلانات أو إدارة كاملة. بتابع معنا خطوة بخطوة.',
         p4_t: 'نتابع النتائج', p4_d: 'تقارير واضحة وتحسين مستمر لحتى توصل لهدفك.',
-        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', res_title: 'نتائج حملات إعلانية حقيقية', res_sub: 'أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.', res_proof: 'شوف الإثبات ↗', grow_title: 'ضخ متابعين: قبل وبعد', grow_sub: 'المتابعين مش بس للمظهر، هم قوة لحسابك قدام زبونك. هاي حسابات ساعدناها تكبر:', grow_all: 'شوف كل النتائج ({n})', grow_less: 'عرض أقل', rev_client: 'عميل موثّق', rev_proof: 'شوف المحادثة ↗', ver_title: 'مبروك التوثيق ✔️', ver_sub: 'التوثيق مش مجرد إشارة، هو ثقة جمهورك وحماية لأثرك. حسابات وثّقناها:', ver_followers: 'متابع', ver_badge: 'موثّق', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
+        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', res_title: 'نتائج حملات إعلانية حقيقية', res_sub: 'أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.', res_proof: 'شوف الإثبات ↗', grow_title: 'ضخ متابعين: قبل وبعد', grow_sub: 'المتابعين مش بس للمظهر، هم قوة لحسابك قدام زبونك. هاي حسابات ساعدناها تكبر:', grow_all: 'شوف كل النتائج ({n})', grow_less: 'عرض أقل', unban_title: 'فك باند واسترجاع حسابات', unban_sub: 'حسابات معطّلة نهائياً ومكتوب عليها «ما بتقدر تطلب مراجعة»، ورجّعناها لأصحابها.', unban_more: '+ مئات الحسابات غيرها رجّعناها لأصحابها', rev_client: 'عميل موثّق', rev_proof: 'شوف المحادثة ↗', ver_title: 'مبروك التوثيق ✔️', ver_sub: 'التوثيق مش مجرد إشارة، هو ثقة جمهورك وحماية لأثرك. حسابات وثّقناها:', ver_followers: 'متابع', ver_badge: 'موثّق', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
         reviews_eyebrow: 'آراء العملاء', reviews_title: 'شو بيحكوا عنّا',
         reviews_empty_t: 'اشتغلت معنا؟', reviews_empty_d: 'رأيك بيهمنا وبيساعد غيرك يختار صح. ابعتلنا تجربتك على واتساب.', reviews_empty_btn: 'شاركنا رأيك',
         contact_eyebrow: 'تواصل معنا', contact_title: 'جاهز نبلّش؟', contact_sub: 'عبّي الفورم، ورح تنفتح محادثة واتساب فيها طلبك جاهز. بس اضغط إرسال.',
@@ -912,7 +928,7 @@
         p2_t: 'Understand & plan', p2_d: 'We study your page and audience and suggest the best plan and price.',
         p3_t: 'Execute', p3_d: 'Shooting, design, ads or full management. You follow every step with us.',
         p4_t: 'Track results', p4_d: 'Clear reports and continuous optimization until you hit your goal.',
-        works_eyebrow: 'Our work', works_title: 'Work we are proud of', res_title: 'Real ad campaign results', res_sub: 'Numbers from Meta Ads Manager for campaigns we ran for our clients.', res_proof: 'See proof ↗', grow_title: 'Follower growth: before & after', grow_sub: 'Followers aren’t just for looks, they give your account credibility with customers. Accounts we helped grow:', grow_all: 'See all results ({n})', grow_less: 'Show less', rev_client: 'Verified client', rev_proof: 'See the chat ↗', ver_title: 'Verified ✔️', ver_sub: 'Verification isn’t just a badge, it’s your audience’s trust and protection for your work. Accounts we verified:', ver_followers: 'followers', ver_badge: 'Verified', works_more: 'See more on Instagram', soon: 'Coming soon',
+        works_eyebrow: 'Our work', works_title: 'Work we are proud of', res_title: 'Real ad campaign results', res_sub: 'Numbers from Meta Ads Manager for campaigns we ran for our clients.', res_proof: 'See proof ↗', grow_title: 'Follower growth: before & after', grow_sub: 'Followers aren’t just for looks, they give your account credibility with customers. Accounts we helped grow:', grow_all: 'See all results ({n})', grow_less: 'Show less', unban_title: 'Unbans & account recovery', unban_sub: 'Accounts disabled permanently with “you cannot request another review”, and we got them back for their owners.', unban_more: '+ hundreds more accounts recovered', rev_client: 'Verified client', rev_proof: 'See the chat ↗', ver_title: 'Verified ✔️', ver_sub: 'Verification isn’t just a badge, it’s your audience’s trust and protection for your work. Accounts we verified:', ver_followers: 'followers', ver_badge: 'Verified', works_more: 'See more on Instagram', soon: 'Coming soon',
         reviews_eyebrow: 'Reviews', reviews_title: 'What clients say',
         reviews_empty_t: 'Worked with us?', reviews_empty_d: 'Your opinion matters and helps others choose right. Send us your experience on WhatsApp.', reviews_empty_btn: 'Share your review',
         contact_eyebrow: 'Contact', contact_title: 'Ready to start?', contact_sub: 'Fill in the form and a WhatsApp chat opens with your request ready. Just hit send.',
@@ -984,6 +1000,7 @@
           <b>${esc(c.t)}</b>
           <span class="muted-s">${esc(c.s)}</span>
           <ul>${(w.names[lang] || w.names.ar).map(n => `<li>${esc(n)}</li>`).join('')}</ul>
+          <span class="celebs-more">${t('unban_more')}</span>
         </article>`;
         if (w.placeholder) return `<div class="work reveal"><i class="work-logo"></i><span class="soon">${t('soon')}</span><div class="meta"><b>${esc(c.t)}</b></div></div>`;
         const media = w.video ? `<video src="${esc(w.video)}" muted loop playsinline autoplay></video>` : `<img src="${esc(w.img)}" alt="${esc(c.t)}" loading="lazy">`;
