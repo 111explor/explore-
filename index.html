@@ -721,6 +721,8 @@
           <p data-i18n="unban_sub">حسابات معطّلة نهائياً ومكتوب عليها «ما بتقدر تطلب مراجعة»، ورجّعناها لأصحابها.</p>
         </div>
         <div class="works" id="worksGrid"></div>
+        <div class="growth-more"><button class="btn btn-ghost" type="button" id="worksMore"></button></div>
+        <div class="works" id="celebsGrid" style="margin-top:16px"></div>
 
         <div class="results-head reveal">
           <h3 data-i18n="res_title">نتائج حملات إعلانية حقيقية</h3>
@@ -903,9 +905,6 @@
       { type: 'case', before: 'assets/works/unban-rita-before.webp', after: 'assets/works/unban-rita-after.webp',
         ar: { t: 'استرجاع حساب ريتا المصري', s: '138K متابع · حساب موقوف', b: 'قبل: معطّل', a: 'بعد: رجع ✔️' },
         en: { t: 'Rita Almasri’s account recovered', s: '138K followers · suspended', b: 'Before: disabled', a: 'After: restored ✔️' } },
-      { type: 'case', before: 'assets/works/unban-maslama-before.webp', after: 'assets/works/unban-maslama-after.webp',
-        ar: { t: 'فك باند حساب المتداول مسلمة', s: '24.6K متابع · «لا يمكن طلب مراجعة»', b: 'قبل: معطّل', a: 'بعد: رجع ✔️' },
-        en: { t: 'Unbanned trader Maslama’s account', s: '24.6K followers · “no further review”', b: 'Before: disabled', a: 'After: restored ✔️' } },
       { type: 'case', before: 'assets/works/abood-before.webp', after: 'assets/works/abood-after.webp',
         ar: { t: 'فك باند حساب المتداول عبود عمر', s: '25.5K متابع · 16/9/2025', b: 'قبل: معطّل', a: 'بعد: رجع ✔️' },
         en: { t: 'Unbanned trader Abood Omer’s account', s: '25.5K followers · 16/9/2025', b: 'Before: disabled', a: 'After: restored ✔️' } },
@@ -925,12 +924,6 @@
       { img: 'assets/works/ads-1.webp', big: '45,622', tag: { ar: 'وصول', en: 'Reach' },
         ar: { t: 'منشور إنستغرام', big: 'شخص وصلهم الإعلان', rows: ['المبلغ المنفق: 15 ₪', 'تكلفة كل 1000 وصول: 0.33 ₪'] },
         en: { t: 'Instagram post', big: 'people reached', rows: ['Spent: ₪15', 'Cost per 1,000 reached: ₪0.33'] } },
-      { img: 'assets/works/ads-2.webp', big: '85', tag: { ar: 'رسائل', en: 'Messages' },
-        ar: { t: 'منشور إنستغرام', big: 'محادثة', rows: ['المبلغ المنفق: 24.57 ₪', 'تكلفة المحادثة: 0.29 ₪'] },
-        en: { t: 'Instagram post', big: 'conversations', rows: ['Spent: ₪24.57', 'Cost per conversation: ₪0.29'] } },
-      { img: 'assets/works/ads-3.webp', big: '82', tag: { ar: 'رسائل', en: 'Messages' },
-        ar: { t: 'إعلان رسائل', big: 'محادثة', rows: ['9,190 مشاهدة', '6,032 مشاهد'] },
-        en: { t: 'Messages ad', big: 'conversations', rows: ['9,190 views', '6,032 viewers'] } }
     ];
 
     // ضخ متابعين: قبل وبعد (الأرقام زي ما هي بالحسابات) — ضيف حسابات جديدة بنفس الشكل
@@ -952,7 +945,7 @@
       { img: 'assets/works/growth-15.webp', handle: 'dr.mohammadjawadzalloum', before: '413', after: '13.4K' },
       { img: 'assets/works/growth-16.webp', handle: 'studiors.design', before: '3,622', after: '15.9K' }
     ];
-    const SHOW_FIRST = 6;
+    const SHOW_FIRST = 2;
     // حسابات وثّقناها (قبل وبعد)
     const VERIFIED = [
       { img: 'assets/works/verify-01.webp', handle: 'hania.wishah11', followers: '49.4K' },
@@ -1006,7 +999,7 @@
         p2_t: 'نفهم ونخطط', p2_d: 'ندرس صفحتك وجمهورك ونقترح عليك الخطة والسعر الأنسب.',
         p3_t: 'ننفّذ', p3_d: 'تصوير، تصميم، إعلانات أو إدارة كاملة. بتابع معنا خطوة بخطوة.',
         p4_t: 'نتابع النتائج', p4_d: 'تقارير واضحة وتحسين مستمر لحتى توصل لهدفك.',
-        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', res_title: 'نتائج حملات إعلانية حقيقية', res_sub: 'أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.', res_proof: 'شوف الإثبات ↗', grow_title: 'ضخ متابعين: قبل وبعد', grow_sub: 'المتابعين مش بس للمظهر، هم قوة لحسابك قدام زبونك. هاي حسابات ساعدناها تكبر:', grow_all: 'شوف كل النتائج ({n})', grow_less: 'عرض أقل', unban_title: 'فك باند واسترجاع حسابات', unban_sub: 'حسابات معطّلة نهائياً ومكتوب عليها «ما بتقدر تطلب مراجعة»، ورجّعناها لأصحابها.', unban_more: '+ مئات الحسابات غيرها رجّعناها لأصحابها', rev_client: 'عميل موثّق', rev_proof: 'شوف المحادثة ↗', ver_title: 'مبروك التوثيق ✔️', ver_sub: 'التوثيق مش مجرد إشارة، هو ثقة جمهورك وحماية لأثرك. حسابات وثّقناها:', ver_followers: 'متابع', ver_badge: 'موثّق', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
+        works_eyebrow: 'أعمالنا', works_title: 'شغل بنفتخر فيه', res_title: 'نتائج حملات إعلانية حقيقية', res_sub: 'أرقام من لوحة إعلانات ميتا لحملات أدرناها لزباينا.', res_proof: 'شوف الإثبات ↗', grow_title: 'ضخ متابعين: قبل وبعد', grow_sub: 'المتابعين مش بس للمظهر، هم قوة لحسابك قدام زبونك. هاي حسابات ساعدناها تكبر:', grow_all: 'شوف كل النتائج ({n})', grow_less: 'عرض أقل', unban_title: 'فك باند واسترجاع حسابات', unban_sub: 'حسابات معطّلة نهائياً ومكتوب عليها «ما بتقدر تطلب مراجعة»، ورجّعناها لأصحابها.', unban_more: '+ وكتير غيرهم من صنّاع المحتوى والمشاهير', rev_client: 'عميل موثّق', rev_proof: 'شوف المحادثة ↗', ver_title: 'مبروك التوثيق ✔️', ver_sub: 'التوثيق مش مجرد إشارة، هو ثقة جمهورك وحماية لأثرك. حسابات وثّقناها:', ver_followers: 'متابع', ver_badge: 'موثّق', works_more: 'شوف المزيد على إنستغرام', soon: 'قريباً',
         reviews_eyebrow: 'آراء العملاء', reviews_title: 'شو بيحكوا عنّا',
         reviews_empty_t: 'اشتغلت معنا؟', reviews_empty_d: 'رأيك بيهمنا وبيساعد غيرك يختار صح. ابعتلنا تجربتك على واتساب.', reviews_empty_btn: 'شاركنا رأيك',
         contact_eyebrow: 'تواصل معنا', contact_title: 'جاهز نبلّش؟', contact_sub: 'عبّي الفورم، ورح تنفتح محادثة واتساب فيها طلبك جاهز. بس اضغط إرسال.',
@@ -1035,7 +1028,7 @@
         p2_t: 'Understand & plan', p2_d: 'We study your page and audience and suggest the best plan and price.',
         p3_t: 'Execute', p3_d: 'Shooting, design, ads or full management. You follow every step with us.',
         p4_t: 'Track results', p4_d: 'Clear reports and continuous optimization until you hit your goal.',
-        works_eyebrow: 'Our work', works_title: 'Work we are proud of', res_title: 'Real ad campaign results', res_sub: 'Numbers from Meta Ads Manager for campaigns we ran for our clients.', res_proof: 'See proof ↗', grow_title: 'Follower growth: before & after', grow_sub: 'Followers aren’t just for looks, they give your account credibility with customers. Accounts we helped grow:', grow_all: 'See all results ({n})', grow_less: 'Show less', unban_title: 'Unbans & account recovery', unban_sub: 'Accounts disabled permanently with “you cannot request another review”, and we got them back for their owners.', unban_more: '+ hundreds more accounts recovered', rev_client: 'Verified client', rev_proof: 'See the chat ↗', ver_title: 'Verified ✔️', ver_sub: 'Verification isn’t just a badge, it’s your audience’s trust and protection for your work. Accounts we verified:', ver_followers: 'followers', ver_badge: 'Verified', works_more: 'See more on Instagram', soon: 'Coming soon',
+        works_eyebrow: 'Our work', works_title: 'Work we are proud of', res_title: 'Real ad campaign results', res_sub: 'Numbers from Meta Ads Manager for campaigns we ran for our clients.', res_proof: 'See proof ↗', grow_title: 'Follower growth: before & after', grow_sub: 'Followers aren’t just for looks, they give your account credibility with customers. Accounts we helped grow:', grow_all: 'See all results ({n})', grow_less: 'Show less', unban_title: 'Unbans & account recovery', unban_sub: 'Accounts disabled permanently with “you cannot request another review”, and we got them back for their owners.', unban_more: '+ and many more creators and public figures', rev_client: 'Verified client', rev_proof: 'See the chat ↗', ver_title: 'Verified ✔️', ver_sub: 'Verification isn’t just a badge, it’s your audience’s trust and protection for your work. Accounts we verified:', ver_followers: 'followers', ver_badge: 'Verified', works_more: 'See more on Instagram', soon: 'Coming soon',
         reviews_eyebrow: 'Reviews', reviews_title: 'What clients say',
         reviews_empty_t: 'Worked with us?', reviews_empty_d: 'Your opinion matters and helps others choose right. Send us your experience on WhatsApp.', reviews_empty_btn: 'Share your review',
         contact_eyebrow: 'Contact', contact_title: 'Ready to start?', contact_sub: 'Fill in the form and a WhatsApp chat opens with your request ready. Just hit send.',
@@ -1091,10 +1084,20 @@
       $('#marquee').innerHTML = [...SERVICES, ...SERVICES].map(s => `<span>${esc(s[lang].t)}</span>`).join('');
     }
 
+    let worksAll = false;
+    const SHOW_CASES = 2;
     function renderWorks() {
-      const items = WORKS.length ? WORKS : SERVICES.filter(s => ['video', 'product', 'design', 'menu', 'manage', 'ads'].includes(s.id))
-        .map(s => ({ placeholder: true, [lang]: { t: s[lang].t, s: t('soon') } }));
-      $('#worksGrid').innerHTML = items.map(w => {
+      const cases = WORKS.filter((w) => w.type === 'case');
+      const shownCases = worksAll ? cases : cases.slice(0, SHOW_CASES);
+      const others = WORKS.filter((w) => w.type !== 'case');
+      const btn = $('#worksMore');
+      btn.hidden = cases.length <= SHOW_CASES;
+      btn.textContent = worksAll ? t('grow_less') : t('grow_all').replace('{n}', cases.length);
+      $('#celebsGrid').innerHTML = others.map(cardHtml).join('');
+      $('#worksGrid').innerHTML = shownCases.map(cardHtml).join('');
+      observeReveal();
+    }
+    function cardHtml(w) {
         const c = w[lang] || w.ar;
         if (w.type === 'case') return `<article class="work-case reveal">
           <div class="case-imgs">
@@ -1113,7 +1116,6 @@
         if (w.placeholder) return `<div class="work reveal"><i class="work-logo"></i><span class="soon">${t('soon')}</span><div class="meta"><b>${esc(c.t)}</b></div></div>`;
         const media = w.video ? `<video src="${esc(w.video)}" muted loop playsinline autoplay></video>` : `<img src="${esc(w.img)}" alt="${esc(c.t)}" loading="lazy">`;
         return `<div class="work has-media reveal">${media}<div class="meta"><b>${esc(c.t)}</b><span>${esc(c.s || '')}</span></div></div>`;
-      }).join('');
     }
 
     function renderResults() {
@@ -1131,15 +1133,16 @@
 
     const toNum = (x) => { const v = parseFloat(String(x).replace(/,/g, '')); return /k$/i.test(x) ? v * 1000 : v; };
     function renderGrowth() {
-      const list = GROWTH.map((g) => ({ ...g, mult: toNum(g.after) / Math.max(1, toNum(g.before)) }))
-        .sort((a, b) => toNum(b.after) - toNum(a.after));
+      const list = GROWTH.map((g) => ({ ...g, inc: toNum(g.after) - toNum(g.before) }))
+        .sort((a, b) => b.inc - a.inc);
+      const fmtK = (n) => n >= 1000 ? (Math.round(n / 100) / 10).toLocaleString('en-US') + 'K' : String(Math.round(n));
       const shown = growthAll ? list : list.slice(0, SHOW_FIRST);
       $('#growthGrid').innerHTML = shown.map((g) => `<figure class="grow reveal">
           <img src="${esc(g.img)}" alt="@${esc(g.handle)}" loading="lazy">
           <figcaption>
             <span class="grow-handle" dir="ltr">@${esc(g.handle)}</span>
             <span class="grow-nums" dir="ltr"><span class="b">${esc(g.before)}</span> → <span class="a">${esc(g.after)}</span></span>
-            <span class="grow-x">×${g.mult >= 10 ? Math.round(g.mult) : g.mult.toFixed(1)}</span>
+            <span class="grow-x" dir="ltr">+${fmtK(g.inc)}</span>
           </figcaption>
         </figure>`).join('');
       const btn = $('#growthMore');
@@ -1149,7 +1152,12 @@
     }
 
     function renderVerified() {
-      const list = [...VERIFIED].sort((a, b) => toNum(b.followers) - toNum(a.followers));
+      const PIN = ['hania.wishah11', 'ii_taallaa'];
+      const list = [...VERIFIED].sort((a, b) => {
+        const pa = PIN.indexOf(a.handle), pb = PIN.indexOf(b.handle);
+        if (pa !== -1 || pb !== -1) return (pa === -1 ? 99 : pa) - (pb === -1 ? 99 : pb);
+        return toNum(b.followers) - toNum(a.followers);
+      });
       const shown = verifyAll ? list : list.slice(0, SHOW_FIRST);
       $('#verifyGrid').innerHTML = shown.map((v) => `<figure class="grow reveal">
           <img src="${esc(v.img)}" alt="@${esc(v.handle)}" loading="lazy">
@@ -1234,6 +1242,7 @@
     }
 
     /* events */
+    $('#worksMore').addEventListener('click', () => { worksAll = !worksAll; renderWorks(); if (!worksAll) $('#worksGrid').scrollIntoView({ block: 'start' }); });
     $('#verifyMore').addEventListener('click', () => { verifyAll = !verifyAll; renderVerified(); if (!verifyAll) $('#verifyGrid').scrollIntoView({ block: 'start' }); });
     $('#growthMore').addEventListener('click', () => { growthAll = !growthAll; renderGrowth(); if (!growthAll) $('#growthGrid').scrollIntoView({ block: 'start' }); });
     $('#langBtn').addEventListener('click', () => { lang = lang === 'ar' ? 'en' : 'ar'; applyLang(); });
