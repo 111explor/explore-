@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>تواصل معنا | Explor Plus</title>
+  <meta name="description" content="كل حسابات وأرقام Explor Plus للدعاية والإعلان بمكان واحد: إنستغرام، واتساب، المتجر وأكتر.">
+  <meta name="theme-color" content="#8b5cf6">
+  <link rel="canonical" href="https://explorplus.online/contact.html">
+  <meta property="og:title" content="تواصل معنا | Explor Plus">
+  <meta property="og:description" content="كل حساباتنا وأرقامنا بمكان واحد.">
+  <meta property="og:image" content="https://explorplus.online/assets/og-image.jpg">
+  <link rel="icon" href="assets/icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Cairo:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* صفحة روابط: عمود واحد بعرض الموبايل، أزرار مستطيلة تحت بعض */
+    :root {
+      --ink: #1d1530; --muted: #5f5378; --card: #ffffff; --line: rgba(124,58,237,.14);
+      --grad: linear-gradient(160deg, #8b5cf6 0%, #c26ad0 50%, #ff8f4e 100%);
+      --display: 'Lalezar', 'Cairo', sans-serif; --body: 'Cairo', system-ui, sans-serif;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    html { background: #ff8f4e; }
+    body { min-height: 100vh; min-height: 100dvh; background: var(--grad); color: var(--ink); font-family: var(--body); }
+    .wrap { width: min(560px, 100%); margin: 0 auto; padding: calc(36px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) calc(40px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; align-items: center; gap: 22px; }
+    .head { display: flex; flex-direction: column; align-items: center; gap: 10px; color: #fff; text-align: center; }
+    .logo { width: 104px; height: 104px; border-radius: 30px; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.35); display: grid; place-items: center; }
+    .logo img { width: 74px; height: auto; }
+    h1 { font-family: var(--display); font-weight: 400; font-size: 46px; line-height: 1.15; }
+    .head p { color: #fff3ea; font-weight: 600; font-size: 16.5px; max-width: 34ch; }
+    .hours { display: inline-flex; align-items: center; gap: 8px; background: rgba(29,21,48,.35); padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; }
+    .hours i { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+    .hours.off i { background: #ffb37d; }
+    .links { width: 100%; display: flex; flex-direction: column; gap: 12px; list-style: none; padding: 0; }
+    .link { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 12px 16px; background: var(--card); color: var(--ink); text-decoration: none; border-radius: 22px; box-shadow: 0 16px 34px -22px rgba(29,21,48,.6); transition: transform .15s ease, box-shadow .2s ease; }
+    .link:hover { transform: translateY(-2px); box-shadow: 0 22px 40px -22px rgba(29,21,48,.7); }
+    .link:active { transform: scale(.985); }
+    .link:focus-visible { outline: 3px solid #1d1530; outline-offset: 3px; }
+    .ico { flex: none; width: 50px; height: 50px; border-radius: 15px; display: grid; place-items: center; color: #fff; }
+    .ico svg { width: 26px; height: 26px; }
+    .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .txt b { font-size: 18px; font-weight: 800; line-height: 1.35; }
+    .txt span { font-size: 14px; color: var(--muted); font-weight: 600; overflow-wrap: anywhere; }
+    .go { flex: none; width: 34px; height: 34px; border-radius: 50%; background: #f6effd; color: #7c3aed; display: grid; place-items: center; }
+    .go svg { width: 18px; height: 18px; transform: scaleX(-1); }
+    .link.featured { background: #1d1530; color: #fff; }
+    .link.featured .txt span { color: #cfc6e6; }
+    .link.featured .go { background: rgba(255,255,255,.1); color: #ffb37d; }
+    .skel { height: 76px; border-radius: 22px; background: rgba(255,255,255,.35); }
+    .foot { color: #fff3ea; font-size: 13.5px; font-weight: 600; text-align: center; display: flex; flex-direction: column; gap: 6px; }
+    .foot a { color: #fff; }
+    @media (prefers-reduced-motion: reduce) { .link { transition: none; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="head">
+      <div class="logo"><img src="assets/logo-light.png" alt="Explor Plus"></div>
+      <h1>تواصل معنا</h1>
+      <p>كل حساباتنا وأرقامنا بمكان واحد. اختار الفرع اللي بدك ياه.</p>
+      <span class="hours" id="hours"><i aria-hidden="true"></i><span id="hoursTxt">يومياً 10AM–10PM</span></span>
+    </header>
+    <ul class="links" id="links" aria-label="روابط التواصل">
+      <li class="skel"></li><li class="skel"></li><li class="skel"></li>
+    </ul>
+    <footer class="foot">
+      <a href="https://explorplus.online">explorplus.online</a>
+      <span>© Explor Plus · للدعاية والإعلان</span>
+    </footer>
+  </main>
+
+  <script src="assets/vendor/supabase-2.118.0.js"></script>
+  <script src="assets/config.js"></script>
+  <script src="assets/store-core.js"></script>
+  <script src="assets/links.js"></script>
+  <script>
+  (function () {
+    const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    // @يوزر وأرقام بالإنجليزي جوّا نص عربي: منعزلهم عشان ما ينقلبوا
+    const bidi = (raw) => String(raw).split(/([@+]?[A-Za-z0-9][\w.@+-]*)/).map((part, i) => i % 2 ? `<bdi dir="ltr">${esc(part)}</bdi>` : esc(part)).join('');
+    const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+    function render(list) {
+      const { ICONS, toHref } = window.XPLinks;
+      const items = (list || []).filter((l) => l && l.title && toHref(l.type, l.value));
+      document.getElementById('links').innerHTML = items.map((l, i) => {
+        const ic = ICONS[l.type] || ICONS.link;
+        const href = toHref(l.type, l.value);
+        const ext = /^https?:/.test(href) ? ' target="_blank" rel="noopener"' : '';
+        return `<li><a class="link${l.featured ? ' featured' : ''}" href="${esc(href)}"${ext}>
+          <span class="ico" style="background:${esc(l.color || ic.color)}">${ic.svg}</span>
+          <span class="txt"><b>${bidi(l.title)}</b>${l.sub ? `<span>${bidi(l.sub)}</span>` : ''}</span>
+          <span class="go">${ARROW}</span></a></li>`;
+      }).join('') || '<li class="link"><span class="txt"><b>راسلنا على واتساب</b></span></li>';
+    }
+
+    function openNow() {
+      let h; try { h = Number(new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: 'Asia/Hebron' }).format(new Date())); } catch (e) { h = new Date().getHours(); }
+      const open = h >= 10 && h < 22;
+      document.getElementById('hours').classList.toggle('off', !open);
+      document.getElementById('hoursTxt').textContent = open ? 'متواجدين الآن · يومياً 10AM–10PM' : 'يومياً 10AM–10PM · بنرد عليك أول ما نفتح';
+    }
+    openNow();
+
+    const C = window.EXPLOR_CONFIG || {};
+    // أول إشي: الأزرار الافتراضية، بعدين اللي رتّبه الأدمن من لوحة الإدارة
+    render(window.XPLinks.defaults(C));
+    if (window.XP && XP.configured) {
+      XP.loadSiteConfig().then((cfg) => {
+        render(Array.isArray(cfg.CONTACT_LINKS) && cfg.CONTACT_LINKS.length ? cfg.CONTACT_LINKS : window.XPLinks.defaults(cfg));
+      });
+      XP.trackVisits('/contact');
+    }
+    if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+  })();
+  </script>
+</body>
+</html>

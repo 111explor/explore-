@@ -39,6 +39,7 @@
   <script src="assets/vendor/supabase-2.118.0.js"></script>
   <script src="assets/config.js"></script>
   <script src="assets/store-core.js"></script>
+  <script src="assets/links.js"></script>
   <script>
   (function () {
     const { C, sb, configured, $, $$, esc, intlPhone, money, fmtDate, waLink, errMsg, toast, twoStep, pill, setupNotice, getProfile, signIn } = XP;
@@ -444,6 +445,7 @@
 
     /* ---------- site: contact, payment, offers ---------- */
     let payDraft = [];
+    let linkDraft = [];
     async function renderSite() {
       const [{ data: cfgRows, error }, { data: anns }] = await Promise.all([
         sb.from('site_config').select('key, value'),
@@ -453,6 +455,7 @@
       const v = Object.fromEntries((cfgRows || []).map((r) => [r.key, r.value]));
       const so = v.socials || {};
       payDraft = Array.isArray(v.payment_methods) ? v.payment_methods.map((m) => ({ ...m })) : [];
+      linkDraft = (Array.isArray(v.contact_links) && v.contact_links.length ? v.contact_links : XPLinks.defaults(C)).map((l) => ({ ...l }));
       const now = new Date();
       app.innerHTML = `
         <div class="page-head"><div><h1>الموقع والعروض</h1><p>كل اللي بتعدّله هون بيتغيّر عالموقع والمتجر فوراً.</p></div></div>
@@ -483,6 +486,13 @@
           </div>
         </div>
 
+        <div class="card stack" style="margin-top:14px">
+          <div class="spread"><h2 style="font-size:18px">🔗 صفحة «تواصل معنا»</h2><a class="btn btn-ghost btn-sm" href="contact.html" target="_blank" rel="noopener">فتح الصفحة ↗</a></div>
+          <p class="small muted">هاي الأزرار اللي بتظهر بصفحة <b dir="ltr">explorplus.online/contact</b> (حطّها بالبايو). بخانة الرابط بتقدر تكتب رابط كامل، أو <b>@يوزر</b> للإنستغرام وتيك توك وتلجرام، أو <b>رقم</b> للواتساب والاتصال.</p>
+          <div class="stack" id="linkList"></div>
+          <div class="row"><button class="btn btn-ghost" type="button" id="linkAdd">+ زر جديد</button><button class="btn btn-primary" type="button" id="linkSave">حفظ الأزرار</button></div>
+        </div>
+
         <div class="grid grid-2" style="margin-top:14px">
           <form class="card stack" id="offerForm" novalidate>
             <h2 style="font-size:18px">🎁 نشر عرض جديد</h2>
@@ -510,6 +520,7 @@
           </div>
         </div>`;
       drawPay();
+      drawLinks();
 
       const digits = (x) => String(x || '').replace(/\D/g, '').replace(/^00/, '');
       $('#contactForm').addEventListener('submit', async (e) => {
@@ -536,6 +547,17 @@
         if (error) return fail(error);
         C.PAYMENT_METHODS = clean; toast('انحفظت طرق الدفع ✓'); renderSite();
       });
+      $('#linkAdd').addEventListener('click', () => { syncLinks(); linkDraft.push({ type: 'instagram', title: '', sub: '', value: '' }); drawLinks(); $('#linkList .item:last-child [data-l-title]').focus(); });
+      $('#linkList').addEventListener('change', (e) => { if (e.target.matches('[data-l-type], [data-l-val]')) { syncLinks(); drawLinks(); } });
+      $('#linkSave').addEventListener('click', async () => {
+        syncLinks();
+        const clean = linkDraft.map((l) => ({ type: l.type, title: l.title.trim(), sub: l.sub.trim(), value: l.value.trim(), featured: !!l.featured })).filter((l) => l.title || l.value);
+        const bad = clean.find((l) => !l.title || !XPLinks.toHref(l.type, l.value));
+        if (bad) return toast(`الزر «${bad.title || 'بدون اسم'}» ناقصه اسم أو رابط صحيح`, 'err');
+        const { error } = await sb.from('site_config').upsert({ key: 'contact_links', value: clean });
+        if (error) return fail(error);
+        C.CONTACT_LINKS = clean; linkDraft = clean.map((l) => ({ ...l })); drawLinks(); toast('انحفظت الأزرار ✓ والصفحة اتحدّثت');
+      });
       $('#offerForm').addEventListener('submit', async (e) => {
         e.preventDefault(); const err = $('#oErr'); err.hidden = true;
         const btn = e.target.querySelector('button[type=submit]');
@@ -546,6 +568,35 @@
         if (error) { err.textContent = errMsg(error); err.hidden = false; return; }
         toast($('#oNotify').checked ? 'انتشر العرض ووصل إشعار للزباين ✓' : 'انتشر العرض ✓'); renderSite();
       });
+    }
+    function syncLinks() {
+      $$('[data-link]').forEach((row) => { const l = linkDraft[Number(row.dataset.link)]; if (l) { l.type = $('[data-l-type]', row).value; l.title = $('[data-l-title]', row).value; l.sub = $('[data-l-sub]', row).value; l.value = $('[data-l-val]', row).value; l.featured = $('[data-l-feat]', row).checked; } });
+    }
+    function drawLinks() {
+      const { ICONS, toHref } = XPLinks;
+      const n = linkDraft.length;
+      $('#linkList').innerHTML = linkDraft.map((l, i) => {
+        const ic = ICONS[l.type] || ICONS.link;
+        const href = toHref(l.type, l.value);
+        return `<div class="item" data-link="${i}">
+          <div class="spread" style="gap:8px;flex-wrap:wrap">
+            <span style="display:inline-grid;place-items:center;width:38px;height:38px;border-radius:11px;color:#fff;background:${ic.color};flex:none"><span style="width:22px;height:22px;display:block">${ic.svg}</span></span>
+            <select class="input" data-l-type aria-label="الأيقونة" style="flex:1;min-width:130px">${Object.entries(ICONS).map(([k, x]) => `<option value="${k}"${k === l.type ? ' selected' : ''}>${esc(x.label)}</option>`).join('')}</select>
+            <span class="row" style="gap:6px">
+              <button class="btn btn-ghost btn-sm" type="button" data-link-move="${i}" data-dir="-1" aria-label="لفوق"${i === 0 ? ' disabled' : ''}>▲</button>
+              <button class="btn btn-ghost btn-sm" type="button" data-link-move="${i}" data-dir="1" aria-label="لتحت"${i === n - 1 ? ' disabled' : ''}>▼</button>
+              <button class="btn btn-bad btn-sm" type="button" data-link-del="${i}">حذف</button>
+            </span>
+          </div>
+          <div class="grid grid-2">
+            <input class="input" data-l-title value="${esc(l.title)}" placeholder="اسم الزر (مثلاً: فرع الإعلانات)" aria-label="اسم الزر">
+            <input class="input" data-l-sub value="${esc(l.sub || '')}" placeholder="سطر صغير تحته (اختياري)" aria-label="الوصف">
+          </div>
+          <input class="input" data-l-val dir="ltr" value="${esc(l.value || '')}" placeholder="رابط أو @يوزر أو رقم" aria-label="الرابط">
+          <div class="spread small" style="flex-wrap:wrap;gap:6px"><label class="check"><input type="checkbox" data-l-feat${l.featured ? ' checked' : ''}> زر مميّز (لون غامق)</label>
+          ${href ? `<span class="muted" dir="ltr" style="overflow-wrap:anywhere">${esc(href)}</span>` : '<span style="color:#e5484d">⚠ الرابط مش واضح</span>'}</div>
+        </div>`;
+      }).join('') || '<p class="muted small">ما في أزرار. اضغط «+ زر جديد».</p>';
     }
     function syncPay() {
       $$('[data-pay]').forEach((row) => { const m = payDraft[Number(row.dataset.pay)]; if (m) { m.name = $('[data-p-name]', row).value; m.details = $('[data-p-det]', row).value; } });
@@ -692,6 +743,12 @@
         toast('رجع المبلغ لرصيد الزبون ✓'); updateCounts(); renderOrders();
       });
       if (d.rf) { reportFilter = d.rf; return renderReports(); }
+      if (d.linkDel !== undefined) { syncLinks(); linkDraft.splice(Number(d.linkDel), 1); return drawLinks(); }
+      if (d.linkMove !== undefined) {
+        syncLinks(); const i = Number(d.linkMove), j = i + Number(d.dir);
+        if (j >= 0 && j < linkDraft.length) [linkDraft[i], linkDraft[j]] = [linkDraft[j], linkDraft[i]];
+        return drawLinks();
+      }
       if (d.payDel !== undefined) { syncPay(); payDraft.splice(Number(d.payDel), 1); return drawPay(); }
       if (d.annToggle) {
         const { error } = await sb.from('announcements').update({ active: d.on !== '1' }).eq('id', Number(d.annToggle));

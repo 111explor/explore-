@@ -191,6 +191,7 @@
       if (v.socials && typeof v.socials === 'object') C.SOCIALS = v.socials;
       if (typeof v.hours === 'string' && v.hours) C.HOURS = v.hours;
       if (typeof v.stat_services === 'string' && v.stat_services) C.STAT_SERVICES = v.stat_services;
+      if (Array.isArray(v.contact_links)) C.CONTACT_LINKS = v.contact_links;
       announcements.length = 0;
       (ann || []).filter((a) => !a.ends_at || new Date(a.ends_at) > new Date()).forEach((a) => announcements.push(a));
     } catch (e) { /* بنضل على القيم الافتراضية */ }
