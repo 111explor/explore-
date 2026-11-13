@@ -2,7 +2,7 @@
    - الصور والخطوط والملفات الثابتة: من الذاكرة بسرعة، وبتتحدّث بالخلفية
    - الصفحات وقاعدة البيانات: دايماً من النت (الأسعار والأرصدة لازم تكون محدّثة)
    - بدون نت: بتفتح آخر نسخة محفوظة من الصفحة */
-const CACHE = 'xp-v5';
+const CACHE = 'xp-v6';
 const CORE = ['/', '/index.html', '/store.html', '/assets/store.css', '/assets/store-core.js', '/assets/config.js', '/assets/vendor/supabase-2.118.0.js', '/assets/logo-light.png', '/assets/icon.png'];
 
 self.addEventListener('install', (e) => {

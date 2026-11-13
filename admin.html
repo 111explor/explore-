@@ -81,10 +81,37 @@
       });
     }
 
+    let mfaOn = false;
+    function renderMfa() {
+      $('#tabs').hidden = true; $('#logoutBtn').hidden = false; $('#refreshBtn').hidden = true;
+      app.innerHTML = `<form class="auth card stack" id="mfaForm" novalidate>
+        <h1 style="font-size:22px">🔐 رمز التحقق</h1>
+        <p class="muted small">افتح تطبيق Google Authenticator واكتب الرمز (6 أرقام) تبع Explor Plus.</p>
+        <div class="field"><label for="mfaCode">الرمز</label><input id="mfaCode" inputmode="numeric" autocomplete="one-time-code" dir="ltr" maxlength="6" required placeholder="123456"></div>
+        <p class="form-msg err" id="mfaErr" hidden></p>
+        <button class="btn btn-primary btn-block" type="submit">تأكيد</button>
+        <p class="small muted">ضيّعت التلفون؟ الحل بملف README، قسم «التحقق الثنائي».</p>
+      </form>`;
+      $('#mfaCode').focus();
+      $('#mfaForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); const err = $('#mfaErr'); err.hidden = true;
+        try {
+          const { data, error } = await sb.auth.mfa.listFactors(); if (error) throw error;
+          const f = (data.totp || []).find((x) => x.status === 'verified');
+          const r = await sb.auth.mfa.challengeAndVerify({ factorId: f.id, code: $('#mfaCode').value.replace(/\D/g, '') });
+          if (r.error) throw r.error;
+          await boot();
+        } catch (ex) { err.textContent = errMsg(ex); err.hidden = false; }
+      });
+    }
+
     async function boot() {
       try { me = await getProfile(); } catch (e) { me = null; }
       if (!me) return renderLogin();
       if (!me.is_admin) { await sb.auth.signOut(); me = null; return renderLogin('هالحساب مش أدمن. لازم تفعّله من Supabase (شوف ملف README).'); }
+      const aal = sb.auth.mfa ? await sb.auth.mfa.getAuthenticatorAssuranceLevel().catch(() => null) : null;
+      mfaOn = !!(aal && aal.data && aal.data.nextLevel === 'aal2');
+      if (mfaOn && aal.data.currentLevel !== 'aal2') return renderMfa();
       $('#tabs').hidden = false; $('#logoutBtn').hidden = false; $('#refreshBtn').hidden = false;
       updateCounts(); route();
     }
@@ -178,6 +205,7 @@
           <h2 style="font-size:18px;margin-bottom:10px">مخزون قرّب يخلص</h2>
           ${low.length ? low.map((p) => `<div class="spread" style="padding:8px 0;border-bottom:1px solid var(--border)"><span>${esc(p.name)}</span><span class="row"><span class="badge ${(stockMap[p.id] || 0) ? 'warn' : 'bad'}">${stockMap[p.id] || 0} متبقي</span><a class="btn btn-ghost btn-sm" href="#stock" data-stock-go="${p.id}">إضافة</a></span></div>`).join('') : '<p class="muted small">كل المخزون تمام.</p>'}
         </div>
+        ${!mfaOn ? `<a class="renew-banner" href="#settings" style="margin-top:14px"><span>🔐 فعّل <b>التحقق الثنائي</b> لحسابك، عشان ما حدا يدخل حتى لو عرف كلمة السر</span><span class="btn btn-primary btn-sm">فعّله هلأ</span></a>` : ''}
         ${counts.reports ? `<a class="renew-banner" href="#reports" style="margin-top:14px"><span>🚨 عندك <b>${counts.reports}</b> بلاغ مفتوح</span><span class="btn btn-primary btn-sm">افتح البلاغات</span></a>` : ''}
         <div class="card" style="margin-top:14px">
           <h2 style="font-size:18px;margin-bottom:4px">اشتراكات بتخلص خلال 7 أيام</h2>
@@ -400,6 +428,9 @@
     async function renderSettings() {
       const [{ data, error }, { data: tr }, al] = await Promise.all([sb.rpc('admin_get_settings'), sb.from('loyalty_tiers').select('*').order('min_spent'), sb.rpc('admin_alert_prefs')]);
       const ap = (!al.error && al.data && al.data[0]) || null;
+      const [bs, fl] = await Promise.all([sb.rpc('admin_bot_status'), sb.auth.mfa ? sb.auth.mfa.listFactors() : Promise.resolve({ data: null })]);
+      const bot = (!bs.error && bs.data && bs.data[0]) || null;
+      const totp = ((fl.data && fl.data.totp) || []).find((x) => x.status === 'verified');
       if (error) throw error;
       tiersCache = tr || [];
       const st = (data && data[0]) || {};
@@ -432,6 +463,28 @@
             <p class="small muted">بدك الإشعارات توصل لكذا موظف؟ اعمل جروب تلجرام، ضيف البوت عليه، وحط Chat ID تبع الجروب (بيبلّش بـ ‎-100).</p>
           </div>
         </div>
+        <div class="grid grid-2" style="margin-top:14px">
+          <div class="card stack" id="mfaCard">
+            <h2 style="font-size:18px">🔐 التحقق الثنائي (2FA)</h2>
+            ${totp ? `<p><span class="badge ok">مفعّل ✓</span></p><p class="small muted">كل دخول للوحة بيطلب رمز من تطبيق Authenticator، وقاعدة البيانات نفسها بترفض أي عملية أدمن بدون الرمز.</p>
+              <button class="btn btn-bad btn-sm" type="button" id="mfaOff" style="justify-self:start">إيقاف التحقق الثنائي</button>`
+            : `<p class="small muted">حتى لو حدا عرف رقمك وكلمة السر، ما بيقدر يدخل بدون الرمز اللي على تلفونك. بتحتاج تطبيق <b>Google Authenticator</b> أو <b>Microsoft Authenticator</b>.</p>
+              <div id="mfaEnroll"><button class="btn btn-primary" type="button" id="mfaStart">تفعيل</button></div>`}
+          </div>
+          <div class="card stack" id="botCard">
+            <h2 style="font-size:18px">🤖 بوت المتجر بتلجرام</h2>
+            ${bot ? `<p>${bot.connected ? '<span class="badge ok">شغّال ✓</span>' : bot.has_token ? '<span class="badge warn">التوكن محفوظ، اضغط «تشغيل»</span>' : '<span class="badge">مش مفعّل</span>'} · <span class="small muted">زباين ربطوا حسابهم: <b class="num">${Number(bot.linked || 0)}</b></span></p>
+            <p class="small muted">بوت للزباين بنفس المتجر: نفس الحسابات والرصيد والمخزون والأسعار. لازم يكون بوت <b>غير</b> بوت الإشعارات تبعك.</p>
+            <ol class="steps-list small">
+              <li>بـ <b>@BotFather</b> اعمل بوت جديد (مثلاً Explor Plus Shop).</li>
+              <li>ركّب سيرفر البوت على Supabase (الخطوات بملف README، قسم «بوت المتجر»).</li>
+              <li>حط التوكن هون واضغط <b>تشغيل</b>، وبعدين ابعت /start للبوت.</li>
+            </ol>
+            <div class="field"><label for="bTok">توكن بوت المتجر</label><input id="bTok" type="password" dir="ltr" autocomplete="off" placeholder="${bot.has_token ? '•••••• محفوظ (اكتب جديد لتغييره)' : '123456789:AA...'}"></div>
+            <button class="btn btn-primary" type="button" id="bStart" style="justify-self:start">${bot.connected ? 'إعادة ربط' : 'تشغيل'}</button>`
+            : '<p class="small muted">البوت بحاجة تحديث قاعدة البيانات (ملف update-2026-11-bot.sql).</p>'}
+          </div>
+        </div>
         <div class="card stack" style="margin-top:14px">
           <div><h2 style="font-size:18px">⭐ مستويات الامتياز</h2><p class="small muted">الزبون بياخد خصم تلقائي على كل مشترياته لما مجموع اللي صرفه يوصل للمبلغ. الخصم بينحسب من السيرفر، ما حدا بيقدر يتلاعب فيه.</p></div>
           <div class="table-wrap"><table style="min-width:520px">
@@ -459,6 +512,43 @@
           if (error) { err.textContent = errMsg(error); err.hidden = false; return; }
         }
         toast('انحفظت الإعدادات ✓'); renderSettings();
+      });
+      if ($('#bStart')) $('#bStart').addEventListener('click', async (e) => {
+        const btn = e.currentTarget; btn.disabled = true;
+        try {
+          const tok = $('#bTok').value.trim();
+          if (tok) { const r = await sb.rpc('admin_set_setting', { p_key: 'shop_bot_token', p_value: tok }); if (r.error) throw r.error; }
+          const r2 = await sb.rpc('admin_setup_shop_bot', { p_url: C.SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/shop-bot' });
+          if (r2.error) throw r2.error;
+          toast('انربط البوت ✓ افتحه بتلجرام وابعتله /start'); renderSettings();
+        } catch (ex) { fail(ex); btn.disabled = false; }
+      });
+      if ($('#mfaOff')) $('#mfaOff').addEventListener('click', (e) => twoStep(e.currentTarget, async () => {
+        const { error } = await sb.auth.mfa.unenroll({ factorId: totp.id });
+        if (error) return fail(error);
+        toast('انوقف التحقق الثنائي'); mfaOn = false; renderSettings();
+      }));
+      if ($('#mfaStart')) $('#mfaStart').addEventListener('click', async () => {
+        try {
+          const old = ((fl.data && fl.data.all) || []).filter((x) => x.status !== 'verified');
+          for (const f of old) await sb.auth.mfa.unenroll({ factorId: f.id });
+          const { data, error } = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'Explor Plus ' + new Date().toISOString().slice(0, 10) });
+          if (error) throw error;
+          $('#mfaEnroll').innerHTML = `<ol class="steps-list small">
+              <li>افتح تطبيق Authenticator واضغط <b>+</b> وامسح الكود:</li></ol>
+            <img src="${esc(data.totp.qr_code)}" alt="QR" width="180" height="180" style="background:#fff;border-radius:12px;padding:8px">
+            <p class="small muted">أو اكتب هالمفتاح بالتطبيق: <code dir="ltr" style="overflow-wrap:anywhere">${esc(data.totp.secret)}</code></p>
+            <form class="stack" id="mfaVerify" novalidate>
+              <div class="field"><label for="mfaNew">اكتب الرمز اللي ظهر بالتطبيق</label><input id="mfaNew" inputmode="numeric" autocomplete="one-time-code" dir="ltr" maxlength="6" placeholder="123456"></div>
+              <button class="btn btn-primary" type="submit">تأكيد وتفعيل</button>
+            </form>`;
+          $('#mfaVerify').addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            const r = await sb.auth.mfa.challengeAndVerify({ factorId: data.id, code: $('#mfaNew').value.replace(/\D/g, '') });
+            if (r.error) return fail(r.error);
+            mfaOn = true; toast('انفعّل التحقق الثنائي ✓ من هلأ كل دخول بيطلب الرمز'); renderSettings();
+          });
+        } catch (ex) { fail(ex); }
       });
       $('#sTest').addEventListener('click', async () => {
         const { error } = await sb.rpc('admin_test_telegram');
@@ -663,15 +753,15 @@
         <div class="spread"><h2>كلمة سر جديدة لـ ${esc(name)}</h2><button class="btn btn-ghost btn-sm" data-close>إغلاق</button></div>
         <p class="muted small">تأكد إنه اللي طالب التغيير هو صاحب الحساب (رسالة من نفس رقمه).</p>
         <form class="stack" id="pwForm" novalidate>
-          <div class="field"><label for="pwNew">كلمة السر الجديدة</label><input id="pwNew" dir="ltr" autocomplete="off" minlength="6" required></div>
+          <div class="field"><label for="pwNew">كلمة السر الجديدة</label><input id="pwNew" dir="ltr" autocomplete="off" minlength="8" required></div>
           <button class="btn btn-ghost btn-sm" type="button" id="pwGen" style="justify-self:start">اقترح كلمة سر</button>
           <p class="form-msg err" id="pwErr" hidden></p>
           <button class="btn btn-primary" type="submit">حفظ</button>
         </form>`);
-      $('#pwGen', el).addEventListener('click', () => { const a = 'abcdefghjkmnpqrstuvwxyz23456789'; let x = ''; const r = crypto.getRandomValues(new Uint32Array(8)); r.forEach((n) => { x += a[n % a.length]; }); $('#pwNew', el).value = x; });
+      $('#pwGen', el).addEventListener('click', () => { const a = 'abcdefghjkmnpqrstuvwxyz23456789'; let x = ''; const r = crypto.getRandomValues(new Uint32Array(10)); r.forEach((n) => { x += a[n % a.length]; }); $('#pwNew', el).value = x; });
       $('#pwForm', el).addEventListener('submit', async (e) => {
         e.preventDefault(); const pw = $('#pwNew', el).value.trim(), err = $('#pwErr', el);
-        if (pw.length < 6) { err.textContent = 'كلمة السر لازم تكون 6 أحرف أو أكثر.'; err.hidden = false; return; }
+        if (pw.length < 8) { err.textContent = 'كلمة السر لازم تكون 8 أحرف أو أكثر.'; err.hidden = false; return; }
         const { error } = await sb.rpc('admin_set_password', { p_user_id: id, p_password: pw });
         if (error) { err.textContent = errMsg(error); err.hidden = false; return; }
         closeSheet(); toast('تغيّرت كلمة السر ✓ ابعتها للزبون على واتساب');

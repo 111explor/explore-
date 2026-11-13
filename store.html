@@ -291,7 +291,7 @@
       if (mode === 'signup') body = `
             <div class="field"><label for="aName">الاسم</label><input id="aName" autocomplete="name" required placeholder="اسمك أو اسم صفحتك"></div>
             <div class="field"><label for="aPhone">رقم الواتساب</label><input id="aPhone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="059xxxxxxx" dir="ltr"><span class="hint">بتدخل فيه على حسابك، ومنتواصل معك عليه بخصوص طلباتك.</span></div>
-            <div class="field"><label for="aPass">كلمة السر</label><input id="aPass" type="password" autocomplete="new-password" required minlength="6" placeholder="6 أحرف أو أكثر" dir="ltr"></div>
+            <div class="field"><label for="aPass">كلمة السر</label><input id="aPass" type="password" autocomplete="new-password" required minlength="8" placeholder="8 أحرف أو أكثر" dir="ltr"></div>
             <label class="check small"><input type="checkbox" id="aTerms"> <span>موافق على <a href="terms.html" target="_blank" rel="noopener" style="color:var(--accent)">الشروط وسياسة الاسترجاع والخصوصية</a></span></label>
             <p class="form-msg err" id="authErr" hidden></p>
             <button class="btn btn-primary btn-block" type="submit">إنشاء الحساب</button>`;
@@ -314,7 +314,7 @@
             <h2 style="font-size:20px">🔑 كلمة سر جديدة</h2>
             <p class="muted small">بعتنا رمز على <b dir="ltr">${esc(authEmail)}</b>.</p>
             <div class="field"><label for="aCode">الرمز</label><input id="aCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" dir="ltr" class="code-input" placeholder="••••••"></div>
-            <div class="field"><label for="aPass">كلمة السر الجديدة</label><input id="aPass" type="password" autocomplete="new-password" minlength="6" dir="ltr"></div>
+            <div class="field"><label for="aPass">كلمة السر الجديدة</label><input id="aPass" type="password" autocomplete="new-password" minlength="8" dir="ltr"></div>
             <p class="form-msg err" id="authErr" hidden></p>
             <button class="btn btn-primary btn-block" type="submit">حفظ والدخول</button>
             <div class="spread small"><button class="linkish" type="button" data-mode="forgot">ابعتلي رمز جديد</button><button class="linkish" type="button" data-mode="login">رجوع</button></div>`;
@@ -350,7 +350,7 @@
             const name = val('aName'), phone = val('aPhone'), pass = $('#aPass').value;
             if (!name) return showErr('اكتب اسمك.');
             if (!validPhone(phone)) return showErr('اكتب رقم واتساب صحيح، مثلاً 0597653989.');
-            if (pass.length < 6) return showErr('كلمة السر لازم تكون 6 أحرف أو أكثر.');
+            if (pass.length < 8) return showErr('كلمة السر لازم تكون 8 أحرف أو أكثر.');
             if (!$('#aTerms').checked) return showErr('لازم توافق على الشروط لتكمل.');
             btn.disabled = true;
             await signUp(name, XP.phoneEmail(phone), phone, pass);
@@ -375,7 +375,7 @@
           if (mode === 'reset') {
             const code = val('aCode'), pass = $('#aPass').value;
             if (code.replace(/\D/g, '').length < 6) return showErr('اكتب الرمز كامل.');
-            if (pass.length < 6) return showErr('كلمة السر لازم تكون 6 أحرف أو أكثر.');
+            if (pass.length < 8) return showErr('كلمة السر لازم تكون 8 أحرف أو أكثر.');
             btn.disabled = true;
             await XP.verifyCode(authEmail, code, 'recovery');
             await XP.setNewPassword(pass);
