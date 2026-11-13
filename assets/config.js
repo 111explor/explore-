@@ -2,6 +2,9 @@
    إعدادات متجر Explor Plus: عدّل هالملف بس
    ===================================================================== */
 window.EXPLOR_CONFIG = {
+  // المتجر: false = موقوف مؤقتاً (صفحة «قريباً» وما في روابط إله). true = شغّال
+  STORE_OPEN: false,
+
   // من Supabase → Project Settings → API (الـ anon key عام وآمن يكون بالموقع)
   SUPABASE_URL: 'https://evevrfazxoncwomqvzlo.supabase.co',
   SUPABASE_ANON_KEY: 'sb_publishable_oTyWXt1avECLgfOz07Ap0A_TUgjU44q',

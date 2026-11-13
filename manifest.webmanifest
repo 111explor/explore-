@@ -1,10 +1,10 @@
 {
   "name": "Explor Plus",
   "short_name": "Explor Plus",
-  "description": "اشتراكات رقمية بتسليم فوري وخدمات الدعاية والإعلان",
+  "description": "Explor Plus للدعاية والإعلان: إعلانات ممولة، توثيق واسترجاع الحسابات، تصوير وتصميم",
   "lang": "ar",
   "dir": "rtl",
-  "start_url": "/store.html?source=app",
+  "start_url": "/?source=app",
   "scope": "/",
   "display": "standalone",
   "background_color": "#07080b",
@@ -15,8 +15,8 @@
     { "src": "/assets/app-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "المتجر", "url": "/store.html#shop" },
-    { "name": "محفظتي", "url": "/store.html#wallet" },
-    { "name": "طلباتي", "url": "/store.html#orders" }
+    { "name": "خدماتنا", "url": "/#services" },
+    { "name": "اطلب خدمتك", "url": "/#contact" },
+    { "name": "كل حساباتنا", "url": "/contact.html" }
   ]
 }

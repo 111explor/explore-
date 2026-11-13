@@ -88,7 +88,8 @@
 
     function render(list) {
       const { ICONS, toHref } = window.XPLinks;
-      const items = (list || []).filter((l) => l && l.title && toHref(l.type, l.value));
+      const storeOff = (window.EXPLOR_CONFIG || {}).STORE_OPEN === false;
+      const items = (list || []).filter((l) => l && l.title && toHref(l.type, l.value) && !(storeOff && (l.type === 'store' || /\/store/.test(String(l.value)))));
       document.getElementById('links').innerHTML = items.map((l, i) => {
         const ic = ICONS[l.type] || ICONS.link;
         const href = toHref(l.type, l.value);

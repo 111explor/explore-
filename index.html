@@ -17,6 +17,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="keywords" content="دعاية وإعلان, شركة إعلانات فلسطين, توثيق حسابات, العلامة الزرقاء, استرجاع حسابات, إعلانات ممولة, إدارة صفحات, تصوير منتجات, تصوير فيديو إعلاني, منيو إلكتروني, اشتراك نتفلكس, Explor Plus">
   <link rel="canonical" href="https://explorplus.online/">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "كيف بطلب خدمة؟", "acceptedAnswer": {"@type": "Answer", "text": "من قسم «خدماتنا» اضغط «اطلبها» على الخدمة، أو عبّي فورم «تواصل معنا». بتنفتح محادثة واتساب فيها طلبك جاهز، بس اضغط إرسال."}}, {"@type": "Question", "name": "قديش بياخد توثيق الحساب؟", "acceptedAnswer": {"@type": "Answer", "text": "التوثيق بالعلامة الزرقاء بياخد تقريباً 10 دقائق، على فيسبوك وإنستغرام وتيك توك، باشتراك شهري أو 6 شهور أو سنوي."}}, {"@type": "Question", "name": "بتقدروا ترجّعوا حساب معطّل نهائياً؟", "acceptedAnswer": {"@type": "Answer", "text": "رجّعنا حسابات كانت معطّلة نهائياً ومكتوب عليها «ما بتقدر تطلب مراجعة»، وفي أمثلة بقسم «أعمالنا». ابعتلنا اسم الحساب أو رابطه على واتساب ومنحكيلك وضعه."}}, {"@type": "Question", "name": "كيف بيتحدد السعر وكيف بدفع؟", "acceptedAnswer": {"@type": "Answer", "text": "السعر بيعتمد على الخدمة وحجم الشغل. بنحكي معك على واتساب ومنتفق على السعر وطريقة الدفع اللي بتناسبك قبل ما نبلّش."}}, {"@type": "Question", "name": "شو ساعات العمل؟", "acceptedAnswer": {"@type": "Answer", "text": "متواجدين يومياً من 10 الصبح لـ 10 الليل. إذا راسلتنا برا هالوقت، منرد عليك أول ما نفتح."}}, {"@type": "Question", "name": "بتحفظوا بياناتي لما أعبّي الفورم؟", "acceptedAnswer": {"@type": "Answer", "text": "لا. الفورم ما بيحفظ ولا إشي، هو بس بيجهّز رسالة واتساب، والرسالة بتنبعت من واتساب تبعك مباشرة."}}]}</script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -397,6 +398,33 @@
     .grow-x.ver { color: #fff; background: #0a84ff; }
     .growth-more { display: flex; justify-content: center; margin-top: 16px; }
 
+    /* how we work */
+    .hw-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: none; }
+    .hw-step { position: relative; padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); display: grid; gap: 8px; align-content: start; }
+    .step-n { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 20px; color: var(--accent-ink); background: var(--accent); margin-bottom: 6px; }
+    .hw-step h3 { font-size: 20px; }
+    .hw-step p { color: var(--muted); font-size: 15px; }
+    [data-style="bold"] .hw-step { border: 2px solid var(--border); box-shadow: none; }
+    [data-style="bold"] .hw-step:nth-child(2) { background: #1d1530; color: #fff; border-color: #1d1530; }
+    [data-style="bold"] .hw-step:nth-child(2) p { color: #cfc6e6; }
+    [data-style="bold"] .hw-step:nth-child(2) .step-n { background: #ffb37d; color: #1d1530; }
+    [data-style="bold"] .hw-step:nth-child(3) .step-n { background: var(--grad); }
+    [data-style="bold"] .hw-step h3 { font-family: 'Lalezar', 'Cairo', sans-serif; font-weight: 400; font-size: 26px; }
+
+    /* faq */
+    .faq { display: grid; gap: 12px; max-width: 860px; }
+    .faq-item { border-radius: 20px; background: var(--surface); border: 1px solid var(--border); overflow: hidden; }
+    .faq-item summary { cursor: pointer; list-style: none; padding: 18px 22px; font-weight: 800; font-size: 17px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after { content: "+"; flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 20px; line-height: 1; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); transition: transform .2s ease; }
+    .faq-item[open] summary::after { transform: rotate(45deg); }
+    .faq-item p { padding: 0 22px 20px; color: var(--muted); font-size: 15.5px; line-height: 1.8; }
+    .faq-item summary:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; border-radius: 20px; }
+    [data-style="bold"] .faq-item { border: 2px solid var(--border); }
+    [data-style="bold"] .faq-item[open] { background: #f6effd; border-color: transparent; }
+
+    [data-store-link][hidden] { display: none !important; }
+
     /* why us */
     .why { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     .why-item { padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); display: grid; gap: 8px; align-content: start; }
@@ -600,6 +628,8 @@
       .fab { inset-inline-start: 16px; bottom: 16px; }
       .hero-ctas .btn { flex: 1 1 auto; }
     }
+    @media (max-width: 980px) { .hw-steps { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { .faq-item summary { font-size: 16px; padding: 16px 18px; } }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
       .reveal { opacity: 1; transform: none; }
@@ -626,7 +656,7 @@
       </nav>
       <div class="nav-actions">
         <button class="lang-btn" id="langBtn" type="button" aria-label="Change language">EN</button>
-        <a href="https://explorplus.online/store" class="btn btn-ghost btn-sm btn-cta" data-i18n="nav_store">المتجر ↗</a>
+        <a href="https://explorplus.online/store" class="btn btn-ghost btn-sm btn-cta" data-i18n="nav_store" data-store-link hidden>المتجر ↗</a>
         <a href="#contact" class="btn btn-primary btn-sm btn-cta" data-i18n="cta_order">اطلب خدمتك</a>
         <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -639,7 +669,8 @@
       <a href="#works" data-i18n="nav_works">أعمالنا</a>
       <a href="#reviews" data-i18n="nav_reviews">آراء العملاء</a>
       <a href="#contact" data-i18n="nav_contact">تواصل معنا</a>
-      <a href="https://explorplus.online/store" data-i18n="nav_store_full">المتجر · اشحن واشترِ ↗</a>
+      <a href="#faq" data-i18n="nav_faq">الأسئلة الشائعة</a>
+      <a href="https://explorplus.online/store" data-i18n="nav_store_full" data-store-link hidden>المتجر · اشحن واشترِ ↗</a>
     </nav>
   </header>
 
@@ -686,6 +717,23 @@
           <p data-i18n="services_sub">اختار الخدمة واضغط "اطلبها"، ورح نجهزلك رسالة واتساب جاهزة بثانية.</p>
         </div>
         <div class="services" id="servicesGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ PROCESS ============ -->
+    <section class="block" id="process" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div>
+            <div class="eyebrow" data-i18n="proc_eyebrow">كيف بنشتغل؟</div>
+            <h2 data-i18n="proc_title">3 خطوات وبنبلّش</h2>
+          </div>
+        </div>
+        <ol class="hw-steps">
+          <li class="hw-step reveal"><span class="step-n">1</span><h3 data-i18n="hw1_t">اختار خدمتك</h3><p data-i18n="hw1_d">من قسم الخدمات اضغط «اطلبها»، أو عبّي الفورم تحت. بتاخد أقل من دقيقة.</p></li>
+          <li class="hw-step reveal"><span class="step-n">2</span><h3 data-i18n="hw2_t">احكي معنا على واتساب</h3><p data-i18n="hw2_d">بتنفتح محادثة فيها طلبك جاهز. منفهم شو بدك، ومنتفق معك على التفاصيل والسعر قبل ما نبلّش.</p></li>
+          <li class="hw-step reveal"><span class="step-n">3</span><h3 data-i18n="hw3_t">بنبلّش بنفس اليوم</h3><p data-i18n="hw3_d">منبلّش بشغلك فوراً، ومنضل نتابع معك يومياً من 10 الصبح لـ 10 الليل لحتى توصل للنتيجة.</p></li>
+        </ol>
       </div>
     </section>
 
@@ -757,6 +805,27 @@
           </div>
         </div>
         <div id="reviewsWrap"></div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="block" id="faq" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div>
+            <div class="eyebrow" data-i18n="faq_eyebrow">أسئلة شائعة</div>
+            <h2 data-i18n="faq_title">عندك سؤال؟</h2>
+          </div>
+          <p data-i18n="faq_sub">إذا ما لقيت جوابك هون، راسلنا على واتساب ومنرد عليك.</p>
+        </div>
+        <div class="faq">
+          <details class="faq-item reveal" open><summary data-i18n="q1">كيف بطلب خدمة؟</summary><p data-i18n="a1">من قسم «خدماتنا» اضغط «اطلبها» على الخدمة، أو عبّي فورم «تواصل معنا». بتنفتح محادثة واتساب فيها طلبك جاهز، بس اضغط إرسال.</p></details>
+          <details class="faq-item reveal"><summary data-i18n="q2">قديش بياخد توثيق الحساب؟</summary><p data-i18n="a2">التوثيق بالعلامة الزرقاء بياخد تقريباً 10 دقائق، على فيسبوك وإنستغرام وتيك توك، باشتراك شهري أو 6 شهور أو سنوي.</p></details>
+          <details class="faq-item reveal"><summary data-i18n="q3">بتقدروا ترجّعوا حساب معطّل نهائياً؟</summary><p data-i18n="a3">رجّعنا حسابات كانت معطّلة نهائياً ومكتوب عليها «ما بتقدر تطلب مراجعة»، وفي أمثلة بقسم «أعمالنا». ابعتلنا اسم الحساب أو رابطه على واتساب ومنحكيلك وضعه.</p></details>
+          <details class="faq-item reveal"><summary data-i18n="q4">كيف بيتحدد السعر وكيف بدفع؟</summary><p data-i18n="a4">السعر بيعتمد على الخدمة وحجم الشغل. بنحكي معك على واتساب ومنتفق على السعر وطريقة الدفع اللي بتناسبك قبل ما نبلّش.</p></details>
+          <details class="faq-item reveal"><summary data-i18n="q5">شو ساعات العمل؟</summary><p data-i18n="a5">متواجدين يومياً من 10 الصبح لـ 10 الليل. إذا راسلتنا برا هالوقت، منرد عليك أول ما نفتح.</p></details>
+          <details class="faq-item reveal"><summary data-i18n="q6">بتحفظوا بياناتي لما أعبّي الفورم؟</summary><p data-i18n="a6">لا. الفورم ما بيحفظ ولا إشي، هو بس بيجهّز رسالة واتساب، والرسالة بتنبعت من واتساب تبعك مباشرة.</p></details>
+        </div>
       </div>
     </section>
 
@@ -987,7 +1056,7 @@
     /* ================= النصوص (عربي / إنجليزي) ================= */
     const I18N = {
       ar: {
-        tagline: 'للدعاية والإعلان', nav_services: 'خدماتنا', nav_process: 'ليش نحنا', nav_works: 'أعمالنا', nav_reviews: 'آراء العملاء', nav_contact: 'تواصل معنا',
+        nav_faq: 'الأسئلة الشائعة', proc_eyebrow: 'كيف بنشتغل؟', proc_title: '3 خطوات وبنبلّش', hw1_t: 'اختار خدمتك', hw1_d: 'من قسم الخدمات اضغط «اطلبها»، أو عبّي الفورم تحت. بتاخد أقل من دقيقة.', hw2_t: 'احكي معنا على واتساب', hw2_d: 'بتنفتح محادثة فيها طلبك جاهز. منفهم شو بدك، ومنتفق معك على التفاصيل والسعر قبل ما نبلّش.', hw3_t: 'بنبلّش بنفس اليوم', hw3_d: 'منبلّش بشغلك فوراً، ومنضل نتابع معك يومياً من 10 الصبح لـ 10 الليل لحتى توصل للنتيجة.', faq_eyebrow: 'أسئلة شائعة', faq_title: 'عندك سؤال؟', faq_sub: 'إذا ما لقيت جوابك هون، راسلنا على واتساب ومنرد عليك.', q1: 'كيف بطلب خدمة؟', a1: 'من قسم «خدماتنا» اضغط «اطلبها» على الخدمة، أو عبّي فورم «تواصل معنا». بتنفتح محادثة واتساب فيها طلبك جاهز، بس اضغط إرسال.', q2: 'قديش بياخد توثيق الحساب؟', a2: 'التوثيق بالعلامة الزرقاء بياخد تقريباً 10 دقائق، على فيسبوك وإنستغرام وتيك توك، باشتراك شهري أو 6 شهور أو سنوي.', q3: 'بتقدروا ترجّعوا حساب معطّل نهائياً؟', a3: 'رجّعنا حسابات كانت معطّلة نهائياً ومكتوب عليها «ما بتقدر تطلب مراجعة»، وفي أمثلة بقسم «أعمالنا». ابعتلنا اسم الحساب أو رابطه على واتساب ومنحكيلك وضعه.', q4: 'كيف بيتحدد السعر وكيف بدفع؟', a4: 'السعر بيعتمد على الخدمة وحجم الشغل. بنحكي معك على واتساب ومنتفق على السعر وطريقة الدفع اللي بتناسبك قبل ما نبلّش.', q5: 'شو ساعات العمل؟', a5: 'متواجدين يومياً من 10 الصبح لـ 10 الليل. إذا راسلتنا برا هالوقت، منرد عليك أول ما نفتح.', q6: 'بتحفظوا بياناتي لما أعبّي الفورم؟', a6: 'لا. الفورم ما بيحفظ ولا إشي، هو بس بيجهّز رسالة واتساب، والرسالة بتنبعت من واتساب تبعك مباشرة.', tagline: 'للدعاية والإعلان', nav_services: 'خدماتنا', nav_process: 'ليش نحنا', nav_works: 'أعمالنا', nav_reviews: 'آراء العملاء', nav_contact: 'تواصل معنا',
         cta_order: 'اطلب خدمتك', since: 'منذ 2018', pill_text: 'وكالة إبداعية',
         hero_1: 'شريكك الرقمي', hero_2: 'نحو النجاح والتطوير.',
         hero_lead: 'منظومة تسويقية متكاملة تمنح علامتك التجارية الظهور الذي تستحقه، وتصل بك إلى جمهورك المستهدف بدقة.',
@@ -1016,7 +1085,7 @@
         rights: 'جميع الحقوق محفوظة', nav_store: 'المتجر ↗', nav_store_full: 'المتجر · اشحن واشترِ', store_eyebrow: 'الاشتراكات الرقمية', store_title: 'اشتراكاتك بتسليم فوري', store_sub: 'تصفّح الأسعار براحتك. لما تطلب بتعمل حساب برقم جوالك، وبيوصلك الاشتراك فوراً.', store_band_t: 'كل ما تشتري أكتر، بتاخد خصم أكبر', store_band_d: 'اشحن محفظتك مرة وحدة واشترِ بضغطة. التسليم تلقائي والدعم يومي.', sub_order: 'اطلب', sub_out: 'نفدت', sub_stock: 'متوفر {n}', sub_low: 'باقي {n} بس', sub_manual: 'تنفيذ سريع', sub_all: 'شوف كل الاشتراكات ←', store_cta: 'ادخل المتجر', why_eyebrow: 'ليش تختارنا؟', why_title: 'شغل بتعتمد عليه', w1_t: 'خبرة من 2018', w1_d: 'أكتر من 8 سنين خبرة بالدعاية والإعلان والسوشال ميديا.', w2_t: 'سرعة بالتنفيذ', w2_d: 'منبلّش بشغلك بنفس اليوم، والتوثيق والاشتراكات بتوصلك خلال دقائق.', w3_t: 'أسعار مناسبة', w3_d: 'باقات لكل ميزانية، وخصومات للعملاء الدائمين.', w4_t: 'متابعة بعد البيع', w4_d: 'ما منختفي بعد الدفع: دعم يومي من 10 الصبح لـ 10 الليل.', admin_login: 'دخول الإدارة', terms_link: 'الشروط والخصوصية', contact_link: 'كل حساباتنا', picker_title: 'اختر الطابع', st_midnight: 'ليلي', st_clean: 'فاتح', st_aurora: 'أورورا'
       },
       en: {
-        tagline: 'Advertising & Media', nav_services: 'Services', nav_process: 'Why us', nav_works: 'Our work', nav_reviews: 'Reviews', nav_contact: 'Contact',
+        nav_faq: 'FAQ', proc_eyebrow: 'How it works', proc_title: '3 steps and we start', hw1_t: 'Pick your service', hw1_d: 'Tap “Order” on any service, or fill in the form below. It takes less than a minute.', hw2_t: 'Chat with us on WhatsApp', hw2_d: 'A chat opens with your request ready. We understand what you need and agree on the details and price before we start.', hw3_t: 'We start the same day', hw3_d: 'We get to work right away and follow up with you daily from 10 AM to 10 PM until you get results.', faq_eyebrow: 'FAQ', faq_title: 'Got a question?', faq_sub: 'Can’t find your answer here? Message us on WhatsApp.', q1: 'How do I order a service?', a1: 'Tap “Order” on a service, or fill in the contact form. A WhatsApp chat opens with your request ready, just hit send.', q2: 'How long does account verification take?', a2: 'Blue-badge verification takes about 10 minutes on Facebook, Instagram and TikTok, on a monthly, 6‑month or yearly plan.', q3: 'Can you recover a permanently disabled account?', a3: 'We have recovered accounts that were permanently disabled with “you can’t request a review”. See examples under “Our work”, and send us the account name or link on WhatsApp so we can check it.', q4: 'How is the price set and how do I pay?', a4: 'The price depends on the service and the scope. We talk on WhatsApp and agree on the price and a payment method that suits you before we start.', q5: 'What are your working hours?', a5: 'We are available daily from 10 AM to 10 PM. If you message us outside these hours, we reply as soon as we open.', q6: 'Do you store my data when I fill in the form?', a6: 'No. The form stores nothing, it only prepares a WhatsApp message that you send from your own WhatsApp.', tagline: 'Advertising & Media', nav_services: 'Services', nav_process: 'Why us', nav_works: 'Our work', nav_reviews: 'Reviews', nav_contact: 'Contact',
         cta_order: 'Order a service', since: 'Since 2018', pill_text: 'Creative agency',
         hero_1: 'Your digital partner', hero_2: 'for growth and success.',
         hero_lead: 'A complete marketing system that gives your brand the visibility it deserves and reaches your target audience with precision.',
@@ -1295,6 +1364,8 @@
   <script src="assets/store-core.js"></script>
   <script>
   (function () {
+    const storeOpen = (window.EXPLOR_CONFIG || {}).STORE_OPEN !== false;
+    if (storeOpen) document.querySelectorAll('[data-store-link]').forEach((a) => { a.hidden = false; });
     if (!window.XP || !XP.configured) return;
     async function loadSubs() {
       const grid = document.getElementById('subsGrid'); if (!grid) return;
@@ -1356,7 +1427,8 @@
       // شريط العروض
       const bar = document.getElementById('offerBar'), offer = XP.announcements[0];
       if (bar && offer) {
-        const link = !offer.link ? 'https://explorplus.online/store' : offer.link.startsWith('#') ? 'https://explorplus.online/store.html' + offer.link : offer.link;
+        const link = !offer.link ? (storeOpen ? 'https://explorplus.online/store' : '#contact')
+          : offer.link.startsWith('#') ? (storeOpen ? 'https://explorplus.online/store.html' + offer.link : '#contact') : offer.link;
         bar.innerHTML = `🎁 <b>${XP.esc(offer.title)}</b>${offer.body ? ` <span>${XP.esc(offer.body)}</span>` : ''} <a href="${XP.esc(link)}">شوف العرض</a>`;
         bar.hidden = false;
       }
