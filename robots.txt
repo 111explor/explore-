@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
+Disallow: /contact-edit.html
+Disallow: /contact/edit/
 
 Sitemap: https://explorplus.online/sitemap.xml
