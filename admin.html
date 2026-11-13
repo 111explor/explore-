@@ -132,6 +132,18 @@
       $('#tWeek').textContent = t.visits_7d ?? 0;
     }
 
+    let auditLimit = 15;
+    async function loadAudit() {
+      const box = $('#auditList'); if (!box) return;
+      const { data, error } = await sb.from('audit_log').select('*').order('at', { ascending: false }).limit(auditLimit);
+      if (error) { box.innerHTML = '<p class="muted small">سجل العمليات بحاجة تحديث قاعدة البيانات (ملف update-2026-11-alerts.sql).</p>'; $('#auditMore').hidden = true; return; }
+      $('#auditMore').hidden = data.length < auditLimit;
+      box.innerHTML = data.length ? data.map((a) => `<div style="padding:8px 0;border-bottom:1px solid var(--border)${a.critical ? ';border-inline-start:3px solid var(--bad);padding-inline-start:10px' : ''}">
+          <div class="spread" style="gap:8px;align-items:flex-start"><b style="font-size:14.5px">${esc(a.action)}</b><span class="small muted num" dir="ltr" style="white-space:nowrap">${new Date(a.at).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', ' ·')}</span></div>
+          ${a.details ? `<div class="small muted" style="white-space:pre-line">${esc(a.details)}</div>` : ''}
+          <div class="small" style="color:${a.actor_label.startsWith('⚠️') ? 'var(--bad)' : 'var(--muted)'}">${esc(a.actor_label)}</div>
+        </div>`).join('') : '<p class="muted small">ما في عمليات لسا.</p>';
+    }
     async function renderHome() {
       const start = new Date(); start.setHours(0, 0, 0, 0);
       const soon = new Date(Date.now() + 7 * 86400000).toISOString();
@@ -174,7 +186,14 @@
             const n = Math.ceil((new Date(o.expires_at) - Date.now()) / 86400000);
             return `<div class="spread" style="padding:8px 0;border-bottom:1px solid var(--border)"><span>${who(o.profiles)}<span class="small muted">${esc(o.product_name)} · #${o.id}</span></span><span class="row"><span class="badge ${n <= 3 ? 'warn' : ''}">باقي ${n} ${n === 1 ? 'يوم' : 'أيام'}</span>${waCustomer(o.profiles, `مرحباً ${o.profiles?.full_name || ''} 👋\nاشتراك ${o.product_name} تبعك بيخلص بعد ${n} ${n === 1 ? 'يوم' : 'أيام'}.\nجدّده من المتجر بضغطة، أو رد علينا هون ومنجددلك 🙏`)}</span></div>`;
           }).join('') : '<p class="muted small">ما في اشتراكات بتخلص هالأسبوع.</p>'}
+        </div>
+        <div class="card" style="margin-top:14px">
+          <div class="spread"><h2 style="font-size:18px">🕵️ سجل العمليات</h2><button class="btn btn-ghost btn-sm" type="button" id="auditMore">عرض أكتر</button></div>
+          <p class="muted small" style="margin:4px 0 8px">كل تعديل بالمتجر مين عمله ومتى. نفس الشي بيوصلك فوراً على بوت تلجرام. ما حدا بيقدر يحذف منه شي.</p>
+          <div id="auditList"><p class="muted small">جاري التحميل…</p></div>
         </div>`;
+      auditLimit = 15; loadAudit();
+      $('#auditMore').addEventListener('click', () => { auditLimit += 30; loadAudit(); });
       loadTraffic(); if (!trafficTimer) trafficTimer = setInterval(loadTraffic, 20000);
     }
 
@@ -379,12 +398,13 @@
     /* ---------- settings ---------- */
     let tiersCache = [];
     async function renderSettings() {
-      const [{ data, error }, { data: tr }] = await Promise.all([sb.rpc('admin_get_settings'), sb.from('loyalty_tiers').select('*').order('min_spent')]);
+      const [{ data, error }, { data: tr }, al] = await Promise.all([sb.rpc('admin_get_settings'), sb.from('loyalty_tiers').select('*').order('min_spent'), sb.rpc('admin_alert_prefs')]);
+      const ap = (!al.error && al.data && al.data[0]) || null;
       if (error) throw error;
       tiersCache = tr || [];
       const st = (data && data[0]) || {};
       app.innerHTML = `
-        <div class="page-head"><div><h1>الإعدادات</h1><p>إشعارات تلجرام إلك: طلب شحن، طلب جديد، بلاغ، مخزون قرّب يخلص، وملخص يومي الساعة 9 الصبح.</p></div></div>
+        <div class="page-head"><div><h1>الإعدادات</h1><p>إشعارات تلجرام إلك: طلب شحن، طلب جديد، بلاغ، مخزون قرّب يخلص، أي تعديل بالمتجر، وملخص يومي الساعة 9 الصبح.</p></div></div>
         <div class="grid grid-2">
           <form class="card stack" id="setForm" novalidate>
             <h2 style="font-size:18px">بوت تلجرام</h2>
@@ -392,6 +412,9 @@
             <div class="field"><label for="sChat">Chat ID</label><input id="sChat" dir="ltr" value="${esc(st.telegram_chat_id || '')}" placeholder="مثلاً 123456789"></div>
             <div class="field"><label for="sUrl">رابط موقعك</label><input id="sUrl" dir="ltr" value="${esc(st.site_url || '')}" placeholder="https://explorplus.com"><span class="hint">عشان رسائل تلجرام يكون فيها زر يفتح لوحة الإدارة.</span></div>
             <div class="field"><label for="sLow">تنبيه المخزون لما يوصل أقل من</label><input id="sLow" type="number" min="1" dir="ltr" value="${esc(st.low_stock || '3')}"></div>
+            ${ap ? `<label class="check"><input type="checkbox" id="sAlertsAll"${ap.alerts_all ? ' checked' : ''}> إشعار فوري لكل تعديل (قبول، رفض، استرجاع، أسعار، مخزون، إعدادات…)</label>
+            <label class="check"><input type="checkbox" id="sAlertsSignups"${ap.alerts_signups ? ' checked' : ''}> إشعار لكل حساب جديد</label>
+            <span class="hint small muted">دخول الأدمن، تغيير كلمة سره، تعديل الرصيد بدون حركة، وأي حدا بيصير أدمن: بيوصلوا دايماً 🚨 حتى لو طفيت هدول.</span>` : ''}
             <p class="form-msg err" id="sErr" hidden></p>
             <div class="row"><button class="btn btn-primary" type="submit">حفظ</button><button class="btn btn-ghost" type="button" id="sTest" ${st.has_telegram_token && st.telegram_chat_id ? '' : 'disabled'}>أرسل رسالة تجربة</button></div>
             <p class="small muted">الحالة: ${st.has_telegram_token && st.telegram_chat_id ? '<span class="badge ok">مفعّل</span>' : '<span class="badge">مش مفعّل</span>'}</p>
@@ -430,6 +453,7 @@
         e.preventDefault(); const err = $('#sErr'); err.hidden = true;
         const pairs = [['telegram_chat_id', $('#sChat').value], ['site_url', $('#sUrl').value], ['low_stock', $('#sLow').value]];
         if ($('#sTok').value.trim()) pairs.push(['telegram_bot_token', $('#sTok').value.trim()]);
+        if ($('#sAlertsAll')) pairs.push(['alerts_all', $('#sAlertsAll').checked ? 'on' : 'off'], ['alerts_signups', $('#sAlertsSignups').checked ? 'on' : 'off']);
         for (const [k, v] of pairs) {
           const { error } = await sb.rpc('admin_set_setting', { p_key: k, p_value: v });
           if (error) { err.textContent = errMsg(error); err.hidden = false; return; }
