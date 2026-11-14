@@ -610,12 +610,12 @@
       .chip-nav { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 10px; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch;
         -webkit-mask-image: linear-gradient(to left, transparent 0, #000 16px, #000 calc(100% - 28px), transparent 100%); mask-image: linear-gradient(to left, transparent 0, #000 16px, #000 calc(100% - 28px), transparent 100%); }
       .chip-nav::-webkit-scrollbar { display: none; }
-      .sec-chip { flex: none; scroll-snap-align: start; display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; min-height: 38px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--border); color: var(--text); font-weight: 700; font-size: 14px; white-space: nowrap; text-decoration: none; transition: background .2s, color .2s, border-color .2s; }
-      .sec-chip svg { width: 17px; height: 17px; color: var(--accent); flex: none; }
-      .sec-chip.hot { background: var(--grad, var(--accent)); color: #fff; border-color: transparent; }
-      .sec-chip.hot svg { color: #fff; }
-      .sec-chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-      .sec-chip.active svg { color: inherit; }
+      .sec-chip { flex: none; scroll-snap-align: start; display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px; min-height: 38px; background: transparent; border: 0; color: var(--text); font-weight: 700; font-size: 14.5px; white-space: nowrap; text-decoration: none; position: relative; transition: color .2s; }
+      .sec-chip svg { width: 18px; height: 18px; color: var(--accent); flex: none; }
+      .sec-chip.hot { color: var(--accent); font-weight: 800; }
+      .sec-chip.hot svg { color: var(--accent-2, var(--accent)); }
+      .sec-chip.active { color: var(--accent); }
+      .sec-chip.active::after { content: ""; position: absolute; inset-inline: 8px; bottom: 0; height: 3px; border-radius: 3px; background: var(--grad, var(--accent)); }
       .sec-chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
       .nav-actions .btn-cta { display: none; }
       .mobile-nav.open { display: grid; gap: 4px; padding: 10px 16px 18px; border-bottom: 1px solid var(--border); }
