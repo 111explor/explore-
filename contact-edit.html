@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>تعديل «تواصل معنا» | Explor Plus</title>
+  <title>تعديل «صفحاتنا» | Explor Plus</title>
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#8b5cf6">
   <link rel="icon" href="assets/icon.png">
@@ -62,14 +62,16 @@
     .savebar .state.dirty { color: #c2410c; }
     /* المعاينة: نفس شكل صفحة تواصل معنا */
     .preview { position: sticky; top: 76px; }
-    .phone { border-radius: 34px; padding: 26px 16px; background: var(--grad); max-height: calc(100vh - 110px); overflow: auto; display: grid; gap: 12px; justify-items: center; }
-    .phone .logo { width: 70px; height: 70px; border-radius: 22px; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.35); display: grid; place-items: center; }
-    .phone .logo img { width: 50px; }
-    .phone h2 { font-family: 'Lalezar', 'Cairo', sans-serif; font-weight: 400; font-size: 30px; color: #fff; }
-    .plinks { list-style: none; padding: 0; width: 100%; display: grid; gap: 9px; }
-    .plink { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 18px; padding: 9px 11px; min-height: 60px; }
-    .plink.featured { background: #1d1530; color: #fff; }
-    .plink .ico { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: #fff; }
+    .phone { border-radius: 34px; background: var(--bg); border: 2px solid var(--line); max-height: calc(100vh - 110px); overflow: auto; padding-bottom: 14px; }
+    .phero { background: linear-gradient(115deg, #8b5cf6 0%, #c26ad0 45%, #ff8f4e 100%); border-radius: 0 0 28px 28px; padding: 22px 12px 24px; text-align: center; }
+    .phone h2 { font-family: 'Lalezar', 'Cairo', sans-serif; font-weight: 400; font-size: 34px; color: #fff; }
+    .plinks { list-style: none; padding: 14px 12px 0; display: grid; gap: 9px; }
+    .plink { display: flex; align-items: center; gap: 10px; background: #fff; border: 2px solid var(--line); border-radius: 20px; padding: 9px 11px; min-height: 60px; }
+    .plinks .plink:nth-child(3n+2) { background: #f6effd; border-color: transparent; }
+    .plinks .plink:nth-child(3n) { background: #ffe8da; border-color: transparent; }
+    .plink.featured { background: #1d1530 !important; color: #fff; border-color: #1d1530 !important; }
+    .plink.featured .ico { background: rgba(255,255,255,.1) !important; color: #fff !important; }
+    .plink .ico { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: #fff; }
     .plink .ico svg { width: 21px; height: 21px; }
     .plink .txt { flex: 1; min-width: 0; display: grid; }
     .plink .txt b { font-weight: 800; font-size: 15px; line-height: 1.35; }
@@ -98,7 +100,7 @@
 <body>
   <header class="top"><div class="in">
     <img src="assets/logo-dark.png" alt="">
-    <div><b>تعديل «تواصل معنا»</b><small>explorplus.online/contact</small></div>
+    <div><b>تعديل «صفحاتنا»</b><small>explorplus.online/contact</small></div>
     <span class="sp"></span>
     <a class="btn btn-ghost btn-sm" href="contact.html" target="_blank" rel="noopener"><span class="lg">فتح الصفحة</span><span class="sm">الصفحة</span> ↗</a>
     <button class="btn btn-ghost btn-sm" type="button" id="logout" hidden>خروج</button>
@@ -201,8 +203,7 @@
         <aside class="preview" aria-label="معاينة">
           <div class="ptitle"><span>👁 معاينة</span><span class="muted small">هيك بتطلع للناس</span></div>
           <div class="phone">
-            <div class="logo"><img src="assets/logo-light.png" alt=""></div>
-            <h2>تواصل معنا</h2>
+            <div class="phero"><h2>صفحاتنا</h2></div>
             <ul class="plinks" id="plinks"></ul>
           </div>
         </aside>
@@ -261,7 +262,7 @@
       $('#plinks').innerHTML = items.map((l) => {
         const ic = ICONS[l.type] || ICONS.link;
         return `<li class="plink${l.featured ? ' featured' : ''}${storeOff && isStore(l) ? ' hidden' : ''}">
-          <span class="ico" style="background:${ic.color}">${ic.svg}</span>
+          <span class="ico" style="color:${ic.color}">${ic.svg}</span>
           <span class="txt"><b>${bidi(l.title)}</b>${l.sub ? `<span>${bidi(l.sub)}</span>` : ''}</span>${ARROW}</li>`;
       }).join('') || '<li class="plink"><span class="txt"><b>لسا ما في أزرار</b></span></li>';
     }

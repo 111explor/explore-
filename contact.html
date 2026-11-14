@@ -3,77 +3,119 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>تواصل معنا | Explor Plus</title>
-  <meta name="description" content="كل حسابات وأرقام Explor Plus للدعاية والإعلان بمكان واحد: إنستغرام، واتساب، المتجر وأكتر.">
-  <meta name="theme-color" content="#8b5cf6">
+  <title>صفحاتنا | Explor Plus</title>
+  <meta name="description" content="كل صفحات وحسابات وأرقام Explor Plus للدعاية والإعلان بمكان واحد: إنستغرام، واتساب، وكل فروعنا.">
+  <meta name="theme-color" content="#fff7f1">
   <link rel="canonical" href="https://explorplus.online/contact.html">
-  <meta property="og:title" content="تواصل معنا | Explor Plus">
-  <meta property="og:description" content="كل حساباتنا وأرقامنا بمكان واحد.">
+  <meta property="og:title" content="صفحاتنا | Explor Plus">
+  <meta property="og:description" content="كل صفحاتنا وحساباتنا وأرقامنا بمكان واحد.">
   <meta property="og:image" content="https://explorplus.online/assets/og-image.jpg">
   <link rel="icon" href="assets/icon.png">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Cairo:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Cairo:wght@400;500;600;700;800&family=Alexandria:wght@600;700&display=swap" rel="stylesheet">
   <style>
-    /* صفحة روابط: عمود واحد بعرض الموبايل، أزرار مستطيلة تحت بعض */
+    /* نفس ثيم الموقع الرئيسي (التصميم 2: كريمي + بنفسجي ← برتقالي) */
     :root {
-      --ink: #1d1530; --muted: #5f5378; --card: #ffffff; --line: rgba(124,58,237,.14);
-      --grad: linear-gradient(160deg, #8b5cf6 0%, #c26ad0 50%, #ff8f4e 100%);
-      --display: 'Lalezar', 'Cairo', sans-serif; --body: 'Cairo', system-ui, sans-serif;
+      --bg: #fff7f1; --surface: #ffffff; --tint-1: #f6effd; --tint-2: #ffe8da;
+      --text: #1d1530; --muted: #5f5378; --border: rgba(124,58,237,.14);
+      --accent: #7c3aed; --accent-2: #e2621f;
+      --grad: linear-gradient(115deg, #8b5cf6 0%, #c26ad0 45%, #ff8f4e 100%);
       color-scheme: light;
     }
     * { box-sizing: border-box; margin: 0; }
     html { -webkit-text-size-adjust: 100%; }
-    html { background: #ff8f4e; }
-    body { min-height: 100vh; min-height: 100dvh; background: var(--grad); color: var(--ink); font-family: var(--body); }
-    .wrap { width: min(560px, 100%); margin: 0 auto; padding: calc(36px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) calc(40px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; align-items: center; gap: 22px; }
-    .head { display: flex; flex-direction: column; align-items: center; gap: 10px; color: #fff; text-align: center; }
-    .logo { width: 104px; height: 104px; border-radius: 30px; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.35); display: grid; place-items: center; }
-    .logo img { width: 74px; height: auto; }
-    h1 { font-family: var(--display); font-weight: 400; font-size: 46px; line-height: 1.15; }
-    .head p { color: #fff3ea; font-weight: 600; font-size: 16.5px; max-width: 34ch; }
-    .hours { display: inline-flex; align-items: center; gap: 8px; background: rgba(29,21,48,.35); padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; }
-    .hours i { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
-    .hours.off i { background: #ffb37d; }
-    .links { width: 100%; display: flex; flex-direction: column; gap: 12px; list-style: none; padding: 0; }
-    .link { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 12px 16px; background: var(--card); color: var(--ink); text-decoration: none; border-radius: 22px; box-shadow: 0 16px 34px -22px rgba(29,21,48,.6); transition: transform .15s ease, box-shadow .2s ease; }
-    .link:hover { transform: translateY(-2px); box-shadow: 0 22px 40px -22px rgba(29,21,48,.7); }
+    body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Cairo', 'IBM Plex Sans Arabic', system-ui, sans-serif; line-height: 1.7; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(640px, 100%); margin: 0 auto; padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+
+    /* الهيدر: نفس الموقع */
+    header.top { position: sticky; top: 0; z-index: 50; background: rgba(255,247,241,.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 66px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-family: 'Alexandria', 'Cairo', sans-serif; font-weight: 700; }
+    .brand img { width: 44px; height: auto; }
+    .brand span { line-height: 1.2; }
+    .brand small { display: block; font-family: 'Cairo', sans-serif; font-size: 11.5px; color: var(--muted); font-weight: 500; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 9px 18px; border-radius: 999px; font-weight: 700; font-size: 14.5px; white-space: nowrap; background: #1d1530; color: #fff; box-shadow: 0 12px 30px -14px rgba(29,21,48,.6); }
+    .btn svg { width: 16px; height: 16px; }
+    .btn:focus-visible, .link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+    /* الواجهة: شريط متدرّج بزوايا مدوّرة تحت، زي الموقع */
+    .hero { background: var(--grad); color: #fff; border-radius: 0 0 40px 40px; padding: 34px 0 44px; text-align: center; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; background: #fff; color: var(--muted); border-radius: 999px; padding: 4px 4px 4px 14px; font-size: 13.5px; font-weight: 600; }
+    .pill b { background: var(--grad); color: #fff; border-radius: 999px; padding: 3px 12px; font-weight: 700; }
+    h1 { font-family: 'Lalezar', 'Cairo', sans-serif; font-weight: 400; font-size: clamp(48px, 13vw, 76px); line-height: 1.15; margin-top: 14px; }
+    .lead { color: #fff3ea; font-size: 16.5px; font-weight: 500; max-width: 36ch; margin: 4px auto 0; }
+    .hours { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; background: rgba(29,21,48,.92); color: #fff; padding: 7px 16px; border-radius: 999px; font-size: 14px; font-weight: 700; }
+    .hours i { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px rgba(34,197,94,.22); }
+    .hours.off i { background: #ffb37d; box-shadow: 0 0 0 4px rgba(255,179,125,.25); }
+
+    /* الأزرار: كروت زي كروت الخدمات بالموقع */
+    .eyebrow { display: inline-block; background: var(--tint-1); color: var(--accent); padding: 4px 14px; border-radius: 999px; font-weight: 700; font-size: 14px; margin: 28px 0 12px; }
+    .links { list-style: none; padding: 0; display: grid; gap: 12px; }
+    .link { display: flex; align-items: center; gap: 14px; min-height: 78px; padding: 13px 16px; background: var(--surface); border: 2px solid var(--border); border-radius: 26px; transition: transform .15s ease, border-color .2s ease; }
+    .links li:nth-child(3n+2) .link { background: var(--tint-1); border-color: transparent; }
+    .links li:nth-child(3n) .link { background: var(--tint-2); border-color: transparent; }
+    .link:hover { transform: translateY(-2px); border-color: var(--accent); }
     .link:active { transform: scale(.985); }
-    .link:focus-visible { outline: 3px solid #1d1530; outline-offset: 3px; }
-    .ico { flex: none; width: 50px; height: 50px; border-radius: 15px; display: grid; place-items: center; color: #fff; }
+    .ico { flex: none; width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: #fff; box-shadow: 0 8px 18px -12px rgba(29,21,48,.35); }
     .ico svg { width: 26px; height: 26px; }
     .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-    .txt b { font-size: 18px; font-weight: 800; line-height: 1.35; }
-    .txt span { font-size: 14px; color: var(--muted); font-weight: 600; overflow-wrap: anywhere; }
-    .go { flex: none; width: 34px; height: 34px; border-radius: 50%; background: #f6effd; color: #7c3aed; display: grid; place-items: center; }
+    .txt b { font-size: 17.5px; font-weight: 800; line-height: 1.35; }
+    .txt span { font-size: 14px; color: var(--muted); font-weight: 500; overflow-wrap: anywhere; }
+    .links li:nth-child(3n) .txt span { color: #6b3d22; }
+    .go { flex: none; width: 36px; height: 36px; border-radius: 50%; background: #fff; color: var(--accent); display: grid; place-items: center; }
     .go svg { width: 18px; height: 18px; transform: scaleX(-1); }
-    .link.featured { background: #1d1530; color: #fff; }
-    .link.featured .txt span { color: #cfc6e6; }
+    .link.featured { background: #1d1530 !important; color: #fff; border-color: #1d1530 !important; }
+    .link.featured .txt span { color: #cfc6e6 !important; }
+    .link.featured .ico { background: rgba(255,255,255,.1); box-shadow: none; color: #fff !important; }
     .link.featured .go { background: rgba(255,255,255,.1); color: #ffb37d; }
-    .skel { height: 76px; border-radius: 22px; background: rgba(255,255,255,.35); }
-    .foot { color: #fff3ea; font-size: 13.5px; font-weight: 600; text-align: center; display: flex; flex-direction: column; gap: 6px; }
-    .foot a { color: #fff; }
+    .skel { height: 78px; border-radius: 26px; background: var(--tint-1); }
+
+    /* الفوتر: زي الموقع */
+    footer { border-top: 1px solid var(--border); margin-top: 40px; padding: 24px 0 calc(28px + env(safe-area-inset-bottom, 0px)); color: var(--muted); font-size: 14px; }
+    .foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+    .foot .brand { font-size: 15px; color: var(--text); }
+    .foot .brand img { width: 36px; }
+    .foot nav { display: flex; gap: 16px; flex-wrap: wrap; }
+    .foot nav a:hover { color: var(--text); }
     @media (prefers-reduced-motion: reduce) { .link { transition: none; } }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <header class="head">
-      <div class="logo"><img src="assets/logo-light.png" alt="Explor Plus"></div>
-      <h1>تواصل معنا</h1>
-      <p>كل حساباتنا وأرقامنا بمكان واحد. اختار الفرع اللي بدك ياه.</p>
-      <span class="hours" id="hours"><i aria-hidden="true"></i><span id="hoursTxt">يومياً 10AM–10PM</span></span>
-    </header>
-    <ul class="links" id="links" aria-label="روابط التواصل">
-      <li class="skel"></li><li class="skel"></li><li class="skel"></li>
-    </ul>
-    <footer class="foot">
-      <a href="https://explorplus.online">explorplus.online</a>
-      <span>© Explor Plus · للدعاية والإعلان</span>
-    </footer>
+  <header class="top">
+    <div class="wrap nav">
+      <a href="./" class="brand" aria-label="Explor Plus"><img src="assets/logo-dark.png" alt=""><span>Explor Plus<small>للدعاية والإعلان</small></span></a>
+      <a href="./" class="btn">الموقع الرئيسي <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <span class="pill"><b>Explor Plus</b><span>منذ 2018</span></span>
+        <h1>صفحاتنا</h1>
+        <p class="lead">كل صفحاتنا وحساباتنا وأرقامنا بمكان واحد. اختار الفرع اللي بدك ياه.</p>
+        <span class="hours" id="hours"><i aria-hidden="true"></i><span id="hoursTxt">يومياً 10AM–10PM</span></span>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <span class="eyebrow">تابعنا وتواصل معنا</span>
+      <ul class="links" id="links" aria-label="صفحاتنا">
+        <li class="skel"></li><li class="skel"></li><li class="skel"></li>
+      </ul>
+    </div>
   </main>
+
+  <footer>
+    <div class="wrap foot">
+      <a href="./" class="brand"><img src="assets/logo-dark.png" alt=""><span>Explor Plus<small>© <span id="year">2026</span> · جميع الحقوق محفوظة</small></span></a>
+      <nav aria-label="روابط"><a href="./">الموقع الرئيسي</a><a href="./#services">خدماتنا</a><a href="terms.html">الشروط والخصوصية</a></nav>
+    </div>
+  </footer>
 
   <script src="assets/vendor/supabase-2.118.0.js"></script>
   <script src="assets/config.js"></script>
@@ -95,7 +137,7 @@
         const href = toHref(l.type, l.value);
         const ext = /^https?:/.test(href) ? ' target="_blank" rel="noopener"' : '';
         return `<li><a class="link${l.featured ? ' featured' : ''}" href="${esc(href)}"${ext}>
-          <span class="ico" style="background:${esc(l.color || ic.color)}">${ic.svg}</span>
+          <span class="ico" style="color:${esc(l.color || ic.color)}">${ic.svg}</span>
           <span class="txt"><b>${bidi(l.title)}</b>${l.sub ? `<span>${bidi(l.sub)}</span>` : ''}</span>
           <span class="go">${ARROW}</span></a></li>`;
       }).join('') || '<li class="link"><span class="txt"><b>راسلنا على واتساب</b></span></li>';
@@ -108,6 +150,7 @@
       document.getElementById('hoursTxt').textContent = open ? 'متواجدين الآن · يومياً 10AM–10PM' : 'يومياً 10AM–10PM · بنرد عليك أول ما نفتح';
     }
     openNow();
+    document.getElementById('year').textContent = new Date().getFullYear();
 
     const C = window.EXPLOR_CONFIG || {};
     // أول إشي: الأزرار الافتراضية، بعدين اللي رتّبه الأدمن من لوحة الإدارة
