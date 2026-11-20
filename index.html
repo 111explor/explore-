@@ -833,7 +833,7 @@
     </section>
 
     <!-- ============ WORKS ============ -->
-    <section class="block tab-panel" id="works" data-panel="works" hidden>
+    <section class="block tab-panel" id="works" data-panel="works">
       <div class="wrap">
         <div class="sec-head reveal">
           <div>
@@ -873,7 +873,7 @@
     </section>
 
     <!-- ============ REVIEWS ============ -->
-    <section class="block tab-panel" id="reviews" data-panel="reviews" hidden>
+    <section class="block tab-panel" id="reviews" data-panel="reviews">
       <div class="wrap">
         <div class="sec-head reveal">
           <div>
@@ -1267,22 +1267,27 @@
       box.innerHTML = SERVICES.map((s) => `<button class="phl" type="button" data-order="${s.id}" aria-label="${esc(s[lang].t)}"><span class="ring"><span>${icon(s.icon)}</span></span>${esc((HL_NAMES[s.id] || [s[lang].t, s[lang].t])[lang === 'en' ? 1 : 0])}</button>`).join('');
     }
     // تبويبات أعمالنا / خدماتنا / الآراء
-    const TABS = ['works', 'services', 'reviews'];
-    function showTab(name, scroll) {
-      if (!TABS.includes(name)) return false;
-      document.querySelectorAll('#ptabs [data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
-      document.querySelectorAll('.tab-panel').forEach((p) => { p.hidden = p.dataset.panel !== name; });
-      document.querySelectorAll('[data-bnav]').forEach((a) => a.classList.toggle('on', a.dataset.bnav === name));
-      if (scroll) $('#ptabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      if (typeof observeReveal === 'function') observeReveal();
+    // كل الأقسام ورا بعض. التبويبات والشريط السفلي بيتنقّلوا لحالهم حسب القسم اللي الزبون فيه
+    const SPY = ['services', 'works', 'reviews', 'process', 'why', 'faq', 'contact'];
+    function markActive(id) {
+      document.querySelectorAll('#ptabs [data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+      document.querySelectorAll('[data-bnav]').forEach((a) => a.classList.toggle('on', a.dataset.bnav === id));
+    }
+    function showTab(name) {
+      const sec = document.getElementById(name); if (!sec) return false;
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return true;
     }
     document.addEventListener('click', (e) => {
       const tb = e.target.closest('#ptabs [data-tab]');
-      if (tb) { showTab(tb.dataset.tab, false); return; }
-      const a = e.target.closest('a[href^="#"]');
-      if (a && showTab(a.getAttribute('href').slice(1), true)) { e.preventDefault(); history.replaceState(null, '', a.getAttribute('href')); }
+      if (tb) { showTab(tb.dataset.tab); markActive(tb.dataset.tab); }
     });
+    if ('IntersectionObserver' in window) {
+      const spy = new IntersectionObserver((entries) => {
+        entries.forEach((en) => { if (en.isIntersecting) markActive(en.target.id); });
+      }, { rootMargin: '-40% 0px -55% 0px' });
+      SPY.forEach((id) => { const el = document.getElementById(id); if (el) spy.observe(el); });
+    }
 
     function renderServices() {
       $('#servicesGrid').innerHTML = SERVICES.map((s, i) => {
@@ -1517,8 +1522,7 @@
     $('#year').textContent = new Date().getFullYear();
     $('#yearsStat').textContent = '+' + (new Date().getFullYear() - FOUNDED);
     setStyle(params.get('style') || 'bold');
-    if (location.hash) setTimeout(() => showTab(location.hash.slice(1), true), 300); else showTab('services', false);
-    window.addEventListener('hashchange', () => showTab(location.hash.slice(1), true));
+    markActive('services');
     if (params.get('picker') === '1') $('#picker').hidden = false;
     applyLang();
     setInterval(updateOpenNow, 60000);
