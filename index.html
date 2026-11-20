@@ -554,6 +554,25 @@
       background: rgba(11,11,20,.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border: 2px solid rgba(255,255,255,.85); box-shadow: 0 0 0 2px #0a84ff; }
     .st-open:hover .st-play { transform: scale(1.08); }
     .st-open:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 14px; }
+
+    /* الغلاف */
+    .pcover { position: relative; overflow: hidden; }
+    .pc-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    [dir="rtl"] .pc-svg { transform: scaleX(-1); }
+    .pc-chip { position: absolute; display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; color: #fff; font-weight: 700; font-size: 14px; white-space: nowrap;
+      background: rgba(255,255,255,.2); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.5); box-shadow: 0 10px 24px -14px rgba(11,37,69,.6); }
+    .pc-chip b { font-weight: 800; }
+    .pc-c1 { inset-inline-end: 14%; top: 118px; }
+    .pc-c2 { inset-inline-end: 33%; top: 26px; }
+    .pc-c3 { inset-inline-end: 52%; top: 64px; }
+    .pc-narrow { display: none; }
+    @media (max-width: 760px) {
+      .pc-wide { display: none; } .pc-narrow { display: block; }
+      .pc-chip { font-size: 11.5px; padding: 4px 10px; gap: 4px; }
+      .pc-c1 { inset-inline-end: 4%; top: 74px; }
+      .pc-c2 { display: none; }
+      .pc-c3 { inset-inline-end: 40%; top: 12px; }
+    }
     /* how we work */
     .hw-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: none; }
     .hw-step { position: relative; padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); display: grid; gap: 8px; align-content: start; }
@@ -858,7 +877,34 @@
   <main id="home">
     <!-- ============ PROFILE (زي بروفايل إنستغرام) ============ -->
     <section class="profile">
-      <div class="pcover" aria-hidden="true"></div>
+      <div class="pcover" aria-hidden="true">
+        <svg class="pc-svg pc-wide" viewBox="0 0 1200 220" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="pcArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            <pattern id="pcDots" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.6" fill="#fff" fill-opacity=".18"/></pattern>
+          </defs>
+          <rect width="1200" height="220" fill="url(#pcDots)"/>
+          <circle cx="1040" cy="-60" r="210" fill="#fff" fill-opacity=".08"/>
+          <circle cx="120" cy="280" r="220" fill="#0b2545" fill-opacity=".12"/>
+          <g transform="translate(0 18)"><path d="M0 196 C 160 194 260 170 380 166 S 600 120 740 112 S 940 70 1060 52 L 1100 45 L 1200 45 L 1200 240 L 0 240 Z" fill="url(#pcArea)"/>
+          <path d="M0 196 C 160 194 260 170 380 166 S 600 120 740 112 S 940 70 1060 52 L 1100 45" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="12" stroke-linecap="round"/>
+          <path d="M0 196 C 160 194 260 170 380 166 S 600 120 740 112 S 940 70 1060 52 L 1100 45" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+          <path d="M1126 40 L 1095 31 L 1100 58 Z" fill="#fff" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
+          <circle cx="380" cy="166" r="6" fill="#fff"/><circle cx="740" cy="112" r="6" fill="#fff"/><circle cx="1060" cy="52" r="6" fill="#fff"/></g>
+        </svg>
+        <svg class="pc-svg pc-narrow" viewBox="0 0 390 118" preserveAspectRatio="xMidYMid slice">
+          <rect width="390" height="118" fill="url(#pcDots)"/>
+          <circle cx="350" cy="-30" r="90" fill="#fff" fill-opacity=".08"/>
+          <path d="M0 108 C 70 106 110 90 160 88 S 250 64 300 56 L 338 46 L 390 46 L 390 118 L 0 118 Z" fill="url(#pcArea)"/>
+          <path d="M0 108 C 70 106 110 90 160 88 S 250 64 300 56 L 338 46" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="9" stroke-linecap="round"/>
+          <path d="M0 108 C 70 106 110 90 160 88 S 250 64 300 56 L 338 46" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          <path d="M356 41 L 334 37 L 340 56 Z" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="160" cy="88" r="4.5" fill="#fff"/><circle cx="300" cy="56" r="4.5" fill="#fff"/>
+        </svg>
+        <span class="pc-chip pc-c1">📈 <b dir="ltr">313K</b> <span data-i18n="cover_reach">وصول</span></span>
+        <span class="pc-chip pc-c2">✔ <span data-i18n="cover_verified">حساب موثّق</span></span>
+        <span class="pc-chip pc-c3">🚀 <b dir="ltr">+54.6K</b> <span data-i18n="cover_followers">متابع</span></span>
+      </div>
       <div class="prof">
         <button type="button" class="pavatar story" id="storyBtn" data-i18n-aria="story_label" aria-label="شوف آخر أعمالنا"><img src="assets/logo-dark.png" alt="Explor Plus" width="579" height="427"></button>
         <div class="pstats">
@@ -1259,7 +1305,7 @@
         cta_order: 'اطلب خدمتك', since: 'منذ 2018', pill_text: 'وكالة إبداعية',
         hero_1: 'شريكك الرقمي', hero_2: 'نحو النجاح والتطوير.',
         hero_lead: 'منظومة تسويقية متكاملة تمنح علامتك التجارية الظهور الذي تستحقه، وتصل بك إلى جمهورك المستهدف بدقة.',
-        cta_whatsapp: 'اطلب على واتساب', prof_cat: 'وكالة دعاية وإعلان · منذ 2018', prof_bio: 'إعلانات ممولة 📈 · توثيق واسترجاع حسابات ✔️ · تصوير وتصميم 🎬 · منبلّش بشغلك بنفس اليوم.', prof_tag: 'محطتك الأولى لأقوى الحلول والخدمات الرقمية المتكاملة', story_cta: 'اطلب هالخدمة', story_label: 'شوف آخر أعمالنا', details: 'التفاصيل', see_works_t: 'بدك تشوف شغلنا الحقيقي؟', see_works_d: 'فك باند، توثيق، نتائج إعلانات وزيادة متابعين، بالصور قبل وبعد.', see_works_btn: 'شوف أعمالنا', see_rev_t: 'شو بيحكوا عنّا زباينّا؟', see_rev_d: 'آراء حقيقية مع صور المحادثات.', see_rev_btn: 'شوف الآراء', tab_works: 'أعمالنا', tab_services: 'خدماتنا', tab_reviews: 'الآراء', cta_services: 'تصفّح الخدمات',
+        cta_whatsapp: 'اطلب على واتساب', prof_cat: 'وكالة دعاية وإعلان · منذ 2018', prof_bio: 'إعلانات ممولة 📈 · توثيق واسترجاع حسابات ✔️ · تصوير وتصميم 🎬 · منبلّش بشغلك بنفس اليوم.', prof_tag: 'محطتك الأولى لأقوى الحلول والخدمات الرقمية المتكاملة', story_cta: 'اطلب هالخدمة', story_label: 'شوف آخر أعمالنا', details: 'التفاصيل', see_works_t: 'بدك تشوف شغلنا الحقيقي؟', see_works_d: 'فك باند، توثيق، نتائج إعلانات وزيادة متابعين، بالصور قبل وبعد.', see_works_btn: 'شوف أعمالنا', see_rev_t: 'شو بيحكوا عنّا زباينّا؟', see_rev_d: 'آراء حقيقية مع صور المحادثات.', see_rev_btn: 'شوف الآراء', cover_reach: 'وصول', cover_verified: 'حساب موثّق', cover_followers: 'متابع', tab_works: 'أعمالنا', tab_services: 'خدماتنا', tab_reviews: 'الآراء', cta_services: 'تصفّح الخدمات',
         stat_years: 'سنوات خبرة', stat_services: 'خدمة خلال هذا العام', stat_hours: 'متواجدين يومياً',
         chip_1: 'توثيق خلال دقائق', chip_2: 'إعلانات بتجيب نتائج', chip_3: 'تصوير احترافي',
         services_eyebrow: 'خدماتنا', services_title: 'كل اللي بتحتاجه علامتك، بمكان واحد', services_sub: 'اختار الخدمة واضغط "اطلبها"، ورح نجهزلك رسالة واتساب جاهزة بثانية.',
@@ -1288,7 +1334,7 @@
         cta_order: 'Order a service', since: 'Since 2018', pill_text: 'Creative agency',
         hero_1: 'Your digital partner', hero_2: 'for growth and success.',
         hero_lead: 'A complete marketing system that gives your brand the visibility it deserves and reaches your target audience with precision.',
-        cta_whatsapp: 'Order on WhatsApp', prof_cat: 'Advertising & media agency · since 2018', prof_bio: 'Sponsored ads 📈 · account verification & recovery ✔️ · photo, video & design 🎬 · we start the same day.', prof_tag: 'Your first stop for powerful, complete digital solutions', story_cta: 'Order this service', story_label: 'See our latest work', details: 'Details', see_works_t: 'Want to see our real work?', see_works_d: 'Unbans, verifications, ad results and follower growth, with before and after.', see_works_btn: 'See our work', see_rev_t: 'What do our clients say?', see_rev_d: 'Real reviews with chat screenshots.', see_rev_btn: 'See reviews', tab_works: 'Our work', tab_services: 'Services', tab_reviews: 'Reviews', cta_services: 'Browse services',
+        cta_whatsapp: 'Order on WhatsApp', prof_cat: 'Advertising & media agency · since 2018', prof_bio: 'Sponsored ads 📈 · account verification & recovery ✔️ · photo, video & design 🎬 · we start the same day.', prof_tag: 'Your first stop for powerful, complete digital solutions', story_cta: 'Order this service', story_label: 'See our latest work', details: 'Details', see_works_t: 'Want to see our real work?', see_works_d: 'Unbans, verifications, ad results and follower growth, with before and after.', see_works_btn: 'See our work', see_rev_t: 'What do our clients say?', see_rev_d: 'Real reviews with chat screenshots.', see_rev_btn: 'See reviews', cover_reach: 'reach', cover_verified: 'Verified account', cover_followers: 'followers', tab_works: 'Our work', tab_services: 'Services', tab_reviews: 'Reviews', cta_services: 'Browse services',
         stat_years: 'Years of experience', stat_services: 'Services delivered this year', stat_hours: 'Available daily',
         chip_1: 'Verified in minutes', chip_2: 'Ads that deliver results', chip_3: 'Pro photography',
         services_eyebrow: 'Services', services_title: 'Everything your brand needs, in one place', services_sub: 'Pick a service and tap “Order”, we will prepare a ready WhatsApp message in a second.',
