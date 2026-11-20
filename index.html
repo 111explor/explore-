@@ -546,6 +546,14 @@
     .see-next:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
     @media (max-width: 520px) { .see-next { flex-wrap: wrap; } .see-next .sn-btn { width: 100%; text-align: center; } }
     @media (prefers-reduced-motion: reduce) { .ptabs .fire, .see-next .sn-fire, #ptabs [data-tab="works"]::after { animation: none; } }
+
+    /* صور الأعمال بتفتح ستوري */
+    .st-open { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; position: relative; font: inherit; color: inherit; }
+    .st-open img { display: block; width: 100%; }
+    .st-play { position: absolute; top: 10px; inset-inline-end: 10px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; color: #fff;
+      background: rgba(11,11,20,.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border: 2px solid rgba(255,255,255,.85); box-shadow: 0 0 0 2px #0a84ff; }
+    .st-open:hover .st-play { transform: scale(1.08); }
+    .st-open:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 14px; }
     /* how we work */
     .hw-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: none; }
     .hw-step { position: relative; padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); display: grid; gap: 8px; align-content: start; }
@@ -1385,31 +1393,35 @@
       { img: 'assets/works/ads-5.webp', svc: 'ads', ar: '287 محادثة مع زباين جدد بـ 89.96 ₪ بس 💬', en: '287 new-customer chats for just ₪89.96 💬' },
       { img: 'assets/works/verify-02.webp', svc: 'verify', ar: 'مبروك التوثيق ✔️ ii_taallaa (126K)', en: 'Verified ✔️ ii_taallaa (126K)' }
     ];
-    (function stories() {
-      const btn = $('#storyBtn'), view = $('#storyView'); if (!btn || !view) return;
-      const DUR = 5000; let i = 0, timer = null, lastFocus = null;
-      try { if (localStorage.getItem('xp_story_seen') === String(STORIES.length)) btn.classList.add('seen'); } catch (e) {}
-      $('#stBars').innerHTML = STORIES.map(() => '<i><b></b></i>').join('');
-      const bars = [...view.querySelectorAll('.st-bars i')];
+    // ---------- عارض الستوري: للوجو ولكل صور الأعمال ----------
+    const Story = (function () {
+      const view = $('#storyView'); if (!view) return { open() {} };
+      const DUR = 5000; let list = [], i = 0, timer = null, lastFocus = null, onClose = null, bars = [];
       function show(n) {
         if (n < 0) n = 0;
-        if (n >= STORIES.length) return close();
-        i = n; const st = STORIES[i]; const svc = SERVICES.find((x) => x.id === st.svc);
+        if (n >= list.length) return close();
+        i = n; const st = list[i]; const svc = SERVICES.find((x) => x.id === st.svc);
         bars.forEach((b, k) => { b.className = k < i ? 'done' : ''; });
         void bars[i].offsetWidth; bars[i].className = 'run'; bars[i].style.setProperty('--dur', DUR + 'ms');
-        $('#stImg').src = st.img; $('#stImg').alt = st[lang] || st.ar;
-        $('#stCap').textContent = st[lang] || st.ar;
+        $('#stImg').src = st.img; $('#stImg').alt = st.cap;
+        $('#stCap').textContent = st.cap;
         const cta = $('#stCta'); cta.textContent = t('story_cta'); cta.href = waLink(orderMsg(svc)); cta.dataset.track = st.svc;
-        if (STORIES[i + 1]) { const pre = new Image(); pre.src = STORIES[i + 1].img; }
+        if (list[i + 1]) { const pre = new Image(); pre.src = list[i + 1].img; }
         clearTimeout(timer); timer = setTimeout(() => show(i + 1), DUR);
       }
-      function open() { lastFocus = document.activeElement; view.hidden = false; document.body.style.overflow = 'hidden'; show(0); $('#stClose').focus(); }
+      function open(items, start, cb) {
+        if (!items.length) return;
+        list = items; onClose = cb || null;
+        $('#stBars').innerHTML = items.map(() => '<i><b></b></i>').join('');
+        bars = [...view.querySelectorAll('.st-bars i')];
+        lastFocus = document.activeElement; view.hidden = false; document.body.style.overflow = 'hidden';
+        show(start || 0); $('#stClose').focus();
+      }
       function close() {
         clearTimeout(timer); view.hidden = true; document.body.style.overflow = '';
-        btn.classList.add('seen'); try { localStorage.setItem('xp_story_seen', String(STORIES.length)); } catch (e) {}
+        if (onClose) onClose();
         if (lastFocus) lastFocus.focus();
       }
-      btn.addEventListener('click', open);
       $('#stClose').addEventListener('click', close);
       $('#stNext').addEventListener('click', () => show(i + 1));
       $('#stPrev').addEventListener('click', () => show(i - 1));
@@ -1419,7 +1431,33 @@
         if (e.key === 'ArrowLeft') show(document.dir === 'rtl' ? i + 1 : i - 1);
         if (e.key === 'ArrowRight') show(document.dir === 'rtl' ? i - 1 : i + 1);
       });
+      return { open };
     })();
+    // ستوري اللوجو: آخر أعمالنا
+    (function () {
+      const btn = $('#storyBtn'); if (!btn) return;
+      try { if (localStorage.getItem('xp_story_seen') === String(STORIES.length)) btn.classList.add('seen'); } catch (e) {}
+      btn.addEventListener('click', () => Story.open(STORIES.map((st) => ({ img: st.img, svc: st.svc, cap: st[lang] || st.ar })), 0, () => {
+        btn.classList.add('seen'); try { localStorage.setItem('xp_story_seen', String(STORIES.length)); } catch (e) {}
+      }));
+    })();
+    // كل قسم بالأعمال بيفتح كستوري من الصورة اللي انضغطت
+    function storyList(kind) {
+      const en = lang === 'en';
+      if (kind === 'growth') return growthSorted().map((g) => ({ img: g.img, svc: 'growth',
+        cap: en ? `@${g.handle}: ${g.before} → ${g.after} followers` : `@${g.handle}: من ${g.before} لـ ${g.after} متابع 🚀` }));
+      if (kind === 'verify') return verifySorted().map((v) => ({ img: v.img, svc: 'verify',
+        cap: en ? `Verified ✔️ @${v.handle} · ${v.followers} followers` : `مبروك التوثيق ✔️ @${v.handle} · ${v.followers} متابع` }));
+      if (kind === 'ads') return RESULTS.map((r) => { const c = r[lang] || r.ar; return { img: r.img, svc: 'ads', cap: `${r.big} ${c.big} · ${c.t}` }; });
+      if (kind === 'cases') return WORKS.filter((w) => w.type === 'case').flatMap((w) => { const c = w[lang] || w.ar;
+        return [{ img: w.before, svc: 'recover', cap: `${c.t} · ${c.b}` }, { img: w.after, svc: 'recover', cap: `${c.t} · ${c.a}` }]; });
+      return [];
+    }
+    document.addEventListener('click', (e) => {
+      const el = e.target.closest('[data-story]'); if (!el) return;
+      e.preventDefault();
+      Story.open(storyList(el.dataset.story), Number(el.dataset.i) || 0);
+    });
 
     function renderServices() {
       $('#servicesGrid').innerHTML = SERVICES.map((s, i) => {
@@ -1454,8 +1492,8 @@
         const c = w[lang] || w.ar;
         if (w.type === 'case') return `<article class="work-case reveal">
           <div class="case-imgs">
-            <figure><img src="${esc(w.before)}" alt="${esc(c.b)}" loading="lazy"><figcaption class="bad">${esc(c.b)}</figcaption></figure>
-            <figure><img src="${esc(w.after)}" alt="${esc(c.a)}" loading="lazy"><figcaption class="good">${esc(c.a)}</figcaption></figure>
+            <figure><button type="button" class="st-open" data-story="cases" data-i="${WORKS.filter((x) => x.type === 'case').indexOf(w) * 2}" aria-label="${esc(c.b)}"><img src="${esc(w.before)}" alt="${esc(c.b)}" loading="lazy"><span class="st-play" aria-hidden="true">▶</span></button><figcaption class="bad">${esc(c.b)}</figcaption></figure>
+            <figure><button type="button" class="st-open" data-story="cases" data-i="${WORKS.filter((x) => x.type === 'case').indexOf(w) * 2 + 1}" aria-label="${esc(c.a)}"><img src="${esc(w.after)}" alt="${esc(c.a)}" loading="lazy"><span class="st-play" aria-hidden="true">▶</span></button><figcaption class="good">${esc(c.a)}</figcaption></figure>
           </div>
           <div class="case-meta"><b>${esc(c.t)}</b><span>${esc(c.s)}</span></div>
         </article>`;
@@ -1472,26 +1510,26 @@
     }
 
     function renderResults() {
-      $('#resultsGrid').innerHTML = RESULTS.map((r) => {
+      $('#resultsGrid').innerHTML = RESULTS.map((r, k) => {
         const c = r[lang] || r.ar;
         return `<article class="result reveal">
           <div class="result-top"><span class="result-tag">${esc(r.tag[lang] || r.tag.ar)}</span><span class="result-name">${esc(c.t)}</span></div>
           <div class="result-big num">${esc(r.big)}</div>
           <div class="result-label">${esc(c.big)}</div>
           <ul>${c.rows.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
-          <a class="result-proof" href="${esc(r.img)}" target="_blank" rel="noopener">${t('res_proof')}</a>
+          <a class="result-proof" href="${esc(r.img)}" data-story="ads" data-i="${k}">${t('res_proof')}</a>
         </article>`;
       }).join('');
     }
 
     const toNum = (x) => { const v = parseFloat(String(x).replace(/,/g, '')); return /k$/i.test(x) ? v * 1000 : v; };
+    const growthSorted = () => GROWTH.map((g) => ({ ...g, inc: toNum(g.after) - toNum(g.before) })).sort((a, b) => b.inc - a.inc);
     function renderGrowth() {
-      const list = GROWTH.map((g) => ({ ...g, inc: toNum(g.after) - toNum(g.before) }))
-        .sort((a, b) => b.inc - a.inc);
+      const list = growthSorted();
       const fmtK = (n) => n >= 1000 ? (Math.round(n / 100) / 10).toLocaleString('en-US') + 'K' : String(Math.round(n));
       const shown = growthAll ? list : list.slice(0, SHOW_FIRST);
-      $('#growthGrid').innerHTML = shown.map((g) => `<figure class="grow reveal">
-          <img src="${esc(g.img)}" alt="@${esc(g.handle)}" loading="lazy">
+      $('#growthGrid').innerHTML = shown.map((g, k) => `<figure class="grow reveal">
+          <button type="button" class="st-open" data-story="growth" data-i="${k}" aria-label="@${esc(g.handle)}"><img src="${esc(g.img)}" alt="@${esc(g.handle)}" loading="lazy"><span class="st-play" aria-hidden="true">▶</span></button>
           <figcaption>
             <span class="grow-handle" dir="ltr">@${esc(g.handle)}</span>
             <span class="grow-nums" dir="ltr"><span class="b">${esc(g.before)}</span> → <span class="a">${esc(g.after)}</span></span>
@@ -1504,16 +1542,19 @@
       observeReveal();
     }
 
-    function renderVerified() {
+    const verifySorted = () => {
       const PIN = ['hania.wishah11', 'ii_taallaa'];
-      const list = [...VERIFIED].sort((a, b) => {
+      return [...VERIFIED].sort((a, b) => {
         const pa = PIN.indexOf(a.handle), pb = PIN.indexOf(b.handle);
         if (pa !== -1 || pb !== -1) return (pa === -1 ? 99 : pa) - (pb === -1 ? 99 : pb);
         return toNum(b.followers) - toNum(a.followers);
       });
+    };
+    function renderVerified() {
+      const list = verifySorted();
       const shown = verifyAll ? list : list.slice(0, SHOW_FIRST);
-      $('#verifyGrid').innerHTML = shown.map((v) => `<figure class="grow reveal">
-          <img src="${esc(v.img)}" alt="@${esc(v.handle)}" loading="lazy">
+      $('#verifyGrid').innerHTML = shown.map((v, k) => `<figure class="grow reveal">
+          <button type="button" class="st-open" data-story="verify" data-i="${k}" aria-label="@${esc(v.handle)}"><img src="${esc(v.img)}" alt="@${esc(v.handle)}" loading="lazy"><span class="st-play" aria-hidden="true">▶</span></button>
           <figcaption>
             <span class="grow-handle" dir="ltr">@${esc(v.handle)}</span>
             <span class="grow-nums" dir="ltr"><span class="a">${esc(v.followers)}</span> <span class="b">${t('ver_followers')}</span></span>
