@@ -535,9 +535,6 @@
     body.works-seen .ptabs .fire { animation: none; }
     @keyframes fireBob { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-2px) scale(1.15); } }
     @keyframes tabPulse { 0% { box-shadow: 0 0 0 0 rgba(10,132,255,.35); background: rgba(10,132,255,.08); } 70% { box-shadow: 0 0 0 10px rgba(10,132,255,0); background: rgba(10,132,255,.04); } 100% { box-shadow: 0 0 0 0 rgba(10,132,255,0); background: transparent; } }
-    .bnav .hot-tab { position: relative; }
-    .bnav .hot-tab::before { content: "🔥"; position: absolute; top: -2px; left: calc(50% + 6px); font-size: 12px; animation: fireBob 1.4s ease-in-out infinite; }
-    body.works-seen .bnav .hot-tab::before { display: none; }
     .see-next { width: 100%; margin-top: 18px; display: flex; align-items: center; gap: 14px; text-align: start; cursor: pointer; font: inherit; color: #fff;
       background: linear-gradient(115deg, #0b0b14 0%, #0b2545 60%, #0a84ff 140%); border: 0; border-radius: 26px; padding: 18px 20px; box-shadow: 0 18px 40px -24px rgba(11,11,20,.6); }
     .see-next .sn-fire { font-size: 34px; flex: none; animation: fireBob 1.6s ease-in-out infinite; }
@@ -548,7 +545,7 @@
     .see-next:hover .sn-btn { background: #e7f3ff; }
     .see-next:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
     @media (max-width: 520px) { .see-next { flex-wrap: wrap; } .see-next .sn-btn { width: 100%; text-align: center; } }
-    @media (prefers-reduced-motion: reduce) { .ptabs .fire, .bnav .hot-tab::before, .see-next .sn-fire, #ptabs [data-tab="works"]::after { animation: none; } }
+    @media (prefers-reduced-motion: reduce) { .ptabs .fire, .see-next .sn-fire, #ptabs [data-tab="works"]::after { animation: none; } }
     /* how we work */
     .hw-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: none; }
     .hw-step { position: relative; padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); display: grid; gap: 8px; align-content: start; }
@@ -1093,7 +1090,7 @@
 
   <nav class="bnav" id="bnav" aria-label="main">
     <a href="#services" data-bnav="services"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span data-i18n="nav_services">خدماتنا</span></a>
-    <a href="#works" data-bnav="works" class="hot-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><span data-i18n="nav_works">أعمالنا</span></a>
+    <a href="#works" data-bnav="works"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><span data-i18n="nav_works">أعمالنا</span></a>
     <a class="bwa" data-track="whatsapp" href="https://wa.me/972597653989?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Explor%20Plus%20%F0%9F%91%8B" target="_blank" rel="noopener" aria-label="WhatsApp"><b><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg></b><span data-i18n="bnav_wa">واتساب</span></a>
     <a href="#reviews" data-bnav="reviews"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span data-i18n="nav_reviews">آراء العملاء</span></a>
     <a href="contact.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg><span data-i18n="nav_pages">صفحاتنا</span></a>
