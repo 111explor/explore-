@@ -555,23 +555,45 @@
     .st-open:hover .st-play { transform: scale(1.08); }
     .st-open:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 14px; }
 
-    /* الغلاف */
-    .pcover { position: relative; overflow: hidden; }
+    /* الغلاف: كحلي ← أزرق كهربائي، خط نمو مضيء بينرسم، كروت نتائج */
+    .pcover { position: relative; overflow: hidden; height: 230px !important;
+      background: radial-gradient(55% 130% at 88% -10%, rgba(92,200,251,.75) 0%, transparent 60%),
+                  radial-gradient(45% 120% at 8% 115%, rgba(10,132,255,.9) 0%, transparent 70%),
+                  linear-gradient(120deg, #050f24 0%, #0a2e6e 42%, #0a84ff 100%) !important; }
     .pc-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
     [dir="rtl"] .pc-svg { transform: scaleX(-1); }
-    .pc-chip { position: absolute; display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; color: #fff; font-weight: 700; font-size: 14px; white-space: nowrap;
-      background: rgba(255,255,255,.2); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.5); box-shadow: 0 10px 24px -14px rgba(11,37,69,.6); }
-    .pc-chip b { font-weight: 800; }
-    .pc-c1 { inset-inline-end: 14%; top: 118px; }
-    .pc-c2 { inset-inline-end: 33%; top: 26px; }
-    .pc-c3 { inset-inline-end: 52%; top: 64px; }
+    .pc-line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: pcDraw 1.8s .2s cubic-bezier(.6,.1,.2,1) forwards; }
+    .pc-area { opacity: 0; animation: pcFade 1s 1.2s ease forwards; }
+    .pc-arrow, .pc-pts { opacity: 0; animation: pcFade .4s 1.85s ease forwards; }
+    .pc-spark path { transform-box: fill-box; transform-origin: center; animation: pcTwinkle 2.6s ease-in-out infinite; }
+    .pc-spark path:nth-child(2) { animation-delay: .9s; } .pc-spark path:nth-child(3) { animation-delay: 1.7s; }
+    @keyframes pcDraw { to { stroke-dashoffset: 0; } }
+    @keyframes pcFade { to { opacity: 1; } }
+    @keyframes pcTwinkle { 0%, 100% { opacity: .25; transform: scale(.7); } 50% { opacity: 1; transform: scale(1.15); } }
+    .pc-chip { position: absolute; display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px 7px 8px; border-radius: 999px; color: #0b0b14; font-weight: 700; font-size: 14px; white-space: nowrap;
+      background: #fff; box-shadow: 0 16px 34px -14px rgba(5,15,36,.75), 0 0 0 4px rgba(255,255,255,.18); animation: pcFloat 4.5s ease-in-out infinite; opacity: 0; animation: pcIn .6s ease forwards, pcFloat 4.5s 1s ease-in-out infinite; }
+    [dir="rtl"] .pc-chip { padding: 7px 8px 7px 14px; }
+    .pc-chip i { font-style: normal; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: #e7f3ff; font-size: 14px; }
+    .pc-chip i.v { background: #0a84ff; color: #fff; font-weight: 800; }
+    .pc-chip b { font-weight: 800; color: #0a84ff; }
+    .pc-c1 { inset-inline-end: 14%; top: 140px; animation-delay: .9s, 1s; }
+    .pc-c2 { inset-inline-end: 33%; top: 34px; animation-delay: 1.2s, 1.6s; }
+    .pc-c3 { inset-inline-end: 52%; top: 84px; animation-delay: 1.5s, 2.2s; }
+    @keyframes pcIn { from { opacity: 0; transform: translateY(10px) scale(.9); } to { opacity: 1; transform: none; } }
+    @keyframes pcFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
     .pc-narrow { display: none; }
     @media (max-width: 760px) {
+      .pcover { height: 150px !important; }
       .pc-wide { display: none; } .pc-narrow { display: block; }
-      .pc-chip { font-size: 11.5px; padding: 4px 10px; gap: 4px; }
-      .pc-c1 { inset-inline-end: 4%; top: 74px; }
+      .pc-chip { font-size: 11.5px; gap: 5px; padding: 4px 10px 4px 5px; }
+      [dir="rtl"] .pc-chip { padding: 4px 5px 4px 10px; }
+      .pc-chip i { width: 21px; height: 21px; font-size: 11px; }
+      .pc-c1 { inset-inline-end: 4%; top: 92px; }
       .pc-c2 { display: none; }
-      .pc-c3 { inset-inline-end: 40%; top: 12px; }
+      .pc-c3 { inset-inline-end: 38%; top: 14px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pc-line { animation: none; stroke-dashoffset: 0; } .pc-area, .pc-arrow, .pc-pts, .pc-chip { animation: none; opacity: 1; } .pc-spark path { animation: none; }
     }
     /* how we work */
     .hw-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: none; }
@@ -878,32 +900,38 @@
     <!-- ============ PROFILE (زي بروفايل إنستغرام) ============ -->
     <section class="profile">
       <div class="pcover" aria-hidden="true">
-        <svg class="pc-svg pc-wide" viewBox="0 0 1200 220" preserveAspectRatio="xMidYMid slice">
+        <svg class="pc-svg pc-wide" viewBox="0 0 1200 240" preserveAspectRatio="xMidYMid slice">
           <defs>
-            <linearGradient id="pcArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".26"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-            <pattern id="pcDots" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.6" fill="#fff" fill-opacity=".18"/></pattern>
+            <linearGradient id="pcArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5cc8fb" stop-opacity=".45"/><stop offset="1" stop-color="#5cc8fb" stop-opacity="0"/></linearGradient>
+            <pattern id="pcDots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#fff" fill-opacity=".14"/></pattern>
+            <filter id="pcGlow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="7"/></filter>
+            <radialGradient id="pcBokeh"><stop offset="0" stop-color="#7dd3fc" stop-opacity=".55"/><stop offset="1" stop-color="#7dd3fc" stop-opacity="0"/></radialGradient>
           </defs>
-          <rect width="1200" height="220" fill="url(#pcDots)"/>
-          <circle cx="1040" cy="-60" r="210" fill="#fff" fill-opacity=".08"/>
-          <circle cx="120" cy="280" r="220" fill="#0b2545" fill-opacity=".12"/>
-          <g transform="translate(0 18)"><path d="M0 196 C 160 194 260 170 380 166 S 600 120 740 112 S 940 70 1060 52 L 1100 45 L 1200 45 L 1200 240 L 0 240 Z" fill="url(#pcArea)"/>
-          <path d="M0 196 C 160 194 260 170 380 166 S 600 120 740 112 S 940 70 1060 52 L 1100 45" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="12" stroke-linecap="round"/>
-          <path d="M0 196 C 160 194 260 170 380 166 S 600 120 740 112 S 940 70 1060 52 L 1100 45" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-          <path d="M1126 40 L 1095 31 L 1100 58 Z" fill="#fff" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
-          <circle cx="380" cy="166" r="6" fill="#fff"/><circle cx="740" cy="112" r="6" fill="#fff"/><circle cx="1060" cy="52" r="6" fill="#fff"/></g>
+          <rect width="1200" height="240" fill="url(#pcDots)"/>
+          <circle cx="980" cy="40" r="120" fill="url(#pcBokeh)"/><circle cx="420" cy="70" r="70" fill="url(#pcBokeh)"/><circle cx="160" cy="200" r="90" fill="url(#pcBokeh)"/>
+          <g transform="translate(0 22)">
+            <path class="pc-line" d="M0 196 C 160 194 260 170 380 166 S 600 120 740 112 S 940 70 1060 52 L 1100 45" fill="none" stroke="#7dd3fc" stroke-width="10" stroke-linecap="round" filter="url(#pcGlow)" pathLength="1"/>
+            <path class="pc-line" d="M0 196 C 160 194 260 170 380 166 S 600 120 740 112 S 940 70 1060 52 L 1100 45" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" pathLength="1"/>
+            <path class="pc-arrow" d="M1130 39 L 1094 29 L 1100 61 Z" fill="#fff" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>
+            <g class="pc-pts"><circle cx="380" cy="166" r="7" fill="#fff"/><circle cx="740" cy="112" r="7" fill="#fff"/><circle cx="1060" cy="52" r="7" fill="#fff"/>
+            <circle cx="380" cy="166" r="14" fill="#fff" fill-opacity=".25"/><circle cx="740" cy="112" r="14" fill="#fff" fill-opacity=".25"/><circle cx="1060" cy="52" r="14" fill="#fff" fill-opacity=".25"/></g>
+          </g>
+          <g class="pc-spark" fill="#fff"><path d="M560 34 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z"/><path d="M880 150 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z"/><path d="M250 60 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z"/></g>
         </svg>
-        <svg class="pc-svg pc-narrow" viewBox="0 0 390 118" preserveAspectRatio="xMidYMid slice">
-          <rect width="390" height="118" fill="url(#pcDots)"/>
-          <circle cx="350" cy="-30" r="90" fill="#fff" fill-opacity=".08"/>
-          <path d="M0 108 C 70 106 110 90 160 88 S 250 64 300 56 L 338 46 L 390 46 L 390 118 L 0 118 Z" fill="url(#pcArea)"/>
-          <path d="M0 108 C 70 106 110 90 160 88 S 250 64 300 56 L 338 46" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="9" stroke-linecap="round"/>
-          <path d="M0 108 C 70 106 110 90 160 88 S 250 64 300 56 L 338 46" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-          <path d="M356 41 L 334 37 L 340 56 Z" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
-          <circle cx="160" cy="88" r="4.5" fill="#fff"/><circle cx="300" cy="56" r="4.5" fill="#fff"/>
+        <svg class="pc-svg pc-narrow" viewBox="0 0 390 140" preserveAspectRatio="xMidYMid slice">
+          <rect width="390" height="140" fill="url(#pcDots)"/>
+          <circle cx="320" cy="20" r="70" fill="url(#pcBokeh)"/><circle cx="60" cy="120" r="60" fill="url(#pcBokeh)"/>
+          <g transform="translate(0 14)">
+            <path class="pc-line" d="M0 112 C 70 110 110 94 160 92 S 250 66 300 58 L 338 48" fill="none" stroke="#7dd3fc" stroke-width="8" stroke-linecap="round" filter="url(#pcGlow)" pathLength="1"/>
+            <path class="pc-line" d="M0 112 C 70 110 110 94 160 92 S 250 66 300 58 L 338 48" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" pathLength="1"/>
+            <path class="pc-arrow" d="M358 43 L 333 37 L 340 59 Z" fill="#fff" stroke="#fff" stroke-width="3.5" stroke-linejoin="round"/>
+            <g class="pc-pts"><circle cx="160" cy="92" r="5" fill="#fff"/><circle cx="300" cy="58" r="5" fill="#fff"/><circle cx="160" cy="92" r="10" fill="#fff" fill-opacity=".25"/><circle cx="300" cy="58" r="10" fill="#fff" fill-opacity=".25"/></g>
+          </g>
+          <g class="pc-spark" fill="#fff"><path d="M60 22 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z"/><path d="M250 112 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5z"/></g>
         </svg>
-        <span class="pc-chip pc-c1">📈 <b dir="ltr">313K</b> <span data-i18n="cover_reach">وصول</span></span>
-        <span class="pc-chip pc-c2">✔ <span data-i18n="cover_verified">حساب موثّق</span></span>
-        <span class="pc-chip pc-c3">🚀 <b dir="ltr">+54.6K</b> <span data-i18n="cover_followers">متابع</span></span>
+        <span class="pc-chip pc-c1"><i>📈</i><b dir="ltr">313K</b><span data-i18n="cover_reach">وصول</span></span>
+        <span class="pc-chip pc-c2"><i class="v">✔</i><span data-i18n="cover_verified">حساب موثّق</span></span>
+        <span class="pc-chip pc-c3"><i>🚀</i><b dir="ltr">+54.6K</b><span data-i18n="cover_followers">متابع</span></span>
       </div>
       <div class="prof">
         <button type="button" class="pavatar story" id="storyBtn" data-i18n-aria="story_label" aria-label="شوف آخر أعمالنا"><img src="assets/logo-dark.png" alt="Explor Plus" width="579" height="427"></button>
