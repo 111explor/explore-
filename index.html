@@ -131,7 +131,6 @@
     [data-style="bold"] .hero .btn-ghost { background: #fff; color: #0b0b14; border-color: #fff; }
     [data-style="bold"] .stat { background: #fff; border: 0; border-radius: 22px; box-shadow: none; }
     [data-style="bold"] .stat strong { color: #0a84ff; font-size: 34px; line-height: 1.1; }
-    [data-style="bold"] .stat:nth-child(2) strong { color: #0369a1; }
     [data-style="bold"] .orb { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.35); box-shadow: 0 40px 90px -40px rgba(11,11,20,.55); }
     [data-style="bold"] .orb::before { display: none; }
     [data-style="bold"] .orb .big-logo { background-image: url(assets/logo-light.png); }
@@ -147,24 +146,12 @@
 
     /* الخدمات: مربعات بأحجام وألوان */
     [data-style="bold"] .svc { border: 2px solid var(--border); box-shadow: none; }
-    [data-style="bold"] .svc:nth-child(4n+2) { background: #e7f3ff; border-color: transparent; }
-    [data-style="bold"] .svc:nth-child(4n+3) { background: #eef4fa; border-color: transparent; }
-    [data-style="bold"] .svc:nth-child(4n+3) p, [data-style="bold"] .svc:nth-child(4n+3) .tag { color: #334155; }
     [data-style="bold"] .svc-ico { background: #fff; color: #0a84ff; }
     [data-style="bold"] .svc-num { -webkit-text-stroke: 1px rgba(10,132,255,.25); }
     [data-style="bold"] .tag { background: rgba(255,255,255,.7); }
-    [data-style="bold"] .svc.featured { background: #0b0b14; color: #fff; border-color: #0b0b14; }
-    [data-style="bold"] .svc.featured p, [data-style="bold"] .svc.featured .tag { color: #b6c3d6; }
-    [data-style="bold"] .svc.featured .tag { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.14); }
-    [data-style="bold"] .svc.featured .svc-ico { background: rgba(255,255,255,.1); color: #7dd3fc; }
-    [data-style="bold"] .svc.featured .svc-num { -webkit-text-stroke: 1px rgba(255,255,255,.25); }
-    [data-style="bold"] .svc.featured .order { color: #7dd3fc; }
-    [data-style="bold"] .svc.featured:last-of-type { background: var(--grad); border-color: transparent; }
 
     /* ليش تختارنا + الأعمال */
     [data-style="bold"] .why-item { border: 0; }
-    [data-style="bold"] .why-item:nth-child(odd) { background: #e7f3ff; }
-    [data-style="bold"] .why-item:nth-child(even) { background: #eef4fa; }
     [data-style="bold"] .why-ico { background: #fff; color: #0a84ff; }
     [data-style="bold"] .why-item h3 { font-size: 24px; }
     [data-style="bold"] .work-case, [data-style="bold"] .result, [data-style="bold"] .grow, [data-style="bold"] .review { border: 2px solid var(--border); }
@@ -173,15 +160,12 @@
     [data-style="bold"] .work-celebs li { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); }
     [data-style="bold"] .work-celebs li::before, [data-style="bold"] .celebs-more { color: #7dd3fc; }
     [data-style="bold"] .result-big { font-size: 46px; color: #0a84ff; }
-    [data-style="bold"] .result:nth-child(even) .result-big { color: #0369a1; }
     [data-style="bold"] .result-tag { background: #e7f3ff; }
     [data-style="bold"] .grow { padding: 10px; background: var(--grad); border: 0; }
     [data-style="bold"] .grow img { border-radius: 16px; }
     [data-style="bold"] .grow figcaption, [data-style="bold"] .grow-handle, [data-style="bold"] .grow-nums .a { color: #fff; }
     [data-style="bold"] .grow-nums .b { color: #dbeafe; }
     [data-style="bold"] #verifyGrid .grow { background: linear-gradient(160deg, #3b82f6, #5eead4); }
-    [data-style="bold"] .review:nth-child(3n+1) { background: #e7f3ff; border-color: transparent; }
-    [data-style="bold"] .review:nth-child(3n+2) { background: #eef4fa; border-color: transparent; }
     [data-style="bold"] .review .stars { color: #0369a1; }
     [data-style="bold"] .review .av { background: var(--grad); }
 
@@ -475,6 +459,19 @@
       .bnav .bwa b svg { width: 30px; height: 30px; }
       .bnav a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 14px; }
     }
+
+    /* كروت موحّدة: أبيض + إطار أزرق فاتح + أيقونة بمربع سماوي + لون اللوجو للأزرار والأرقام */
+    [data-style="bold"] .svc, [data-style="bold"] .why-item, [data-style="bold"] .hw-step, [data-style="bold"] .review {
+      background: #fff; color: var(--text); border: 1.5px solid var(--border); box-shadow: 0 12px 30px -24px rgba(11,11,20,.35); }
+    [data-style="bold"] .svc p, [data-style="bold"] .why-item p, [data-style="bold"] .hw-step p { color: var(--muted); }
+    [data-style="bold"] .svc-ico, [data-style="bold"] .why-ico { background: #e7f3ff; color: var(--accent); }
+    [data-style="bold"] .svc-num { -webkit-text-stroke: 1px rgba(10,132,255,.28); }
+    [data-style="bold"] .tag { background: #f1f7fd; border-color: transparent; color: var(--muted); }
+    [data-style="bold"] .svc .order { color: var(--accent); }
+    [data-style="bold"] .step-n { background: var(--accent); color: #fff; }
+    [data-style="bold"] .stat strong, [data-style="bold"] .result-big { color: var(--accent); }
+    [data-style="bold"] .review .stars { color: var(--accent); }
+    [data-style="bold"] .svc:hover, [data-style="bold"] .why-item:hover, [data-style="bold"] .review:hover { border-color: rgba(10,132,255,.45); }
     /* how we work */
     .hw-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: none; }
     .hw-step { position: relative; padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--card-shadow); display: grid; gap: 8px; align-content: start; }
@@ -482,10 +479,6 @@
     .hw-step h3 { font-size: 20px; }
     .hw-step p { color: var(--muted); font-size: 15px; }
     [data-style="bold"] .hw-step { border: 2px solid var(--border); box-shadow: none; }
-    [data-style="bold"] .hw-step:nth-child(2) { background: #0b0b14; color: #fff; border-color: #0b0b14; }
-    [data-style="bold"] .hw-step:nth-child(2) p { color: #b6c3d6; }
-    [data-style="bold"] .hw-step:nth-child(2) .step-n { background: #7dd3fc; color: #0b0b14; }
-    [data-style="bold"] .hw-step:nth-child(3) .step-n { background: var(--grad); }
     [data-style="bold"] .hw-step h3 { font-family: 'Lalezar', 'Cairo', sans-serif; font-weight: 400; font-size: 26px; }
 
     /* faq */
