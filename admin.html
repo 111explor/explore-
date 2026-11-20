@@ -171,6 +171,20 @@
           <div class="small" style="color:${a.actor_label.startsWith('⚠️') ? 'var(--bad)' : 'var(--muted)'}">${esc(a.actor_label)}</div>
         </div>`).join('') : '<p class="muted small">ما في عمليات لسا.</p>';
     }
+    const SVC_NAMES = { ads: 'الإعلانات الممولة', verify: 'توثيق الحسابات', recover: 'استرجاع الحسابات', growth: 'زيادة المتابعين', manage: 'إدارة الصفحات',
+      video: 'فيديوهات إعلانية', menu: 'المنيو الإلكتروني', product: 'تصوير المنتجات', design: 'تصاميم السوشال', setup: 'تأسيس الصفحات', whatsapp: 'زر الواتساب العام', form: 'فورم الطلب' };
+    async function loadClicks() {
+      const box = $('#clicksList'); if (!box) return;
+      const { data, error } = await sb.rpc('admin_order_clicks');
+      if (error) { box.innerHTML = '<p class="muted small">العدّاد بحاجة تحديث قاعدة البيانات (ملف update-2026-11-clicks.sql).</p>'; return; }
+      if (!data || !data.length) { box.innerHTML = '<p class="muted small">لسا ما في ضغطات.</p>'; return; }
+      const max = Math.max(...data.map((r) => Number(r.d30)), 1);
+      box.innerHTML = `<div class="spread small muted" style="padding:4px 0"><span>الخدمة</span><span>7 أيام · 30 يوم</span></div>` + data.map((r) => `
+        <div style="padding:7px 0;border-bottom:1px solid var(--border)">
+          <div class="spread"><b style="font-size:14.5px">${esc(SVC_NAMES[r.service] || r.service)}</b><span class="num small"><b>${r.d7}</b> · ${r.d30}</span></div>
+          <div style="height:6px;border-radius:6px;background:var(--surface-2,#eef2f7);margin-top:6px;overflow:hidden"><i style="display:block;height:100%;width:${Math.round(Number(r.d30) / max * 100)}%;background:#0a84ff;border-radius:6px"></i></div>
+        </div>`).join('');
+    }
     async function renderHome() {
       const start = new Date(); start.setHours(0, 0, 0, 0);
       const soon = new Date(Date.now() + 7 * 86400000).toISOString();
@@ -216,11 +230,16 @@
           }).join('') : '<p class="muted small">ما في اشتراكات بتخلص هالأسبوع.</p>'}
         </div>
         <div class="card" style="margin-top:14px">
+          <h2 style="font-size:18px;margin-bottom:4px">📈 الخدمات الأكثر طلباً</h2>
+          <p class="muted small" style="margin-bottom:8px">كم مرة الزباين ضغطوا «اطلبها» أو زر الواتساب بالموقع. (ضغطات مش طلبات مؤكدة)</p>
+          <div id="clicksList"><p class="muted small">جاري التحميل…</p></div>
+        </div>
+        <div class="card" style="margin-top:14px">
           <div class="spread"><h2 style="font-size:18px">🕵️ سجل العمليات</h2><button class="btn btn-ghost btn-sm" type="button" id="auditMore">عرض أكتر</button></div>
           <p class="muted small" style="margin:4px 0 8px">كل تعديل بالمتجر مين عمله ومتى. نفس الشي بيوصلك فوراً على بوت تلجرام. ما حدا بيقدر يحذف منه شي.</p>
           <div id="auditList"><p class="muted small">جاري التحميل…</p></div>
         </div>`;
-      auditLimit = 15; loadAudit();
+      auditLimit = 15; loadAudit(); loadClicks();
       $('#auditMore').addEventListener('click', () => { auditLimit += 30; loadAudit(); });
       loadTraffic(); if (!trafficTimer) trafficTimer = setInterval(loadTraffic, 20000);
     }
