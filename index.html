@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl" data-style="bold">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Explor Plus | للدعاية والإعلان</title>
   <meta name="description" content="Explor Plus للدعاية والإعلان منذ 2018: توثيق واسترجاع الحسابات، الإعلانات الممولة، إدارة الصفحات، تصوير الفيديوهات والمنتجات، تصاميم السوشال ميديا والمنيو الإلكتروني.">
   <meta name="theme-color" content="#f5faff">
@@ -444,17 +444,17 @@
     @media (max-width: 980px) {
       .chip-nav { display: none !important; }
       .fab { display: none !important; }
-      body { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+      body { padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px)); }
       section[id] { scroll-margin-top: 84px !important; }
       .bnav { display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; position: fixed; z-index: 70;
-        left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); height: 66px; padding: 0 6px 8px; border-radius: 26px;
-        background: rgba(255,255,255,.72); -webkit-backdrop-filter: blur(18px) saturate(1.7); backdrop-filter: blur(18px) saturate(1.7);
-        border: 1px solid rgba(255,255,255,.9); box-shadow: 0 14px 34px -14px rgba(11,11,20,.35), inset 0 1px 0 rgba(255,255,255,.95); }
+        left: 0; right: 0; bottom: 0; padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px)); border-radius: 22px 22px 0 0;
+        background: rgba(255,255,255,.86); -webkit-backdrop-filter: blur(18px) saturate(1.7); backdrop-filter: blur(18px) saturate(1.7);
+        border-top: 1px solid rgba(10,132,255,.14); box-shadow: 0 -10px 28px -18px rgba(11,11,20,.35); }
       .bnav a { display: grid; justify-items: center; gap: 2px; color: var(--muted); font-size: 11px; font-weight: 700; line-height: 1.2; text-align: center; padding-top: 6px; }
       .bnav a svg { width: 23px; height: 23px; }
       .bnav a.on { color: var(--accent); }
-      .bnav .bwa { margin-top: -30px; color: var(--text); }
-      .bnav .bwa b { width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; background: #25d366; color: #fff; border: 4px solid #fff;
+      .bnav .bwa { margin-top: -28px; color: var(--text); }
+      .bnav .bwa b { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; background: #25d366; color: #fff; border: 4px solid #fff;
         box-shadow: 0 12px 26px -10px rgba(37,211,102,.75); }
       .bnav .bwa b svg { width: 30px; height: 30px; }
       .bnav a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 14px; }
