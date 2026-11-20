@@ -868,13 +868,6 @@
       <div id="marquee" hidden></div>
     </section>
 
-    <!-- ============ TABS ============ -->
-    <div class="ptabs" id="ptabs" role="tablist">
-      <button type="button" role="tab" data-tab="services" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 1.9 5.8L20 9l-4.9 3.6L17 19l-5-3.6L7 19l1.9-6.4L4 9l6.1-.2z"/></svg><span data-i18n="tab_services">خدماتنا</span></button>
-      <button type="button" role="tab" data-tab="works" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span data-i18n="tab_works">أعمالنا</span><em class="fire" aria-hidden="true">🔥</em></button>
-      <button type="button" role="tab" data-tab="reviews" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span data-i18n="tab_reviews">الآراء</span></button>
-    </div>
-
     <!-- ============ SERVICES ============ -->
     <section class="block tab-panel" id="services" data-panel="services">
       <div class="wrap">
@@ -1355,7 +1348,7 @@
       document.querySelectorAll('.tab-panel').forEach((p) => { p.hidden = p.dataset.panel !== name; });
       markActive(name);
       if (name === 'works') { document.body.classList.add('works-seen'); try { localStorage.setItem('xp_works_seen', '1'); } catch (e) {} }
-      if (scroll) $('#ptabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (scroll) { const sec = document.getElementById(name); if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
       if (typeof observeReveal === 'function') observeReveal();
       return true;
     }
