@@ -1,0 +1,22 @@
+{
+  "name": "Explor Plus",
+  "short_name": "Explor Plus",
+  "description": "Explor Plus للدعاية والإعلان: إعلانات ممولة، توثيق واسترجاع الحسابات، تصوير وتصميم",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#07080b",
+  "theme_color": "#07080b",
+  "icons": [
+    { "src": "/assets/app-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/app-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/assets/app-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "خدماتنا", "url": "/#services" },
+    { "name": "اطلب خدمتك", "url": "/#contact" },
+    { "name": "كل حساباتنا", "url": "/contact.html" }
+  ]
+}
